@@ -13,8 +13,6 @@ const commonFeatures = [
   "carouselPosts",
   "bulkVideo",
   "contentStudio",
-  "apiAddon",
-  "analytics",
 ] as const;
 
 const plans: Array<{
@@ -34,13 +32,13 @@ const plans: Array<{
   {
     id: "growth",
     accountFeature: "accounts50",
-    extraFeatures: ["growthConsulting", "prioritySupport", "teamMembers"],
+    extraFeatures: ["prioritySupport", "teamMembers"],
     monthly: { USD: 49, BRL: 249 },
   },
   {
     id: "pro",
     accountFeature: "accountsUnlimited",
-    extraFeatures: ["growthConsulting", "prioritySupport", "teamMembers"],
+    extraFeatures: ["prioritySupport", "teamMembers"],
     badge: "bestDeal",
     monthly: { USD: 99, BRL: 499 },
   },
@@ -76,7 +74,7 @@ export function PricingPlans({ onSelectPlan }: PricingPlansProps) {
             <button
               key={cycle}
               type="button"
-              className={`rounded-lg px-4 py-2 text-sm font-bold transition-colors ${billingCycle === cycle ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+              className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-bold transition-colors ${billingCycle === cycle ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
               onClick={() => setBillingCycle(cycle)}
               aria-pressed={billingCycle === cycle}
             >

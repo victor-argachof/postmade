@@ -45,7 +45,7 @@ export function LanguageSwitcher({ placement = "bottom" }: { placement?: "top" |
               key={language.code}
               type="button"
               onClick={() => selectLanguage(language)}
-              className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-medium transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               lang={language.code}
               aria-current={isSelected ? "true" : undefined}
             >

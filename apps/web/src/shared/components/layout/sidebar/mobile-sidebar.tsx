@@ -50,7 +50,7 @@ export function MobileSidebar({
     <>
       <button
         type="button"
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-[2px] md:hidden"
+        className="fixed inset-0 z-50 cursor-pointer bg-black/50 backdrop-blur-[2px] md:hidden"
         onClick={onClose}
         aria-label={closeLabel}
       />
@@ -68,7 +68,7 @@ export function MobileSidebar({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="flex size-10 items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex size-10 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={closeLabel}
           >
             <X className="size-5" aria-hidden="true" />

@@ -62,7 +62,7 @@ export function UserMenu() {
         <button
           type="button"
           onClick={openAccount}
-          className="mt-2 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          className="mt-2 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
         >
           <UserRoundCog className="size-4" aria-hidden="true" />
           {t("myAccount")}
@@ -70,7 +70,7 @@ export function UserMenu() {
         <button
           type="button"
           onClick={openSubscription}
-          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          className="mt-1 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
         >
           <CreditCard className="size-4" aria-hidden="true" />
           {t("menuLabel", { ns: "subscription" })}
@@ -78,7 +78,7 @@ export function UserMenu() {
         <button
           type="button"
           onClick={signOut}
-          className="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          className="mt-1 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
         >
           <LogOut className="size-4" aria-hidden="true" />
           {t("signOut")}
