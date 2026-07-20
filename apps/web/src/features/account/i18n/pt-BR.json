@@ -1,0 +1,15 @@
+{
+  "fallbackName": "Criador",
+  "openMenu": "Abrir menu da conta",
+  "myAccount": "Minha conta",
+  "signOut": "Sair",
+  "pageTitle": "Minha conta",
+  "pageDescription": "Gerencie seus dados pessoais e as configurações da sua conta Postmade.",
+  "profileTitle": "Informações do perfil",
+  "profileDescription": "Esses dados identificam você dentro do Postmade.",
+  "name": "Nome",
+  "email": "E-mail",
+  "emailHelper": "A alteração de e-mail será disponibilizada com a integração do backend.",
+  "save": "Salvar alterações",
+  "saveSuccess": "Alterações salvas nesta sessão."
+}

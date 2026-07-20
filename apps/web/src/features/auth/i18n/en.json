@@ -1,0 +1,11 @@
+{
+  "loginTitle": "Welcome back",
+  "registerTitle": "Create your account",
+  "email": "Email",
+  "password": "Password",
+  "name": "Name",
+  "login": "Sign in",
+  "register": "Create account",
+  "noAccount": "Don't have an account yet?",
+  "hasAccount": "Already have an account?"
+}

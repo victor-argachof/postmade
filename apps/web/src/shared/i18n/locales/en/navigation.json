@@ -1,0 +1,11 @@
+{
+  "dashboard": "Overview",
+  "posts": "Posts",
+  "channels": "Channels",
+  "calendar": "Calendar",
+  "mainNavigation": "Main navigation",
+  "collapseSidebar": "Collapse sidebar",
+  "expandSidebar": "Expand sidebar",
+  "openSidebar": "Open sidebar",
+  "closeSidebar": "Close sidebar"
+}

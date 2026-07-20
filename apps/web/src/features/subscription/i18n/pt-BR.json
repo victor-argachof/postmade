@@ -1,0 +1,22 @@
+{
+  "menuLabel": "Assinatura",
+  "eyebrow": "Plano e cobrança",
+  "pageTitle": "Assinatura",
+  "pageDescription": "Gerencie sua avaliação, seu plano e as informações de cobrança do Postmade.",
+  "statusTitle": "Status da assinatura",
+  "trialActive": "Avaliação ativa",
+  "trialTitle": "Sua avaliação gratuita está ativa",
+  "trialDescription": "A avaliação começou automaticamente quando você criou sua conta. Você pode explorar todo o Postmade por 15 dias sem cadastrar um cartão.",
+  "progressLabel": "Tempo restante da avaliação",
+  "daysRemaining_one": "{{count}} dia restante",
+  "daysRemaining_other": "{{count}} dias restantes",
+  "ofTotalDays": "de {{total}} dias",
+  "crossPosting": "Publicação em múltiplas redes sociais",
+  "scheduling": "Agendamento de publicações",
+  "platformCustomization": "Personalização por plataforma",
+  "calendar": "Calendário de conteúdo",
+  "subscribeCardTitle": "Não perca o acesso ao Postmade",
+  "subscribeCardDescription": "Escolha seu plano agora e mantenha todos os recursos disponíveis após o período gratuito.",
+  "subscribeNow": "Assinar agora",
+  "checkoutPending": "O checkout será habilitado após a integração segura com o backend e a Stripe."
+}

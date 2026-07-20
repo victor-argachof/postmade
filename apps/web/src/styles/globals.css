@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: light;
+  --background: oklch(0.985 0.004 250);
+  --foreground: oklch(0.20 0.025 255);
+  --card: oklch(1 0 0);
+  --brand-primary: #fe4f02;
+  --brand-secondary: #ffead0;
+  --primary: var(--brand-primary);
+  --primary-foreground: #2b1004;
+  --secondary: var(--brand-secondary);
+  --secondary-foreground: #542000;
+  --muted: oklch(0.95 0.008 250);
+  --muted-foreground: oklch(0.52 0.025 255);
+  --border: oklch(0.90 0.012 250);
+  --input: oklch(0.87 0.015 250);
+  --ring: var(--brand-primary);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.16 0.012 45);
+  --foreground: oklch(0.96 0.008 70);
+  --card: oklch(0.20 0.014 45);
+  --primary: var(--brand-primary);
+  --primary-foreground: #2b1004;
+  --secondary: #5b2a13;
+  --secondary-foreground: var(--brand-secondary);
+  --muted: oklch(0.25 0.014 45);
+  --muted-foreground: oklch(0.70 0.018 60);
+  --border: oklch(0.30 0.016 45);
+  --input: oklch(0.36 0.018 45);
+  --ring: var(--brand-primary);
+}
+
+* { border-color: var(--border); }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--background); }
+button, input { font: inherit; }

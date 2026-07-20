@@ -1,0 +1,15 @@
+{
+  "fallbackName": "Creator",
+  "openMenu": "Open account menu",
+  "myAccount": "My account",
+  "signOut": "Sign out",
+  "pageTitle": "My account",
+  "pageDescription": "Manage your personal details and Postmade account settings.",
+  "profileTitle": "Profile information",
+  "profileDescription": "These details identify you inside Postmade.",
+  "name": "Name",
+  "email": "Email",
+  "emailHelper": "Changing your email will be available after the backend integration.",
+  "save": "Save changes",
+  "saveSuccess": "Changes saved for this session."
+}

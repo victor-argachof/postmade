@@ -1,0 +1,22 @@
+{
+  "menuLabel": "Subscription",
+  "eyebrow": "Plan and billing",
+  "pageTitle": "Subscription",
+  "pageDescription": "Manage your trial, plan and Postmade billing information.",
+  "statusTitle": "Subscription status",
+  "trialActive": "Trial active",
+  "trialTitle": "Your free trial is active",
+  "trialDescription": "Your trial started automatically when you created your account. You can explore all of Postmade for 15 days without adding a card.",
+  "progressLabel": "Trial time remaining",
+  "daysRemaining_one": "{{count}} day remaining",
+  "daysRemaining_other": "{{count}} days remaining",
+  "ofTotalDays": "of {{total}} days",
+  "crossPosting": "Publishing across multiple social networks",
+  "scheduling": "Post scheduling",
+  "platformCustomization": "Per-platform customization",
+  "calendar": "Content calendar",
+  "subscribeCardTitle": "Keep your access to Postmade",
+  "subscribeCardDescription": "Choose your plan now and keep every feature available after your free trial.",
+  "subscribeNow": "Subscribe now",
+  "checkoutPending": "Checkout will be enabled after the secure backend and Stripe integration."
+}
