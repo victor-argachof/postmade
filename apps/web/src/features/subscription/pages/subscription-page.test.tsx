@@ -8,7 +8,12 @@ describe("SubscriptionPage", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: /assinatura|subscription/i })).toBeInTheDocument();
     expect(screen.getByRole("progressbar", { name: /tempo restante|time remaining/i })).toHaveAttribute("aria-valuenow", "15");
+    expect(screen.getByRole("progressbar", { name: /posts utilizados|posts used/i })).toHaveAttribute("aria-valuemax", "3");
+    expect(screen.getByRole("progressbar", { name: /canais conectados|connected channels/i })).toHaveAttribute("aria-valuemax", "3");
     expect(screen.getByText(/sem cadastrar um cartão|without adding a card/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /assinar agora|subscribe now/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /selecionar plano|select a plan/i })).toBeEnabled();
+    expect(screen.getByRole("heading", { level: 2, name: /escolha o plano|choose the right plan/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3, name: "Creator" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /começar agora|get started/i })).toHaveLength(3);
   });
 });
