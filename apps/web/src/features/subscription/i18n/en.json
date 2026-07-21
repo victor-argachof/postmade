@@ -6,7 +6,7 @@
   "statusTitle": "Subscription status",
   "trialActive": "Trial active",
   "trialTitle": "Your free trial is active",
-  "trialDescription": "Your trial started automatically when you created your account. You can explore all of Postmade for 15 days without adding a credit card.",
+  "trialDescription": "Try Postmade's essential features for free. During your trial, you can publish up to 3 posts and connect up to 3 channels, with no credit card required.",
   "progressLabel": "Trial time remaining",
   "daysUsage": "{{remaining}} of {{total}} days remaining",
   "postsLimitLabel": "Posts used",

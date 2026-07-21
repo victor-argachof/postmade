@@ -6,7 +6,7 @@
   "statusTitle": "Status da assinatura",
   "trialActive": "Avaliação ativa",
   "trialTitle": "Sua avaliação gratuita está ativa",
-  "trialDescription": "A avaliação começou automaticamente quando você criou sua conta. Você pode explorar todo o Postmade por 15 dias sem cadastrar um cartão de crédito.",
+  "trialDescription": "Experimente os principais recursos do Postmade gratuitamente. Durante a avaliação, você pode publicar até 3 posts e conectar até 3 canais, sem precisar cadastrar um cartão de crédito.",
   "progressLabel": "Tempo restante da avaliação",
   "daysUsage": "{{remaining}} de {{total}} dias restantes",
   "postsLimitLabel": "Posts utilizados",
