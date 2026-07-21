@@ -54,4 +54,4 @@
 
 * { border-color: var(--border); }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--background); }
-button, input { font: inherit; }
+button, input { font-family: inherit; }

@@ -1,70 +1,62 @@
-import { useEffect, useState, type FormEvent } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { setSession } from "@/features/auth/store/auth-slice";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { createProfileSchema, type ProfileFormValues } from "../schemas/profile-schema";
 
 export function ProfileForm() {
   const { t } = useTranslation("account");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const [name, setName] = useState(user?.name ?? t("fallbackName"));
-  const [saved, setSaved] = useState(false);
-  const email = user?.email ?? "creator@postmade.app";
+  const schema = useMemo(() => createProfileSchema(t), [t]);
+  const fallbackName = user?.name ?? t("fallbackName");
+  const currentEmail = user?.email ?? "creator@postmade.app";
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty, isSubmitting },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: fallbackName },
+    mode: "onTouched",
+    reValidateMode: "onChange",
+  });
 
   useEffect(() => {
-    setName(user?.name ?? t("fallbackName"));
-  }, [t, user?.name]);
+    reset({ name: fallbackName });
+  }, [fallbackName, reset]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    dispatch(setSession({ name: name.trim(), email }));
-    setSaved(true);
+  const saveProfile = (values: ProfileFormValues) => {
+    dispatch(setSession({ name: values.name, email: currentEmail }));
+    reset(values);
+    toast.success(t("saveSuccess"));
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-      <label className="block text-sm font-medium">
-        {t("name")}
-        <Input
-          className="mt-2"
-          name="name"
-          autoComplete="name"
-          value={name}
-          onChange={(event) => {
-            setName(event.target.value);
-            setSaved(false);
-          }}
-          required
-        />
-      </label>
+    <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit(saveProfile)}>
       <div>
-        <label className="block text-sm font-medium">
-          {t("email")}
-          <Input
-            className="mt-2"
-            name="email"
-            type="email"
-            autoComplete="email"
-            value={email}
-            readOnly
-            aria-describedby="account-email-helper"
-          />
-        </label>
-        <p id="account-email-helper" className="mt-2 text-xs leading-5 text-muted-foreground">
-          {t("emailHelper")}
-        </p>
+        <label className="block text-sm font-medium" htmlFor="account-name">{t("fullName")}</label>
+        <Input
+          aria-describedby={errors.name ? "account-name-error" : undefined}
+          aria-invalid={Boolean(errors.name)}
+          autoComplete="name"
+          className={`mt-2 ${errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
+          id="account-name"
+          {...register("name")}
+        />
+        {errors.name && <p className="mt-2 text-xs text-red-600" id="account-name-error" role="alert">{errors.name.message}</p>}
       </div>
-      <div className="flex flex-wrap items-center gap-4 border-t border-border pt-6">
-        <Button type="submit" disabled={!name.trim()}>{t("save")}</Button>
-        {saved && (
-          <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground" role="status">
-            <CheckCircle2 className="size-4 text-primary" aria-hidden="true" />
-            {t("saveSuccess")}
-          </p>
-        )}
+
+      <div>
+        <Button className="w-full sm:w-auto" disabled={!isDirty || isSubmitting} type="submit">
+          {t("save")}
+        </Button>
       </div>
     </form>
   );
