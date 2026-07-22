@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { setSession } from "@/features/auth/store/auth-slice";
+import { updateMemberIdentity } from "@/features/workspaces/store/workspaces-slice";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
@@ -54,7 +55,9 @@ export function ChangeEmailForm() {
       name: user?.name ?? t("fallbackName"),
       email: pendingEmail,
       provider,
+      preserveId: true,
     }));
+    if (user) dispatch(updateMemberIdentity({ userId: user.id, email: pendingEmail }));
     setPendingEmail("");
     toast.success(t("emailChangeSuccess"));
   };

@@ -3,11 +3,12 @@ import { useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ROUTES } from "@/routes/route-paths";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { useAppDispatch } from "@/shared/hooks/store-hooks";
+import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { acceptInvitation, createInitialWorkspace } from "@/features/workspaces/store/workspaces-slice";
 import {
   createAuthSchema,
   type AuthFormValues,
@@ -38,6 +39,14 @@ export function AuthForm({
   const { t } = useTranslation("auth");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const invitationToken = searchParams.get("invite");
+  const invitation = useAppSelector((state) => state.workspaces.items
+    .flatMap((workspace) => workspace.invitations)
+    .find((item) => item.token === invitationToken && item.status === "pending"));
+  const knownMember = useAppSelector((state) => state.workspaces.items
+    .flatMap((workspace) => workspace.members)
+    .find((member) => member.email === (invitation?.email ?? "").toLowerCase()));
   const [showPassword, setShowPassword] = useState(false);
   const [pendingCredentials, setPendingCredentials] = useState<AuthFormValues | null>(null);
   const isRegister = mode === "register";
@@ -50,7 +59,7 @@ export function AuthForm({
     formState: { errors },
   } = useForm<AuthFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { name: "", email: invitation?.email ?? "", password: "" },
     mode: "onTouched",
     reValidateMode: "onChange",
   });
@@ -64,20 +73,51 @@ export function AuthForm({
   const completeEmailAuthentication = () => {
     if (!pendingCredentials) return;
 
+    const userName = isRegister ? pendingCredentials.name ?? "" : knownMember?.name ?? "Creator";
+    const userId = `user:${pendingCredentials.email.trim().toLowerCase()}`;
     dispatch(setSession({
-      name: isRegister ? pendingCredentials.name ?? "" : "Creator",
+      name: userName,
       email: pendingCredentials.email,
       provider: "email",
     }));
+    if (invitationToken) {
+      dispatch(acceptInvitation({
+        token: invitationToken,
+        userId,
+        userName,
+        userEmail: pendingCredentials.email,
+        acceptedAt: new Date().toISOString(),
+      }));
+    } else {
+      dispatch(createInitialWorkspace({
+        userId,
+        userName,
+        userEmail: pendingCredentials.email,
+      }));
+    }
     navigate(ROUTES.dashboard);
   };
 
   const handleGoogleSignIn = () => {
+    const userName = getValues("name") || t("googleUser");
+    const userEmail = invitation?.email || getValues("email") || "google-user@postmade.app";
+    const userId = `user:${userEmail.trim().toLowerCase()}`;
     dispatch(setSession({
-      name: getValues("name") || t("googleUser"),
-      email: getValues("email") || "google-user@postmade.app",
+      name: userName,
+      email: userEmail,
       provider: "google",
     }));
+    if (invitationToken) {
+      dispatch(acceptInvitation({
+        token: invitationToken,
+        userId,
+        userName,
+        userEmail,
+        acceptedAt: new Date().toISOString(),
+      }));
+    } else {
+      dispatch(createInitialWorkspace({ userId, userName, userEmail }));
+    }
     navigate(ROUTES.dashboard);
   };
 
@@ -131,6 +171,7 @@ export function AuthForm({
           id="auth-email"
           type="email"
           autoComplete="email"
+          readOnly={Boolean(invitation)}
           {...register("email")}
         />
         {errors.email && <p className="mt-2 text-xs text-red-600" id="auth-email-error" role="alert">{errors.email.message}</p>}
@@ -189,12 +230,15 @@ export function AuthForm({
       )}
 
       <Button className="w-full" type="submit">
-        {t(isRegister ? "startFreeTrial" : "login")}
+        {t(invitationToken && isRegister ? "joinWorkspace" : isRegister ? "startFreeTrial" : "login")}
       </Button>
 
       <p className="text-center text-sm text-muted-foreground">
         {t(isRegister ? "hasAccount" : "noAccount")} {" "}
-        <Link className="font-semibold text-primary hover:underline" to={isRegister ? ROUTES.login : ROUTES.register}>
+        <Link
+          className="font-semibold text-primary hover:underline"
+          to={`${isRegister ? ROUTES.login : ROUTES.register}${invitationToken ? `?invite=${encodeURIComponent(invitationToken)}` : ""}`}
+        >
           {t(isRegister ? "login" : "register")}
         </Link>
       </p>

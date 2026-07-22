@@ -3,17 +3,17 @@ import { ROUTES } from "@/routes/route-paths";
 import { Brand } from "@/shared/components/brand";
 import {
   SidebarNavigation,
-  type SidebarNavigationItem,
+  type SidebarNavigationSection,
 } from "./sidebar-navigation";
 import { cn } from "@/shared/lib/utils";
 
 interface DesktopSidebarProps {
   collapsed: boolean;
-  items: SidebarNavigationItem[];
+  sections: SidebarNavigationSection[];
   navigationLabel: string;
 }
 
-export function DesktopSidebar({ collapsed, items, navigationLabel }: DesktopSidebarProps) {
+export function DesktopSidebar({ collapsed, sections, navigationLabel }: DesktopSidebarProps) {
   return (
     <aside
       className={cn(
@@ -31,7 +31,7 @@ export function DesktopSidebar({ collapsed, items, navigationLabel }: DesktopSid
         </NavLink>
       </div>
       <SidebarNavigation
-        items={items}
+        sections={sections}
         ariaLabel={navigationLabel}
         collapsed={collapsed}
       />

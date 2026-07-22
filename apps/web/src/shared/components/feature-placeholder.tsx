@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { PageHeader } from "@/shared/components/page-header";
 
 interface FeaturePlaceholderProps {
   title: string;
@@ -10,8 +11,7 @@ interface FeaturePlaceholderProps {
 export function FeaturePlaceholder({ title, description, eyebrow, icon: Icon }: FeaturePlaceholderProps) {
   return (
     <section className="mx-auto max-w-5xl">
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">{eyebrow}</p>
-      <h1 className="mt-4 text-4xl font-black tracking-tight">{title}</h1>
+      <PageHeader eyebrow={eyebrow} title={title} />
       <div className="mt-10 flex min-h-72 flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card p-8 text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Icon className="size-6" aria-hidden="true" />

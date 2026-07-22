@@ -3,17 +3,14 @@ import { useTranslation } from "react-i18next";
 import { ChangeEmailForm } from "../components/change-email-form";
 import { ChangePasswordForm } from "../components/change-password-form";
 import { ProfileForm } from "../components/profile-form";
+import { PageHeader } from "@/shared/components/page-header";
 
 export function AccountPage() {
   const { t } = useTranslation("account");
 
   return (
     <section className="mx-auto max-w-4xl">
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Postmade</p>
-      <h1 className="mt-4 text-4xl font-black tracking-tight">{t("pageTitle")}</h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-        {t("pageDescription")}
-      </p>
+      <PageHeader eyebrow="Postmade" title={t("pageTitle")} description={t("pageDescription")} />
 
       <div className="mt-10 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
         <div className="flex items-start gap-4">

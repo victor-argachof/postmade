@@ -1,8 +1,9 @@
-import { CreditCard, LogOut, UserRound, UserRoundCog } from "lucide-react";
+import { LogOut, UserRound, UserRoundCog } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/routes/route-paths";
 import { clearSession } from "@/features/auth/store/auth-slice";
+import { clearWorkspaceSession } from "@/features/workspaces/store/workspaces-slice";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 import { useDismissibleDetails } from "@/shared/hooks/use-dismissible-details";
 
@@ -17,7 +18,7 @@ function getInitials(name: string) {
 
 export function UserMenu() {
   const menuRef = useDismissibleDetails();
-  const { t } = useTranslation(["account", "subscription"]);
+  const { t } = useTranslation("account");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
@@ -27,17 +28,13 @@ export function UserMenu() {
   const signOut = () => {
     menuRef.current?.removeAttribute("open");
     dispatch(clearSession());
+    dispatch(clearWorkspaceSession());
     navigate(ROUTES.login);
   };
 
   const openAccount = () => {
     menuRef.current?.removeAttribute("open");
     navigate(ROUTES.account);
-  };
-
-  const openSubscription = () => {
-    menuRef.current?.removeAttribute("open");
-    navigate(ROUTES.subscription);
   };
 
   return (
@@ -66,14 +63,6 @@ export function UserMenu() {
         >
           <UserRoundCog className="size-4" aria-hidden="true" />
           {t("myAccount")}
-        </button>
-        <button
-          type="button"
-          onClick={openSubscription}
-          className="mt-1 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
-        >
-          <CreditCard className="size-4" aria-hidden="true" />
-          {t("menuLabel", { ns: "subscription" })}
         </button>
         <button
           type="button"

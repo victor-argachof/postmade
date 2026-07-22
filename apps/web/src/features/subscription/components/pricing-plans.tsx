@@ -46,9 +46,10 @@ const plans: Array<{
 
 interface PricingPlansProps {
   onSelectPlan?: (plan: PlanId, cycle: BillingCycle) => void;
+  currentPlan?: PlanId;
 }
 
-export function PricingPlans({ onSelectPlan }: PricingPlansProps) {
+export function PricingPlans({ currentPlan, onSelectPlan }: PricingPlansProps) {
   const { t, i18n } = useTranslation("subscription");
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const isBrazilianPortuguese = i18n.resolvedLanguage?.toLowerCase().startsWith("pt-br");
@@ -116,9 +117,9 @@ export function PricingPlans({ onSelectPlan }: PricingPlansProps) {
                 className="mt-6 w-full"
                 variant={plan.badge === "mostPopular" ? "default" : "outline"}
                 onClick={() => onSelectPlan?.(plan.id, billingCycle)}
-                disabled={!onSelectPlan}
+                disabled={!onSelectPlan || currentPlan === plan.id}
               >
-                {t("getStarted")}
+                {t(currentPlan === plan.id ? "currentPlan" : "getStarted")}
               </Button>
               <ul className="mt-6 space-y-3 border-t border-border pt-6">
                 {features.map((feature) => (

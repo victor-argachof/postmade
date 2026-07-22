@@ -7,10 +7,11 @@ export const ROUTES = {
   privacyPolicy: "/privacy-policy",
   dashboard: "/dashboard",
   posts: "/posts",
-  channels: "/channels",
+  workspaceChannels: "/workspace/channels",
   calendar: "/calendar",
+  workspaceSettings: "/workspace/settings",
   account: "/account",
-  subscription: "/subscription",
+  workspaceSubscription: "/workspace/subscription",
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

@@ -17,5 +17,7 @@ describe("AppRouter", () => {
     );
 
     expect(await screen.findByRole("heading", { name: /crie uma vez|create once/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /configurações|settings/i })).toHaveAttribute("href", ROUTES.workspaceSettings);
+    expect(screen.getByRole("link", { name: /assinatura|subscription/i })).toHaveAttribute("href", ROUTES.workspaceSubscription);
   });
 });

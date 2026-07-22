@@ -18,6 +18,8 @@ import postsEn from "@/features/posts/i18n/en.json";
 import postsPtBR from "@/features/posts/i18n/pt-BR.json";
 import subscriptionEn from "@/features/subscription/i18n/en.json";
 import subscriptionPtBR from "@/features/subscription/i18n/pt-BR.json";
+import workspacesEn from "@/features/workspaces/i18n/en.json";
+import workspacesPtBR from "@/features/workspaces/i18n/pt-BR.json";
 
 const savedLanguage = window.localStorage.getItem("postmade.language");
 const browserLanguage = navigator.language.toLowerCase().startsWith("pt")
@@ -33,6 +35,7 @@ export const resources = {
     auth: authEn,
     posts: postsEn,
     subscription: subscriptionEn,
+    workspaces: workspacesEn,
     channels: channelsEn,
     calendar: calendarEn,
   },
@@ -44,6 +47,7 @@ export const resources = {
     auth: authPtBR,
     posts: postsPtBR,
     subscription: subscriptionPtBR,
+    workspaces: workspacesPtBR,
     channels: channelsPtBR,
     calendar: calendarPtBR,
   },
@@ -55,7 +59,7 @@ void i18n.use(initReactI18next).init({
   fallbackLng: "en",
   supportedLngs: ["en", "pt-BR"],
   defaultNS: "common",
-  ns: ["common", "navigation", "account", "dashboard", "auth", "posts", "channels", "calendar", "subscription"],
+  ns: ["common", "navigation", "account", "dashboard", "auth", "posts", "channels", "calendar", "subscription", "workspaces"],
   showSupportNotice: false,
   interpolation: {
     escapeValue: false,

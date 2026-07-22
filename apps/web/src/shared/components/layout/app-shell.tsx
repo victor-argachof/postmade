@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { CalendarDays, LayoutDashboard, Radio, Send } from "lucide-react";
+import { CalendarDays, CreditCard, LayoutDashboard, Radio, Send, Settings2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import { ROUTES } from "@/routes/route-paths";
@@ -12,11 +12,25 @@ export function AppShell() {
     () => window.localStorage.getItem("postmade.sidebar-collapsed") === "true",
   );
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const links = [
-    { to: ROUTES.dashboard, label: t("dashboard"), icon: LayoutDashboard },
-    { to: ROUTES.posts, label: t("posts"), icon: Send },
-    { to: ROUTES.channels, label: t("channels"), icon: Radio },
-    { to: ROUTES.calendar, label: t("calendar"), icon: CalendarDays },
+  const navigationSections = [
+    {
+      items: [{ to: ROUTES.dashboard, label: t("dashboard"), icon: LayoutDashboard }],
+    },
+    {
+      label: t("postsSection"),
+      items: [
+        { to: ROUTES.posts, label: t("posts"), icon: Send },
+        { to: ROUTES.calendar, label: t("calendar"), icon: CalendarDays },
+      ],
+    },
+    {
+      label: t("workspaceSection"),
+      items: [
+        { to: ROUTES.workspaceChannels, label: t("channels"), icon: Radio },
+        { to: ROUTES.workspaceSettings, label: t("workspaceSettings"), icon: Settings2 },
+        { to: ROUTES.workspaceSubscription, label: t("subscription"), icon: CreditCard },
+      ],
+    },
   ];
 
   const toggleSidebar = () => {
@@ -34,7 +48,7 @@ export function AppShell() {
     <div className="flex min-h-screen bg-background text-foreground">
       <DesktopSidebar
         collapsed={sidebarCollapsed}
-        items={links}
+        sections={navigationSections}
         navigationLabel={t("mainNavigation")}
       />
       <div className="min-w-0 flex-1">
@@ -49,7 +63,7 @@ export function AppShell() {
       </div>
       <MobileSidebar
         open={mobileSidebarOpen}
-        items={links}
+        sections={navigationSections}
         navigationLabel={t("mainNavigation")}
         closeLabel={t("closeSidebar")}
         onClose={closeMobileSidebar}

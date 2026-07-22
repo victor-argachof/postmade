@@ -1,10 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import "@/shared/i18n";
 import { SubscriptionPage } from "./subscription-page";
+import { Provider } from "react-redux";
+import { store } from "@/app/store";
 
 describe("SubscriptionPage", () => {
   it("presents the active trial progress", () => {
-    render(<SubscriptionPage />);
+    render(<Provider store={store}><SubscriptionPage /></Provider>);
 
     expect(screen.getByRole("heading", { level: 1, name: /assinatura|subscription/i })).toBeInTheDocument();
     expect(screen.getByRole("progressbar", { name: /tempo restante|time remaining/i })).toHaveAttribute("aria-valuenow", "15");

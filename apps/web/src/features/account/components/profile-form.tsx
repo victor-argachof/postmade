@@ -8,6 +8,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 import { createProfileSchema, type ProfileFormValues } from "../schemas/profile-schema";
+import { updateMemberIdentity } from "@/features/workspaces/store/workspaces-slice";
 
 export function ProfileForm() {
   const { t } = useTranslation("account");
@@ -34,6 +35,7 @@ export function ProfileForm() {
 
   const saveProfile = (values: ProfileFormValues) => {
     dispatch(setSession({ name: values.name, email: currentEmail }));
+    if (user) dispatch(updateMemberIdentity({ userId: user.id, name: values.name }));
     reset(values);
     toast.success(t("saveSuccess"));
   };

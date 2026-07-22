@@ -5,6 +5,7 @@ import { ChannelsPage } from "@/features/channels";
 import { PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
 import { DashboardHome } from "@/shared/components/dashboard-home";
+import { WorkspaceSettingsPage } from "@/features/workspaces";
 import { AppShell } from "@/shared/components/layout/app-shell";
 import { ROUTES } from "./route-paths";
 
@@ -15,9 +16,10 @@ export const protectedRoutes: RouteObject = {
   children: [
     { path: ROUTES.dashboard, element: <DashboardHome /> },
     { path: ROUTES.posts, element: <PostsPage /> },
-    { path: ROUTES.channels, element: <ChannelsPage /> },
+    { path: ROUTES.workspaceChannels, element: <ChannelsPage /> },
     { path: ROUTES.calendar, element: <CalendarPage /> },
+    { path: ROUTES.workspaceSettings, element: <WorkspaceSettingsPage /> },
     { path: ROUTES.account, element: <AccountPage /> },
-    { path: ROUTES.subscription, element: <SubscriptionPage /> },
+    { path: ROUTES.workspaceSubscription, element: <SubscriptionPage /> },
   ],
 };

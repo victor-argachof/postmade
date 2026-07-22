@@ -11,6 +11,8 @@ const benefitKeys = [
 ] as const;
 
 interface SubscriptionSummaryProps {
+  plan?: "creator" | "growth" | "pro";
+  trialing?: boolean;
   totalDays?: number;
   remainingDays?: number;
   postLimit?: number;
@@ -56,6 +58,8 @@ function UsageMeter({ label, valueLabel, value, maximum }: UsageMeterProps) {
 }
 
 export function SubscriptionSummary({
+  plan = "creator",
+  trialing = true,
   totalDays = 15,
   remainingDays = 15,
   postLimit = 3,
@@ -74,7 +78,7 @@ export function SubscriptionSummary({
           <div>
             <p className="text-sm font-semibold text-muted-foreground">{t("statusTitle")}</p>
             <span className="mt-2 inline-flex rounded-full bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
-              {t("trialActive")}
+              {t(trialing ? "trialActive" : "planActive", { plan: t(`plans.${plan}.name`) })}
             </span>
           </div>
           <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -82,16 +86,16 @@ export function SubscriptionSummary({
           </div>
         </div>
 
-        <h2 id="trial-title" className="mt-8 text-2xl font-black tracking-tight">{t("trialTitle")}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{t("trialDescription")}</p>
+        <h2 id="trial-title" className="mt-8 text-2xl font-black tracking-tight">{t(trialing ? "trialTitle" : "activePlanTitle", { plan: t(`plans.${plan}.name`) })}</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">{t(trialing ? "trialDescription" : "activePlanDescription")}</p>
 
         <div className="mt-8 space-y-6 rounded-2xl bg-muted p-5">
-          <UsageMeter
-            label={t("progressLabel")}
-            valueLabel={t("daysUsage", { remaining: safeRemainingDays, total: safeTotalDays })}
-            value={safeRemainingDays}
-            maximum={safeTotalDays}
-          />
+          {trialing && <UsageMeter
+              label={t("progressLabel")}
+              valueLabel={t("daysUsage", { remaining: safeRemainingDays, total: safeTotalDays })}
+              value={safeRemainingDays}
+              maximum={safeTotalDays}
+            />}
           <UsageMeter
             label={t("postsLimitLabel")}
             valueLabel={t("usageOfLimit", { used: postsUsed, limit: postLimit })}

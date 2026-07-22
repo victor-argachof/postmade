@@ -10,9 +10,9 @@ describe("SidebarNavigation", () => {
       <MemoryRouter initialEntries={[ROUTES.posts]}>
         <SidebarNavigation
           ariaLabel="Main navigation"
-          items={[
-            { to: ROUTES.dashboard, label: "Overview", icon: LayoutDashboard },
-            { to: ROUTES.posts, label: "Posts", icon: Send },
+          sections={[
+            { items: [{ to: ROUTES.dashboard, label: "Overview", icon: LayoutDashboard }] },
+            { label: "Posts", items: [{ to: ROUTES.posts, label: "Posts", icon: Send }] },
           ]}
         />
       </MemoryRouter>,
@@ -20,5 +20,6 @@ describe("SidebarNavigation", () => {
 
     expect(screen.getByRole("navigation", { name: "Main navigation" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Posts" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Posts", { selector: "p" })).toBeInTheDocument();
   });
 });

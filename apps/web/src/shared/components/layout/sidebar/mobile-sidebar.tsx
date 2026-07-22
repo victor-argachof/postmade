@@ -6,12 +6,12 @@ import { Brand } from "@/shared/components/brand";
 import { MobilePreferences } from "./mobile-preferences";
 import {
   SidebarNavigation,
-  type SidebarNavigationItem,
+  type SidebarNavigationSection,
 } from "./sidebar-navigation";
 
 interface MobileSidebarProps {
   open: boolean;
-  items: SidebarNavigationItem[];
+  sections: SidebarNavigationSection[];
   navigationLabel: string;
   closeLabel: string;
   onClose: () => void;
@@ -19,7 +19,7 @@ interface MobileSidebarProps {
 
 export function MobileSidebar({
   open,
-  items,
+  sections,
   navigationLabel,
   closeLabel,
   onClose,
@@ -75,7 +75,7 @@ export function MobileSidebar({
           </button>
         </div>
         <SidebarNavigation
-          items={items}
+          sections={sections}
           ariaLabel={navigationLabel}
           onNavigate={onClose}
         />
