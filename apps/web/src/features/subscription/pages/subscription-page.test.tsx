@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import "@/shared/i18n";
 import { SubscriptionPage } from "./subscription-page";
 import { Provider } from "react-redux";
-import { store } from "@/app/store";
+import { store } from "@/shared/store";
 
 describe("SubscriptionPage", () => {
   it("presents the active trial progress", () => {

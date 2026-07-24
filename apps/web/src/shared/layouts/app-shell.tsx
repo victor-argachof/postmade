@@ -3,8 +3,8 @@ import { CalendarDays, CreditCard, LayoutDashboard, Radio, Send, Settings2 } fro
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import { ROUTES } from "@/routes/route-paths";
-import { DesktopSidebar, MobileSidebar } from "@/shared/components/layout/sidebar";
-import { TopBar } from "@/shared/components/layout/top-bar";
+import { DesktopSidebar, MobileSidebar } from "@/shared/layouts/sidebar";
+import { TopBar } from "@/shared/layouts/top-bar";
 
 export function AppShell() {
   const { t } = useTranslation("navigation");

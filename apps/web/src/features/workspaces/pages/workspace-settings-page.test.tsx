@@ -1,7 +1,7 @@
 import { Provider } from "react-redux";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { store } from "@/app/store";
+import { store } from "@/shared/store";
 import { setSession } from "@/features/auth/store/auth-slice";
 import { createInitialWorkspace } from "../store/workspaces-slice";
 import "@/shared/i18n";

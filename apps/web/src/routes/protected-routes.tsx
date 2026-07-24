@@ -6,7 +6,7 @@ import { PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
 import { DashboardHome } from "@/shared/components/dashboard-home";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
-import { AppShell } from "@/shared/components/layout/app-shell";
+import { AppShell } from "@/shared/layouts/app-shell";
 import { ROUTES } from "./route-paths";
 
 // This route group defines the authenticated application surface. A real

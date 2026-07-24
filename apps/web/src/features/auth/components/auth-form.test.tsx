@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterAll, beforeAll } from "vitest";
-import { store } from "@/app/store";
+import { store } from "@/shared/store";
 import i18n from "@/shared/i18n";
 import { LoginPage } from "../pages/login-page";
 import { AuthForm } from "./auth-form";

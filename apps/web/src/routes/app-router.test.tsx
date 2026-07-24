@@ -1,7 +1,7 @@
 import { Provider } from "react-redux";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { store } from "@/app/store";
+import { store } from "@/shared/store";
 import "@/shared/i18n";
 import { AppRouter } from "./app-router";
 import { ROUTES } from "./route-paths";
