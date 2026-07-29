@@ -10,12 +10,13 @@ const footerLinks = [
 
 export function AppFooter() {
   const { t } = useTranslation("common");
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t border-border px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
         <p className="flex flex-wrap items-center justify-center gap-1 sm:justify-start">
-          <span>© 2026 - {t("footer.madeWith")}</span>
+          <span>© {currentYear} - {t("footer.madeWith")}</span>
           <Heart className="size-3.5 fill-primary text-primary" aria-label={t("footer.love")} />
           <span>{t("footer.byTeam")}</span>
         </p>

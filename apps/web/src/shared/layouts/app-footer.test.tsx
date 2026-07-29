@@ -7,7 +7,7 @@ describe("AppFooter", () => {
   it("shows the attribution and opens every link in a new tab", () => {
     render(<AppFooter />);
 
-    expect(screen.getByText(/© 2026/i)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`© ${new Date().getFullYear()}`))).toBeInTheDocument();
     expect(screen.getByLabelText(/amor|love/i)).toBeInTheDocument();
 
     const expectedLinks = [
