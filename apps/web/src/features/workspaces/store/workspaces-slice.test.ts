@@ -57,6 +57,10 @@ describe("workspacesSlice", () => {
     expect(state.items[0]!.invitations).toHaveLength(0);
 
     state = reducer(state, setWorkspacePlan({ workspaceId, plan: "growth", actorId: owner.userId }));
+    expect(state.items[0]).toEqual(expect.objectContaining({
+      plan: "growth",
+      subscriptionStatus: "trialing",
+    }));
     state = reducer(state, inviteMember(invitationInput));
     const invitation = state.items[0]!.invitations[0]!;
     expect(invitation.status).toBe("pending");

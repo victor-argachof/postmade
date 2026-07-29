@@ -27,7 +27,10 @@ describe("WorkspaceSettingsPage", () => {
       </Provider>,
     );
 
-    expect(screen.getByRole("heading", { level: 1, name: "Workspace" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", {
+      level: 1,
+      name: /configurações do workspace|workspace settings/i,
+    })).toBeInTheDocument();
     expect(screen.getByRole("textbox", { name: /nome do workspace|workspace name/i })).toHaveValue(
       "Workspace de Workspace Owner",
     );

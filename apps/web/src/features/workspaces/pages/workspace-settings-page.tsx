@@ -8,7 +8,6 @@ export function WorkspaceSettingsPage() {
   return (
     <section className="mx-auto max-w-5xl">
       <PageHeader
-        eyebrow={t("pageEyebrow")}
         title={t("pageTitle")}
         description={t("pageDescription")}
       />

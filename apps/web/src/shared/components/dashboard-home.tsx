@@ -35,7 +35,6 @@ export function DashboardHome() {
         eyebrow={t("eyebrow", { ns: "dashboard" })}
         title={t("title", { ns: "dashboard" })}
         description={t("description", { ns: "dashboard" })}
-        variant="hero"
       />
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <ModuleCard to={ROUTES.posts} title={t("posts", { ns: "navigation" })} description={t("postsDescription", { ns: "dashboard" })} icon={Send} />

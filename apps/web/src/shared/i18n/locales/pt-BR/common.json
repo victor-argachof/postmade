@@ -6,5 +6,14 @@
   "theme": "Tema",
   "selectLanguage": "Selecionar idioma",
   "useLightTheme": "Usar tema claro",
-  "useDarkTheme": "Usar tema escuro"
+  "useDarkTheme": "Usar tema escuro",
+  "footer": {
+    "madeWith": "Feito com",
+    "love": "amor",
+    "byTeam": "pelo time Postmade",
+    "termsOfUse": "Termos de Uso",
+    "privacyPolicy": "Política de Privacidade",
+    "support": "Suporte",
+    "navigationLabel": "Links do rodapé"
+  }
 }

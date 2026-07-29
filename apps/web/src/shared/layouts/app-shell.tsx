@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import { ROUTES } from "@/routes/route-paths";
 import { DesktopSidebar, MobileSidebar } from "@/shared/layouts/sidebar";
 import { TopBar } from "@/shared/layouts/top-bar";
+import { AppFooter } from "@/shared/layouts/app-footer";
 
 export function AppShell() {
   const { t } = useTranslation("navigation");
@@ -51,15 +52,16 @@ export function AppShell() {
         sections={navigationSections}
         navigationLabel={t("mainNavigation")}
       />
-      <div className="min-w-0 flex-1">
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <TopBar
           sidebarCollapsed={sidebarCollapsed}
           onToggleSidebar={toggleSidebar}
           onOpenMobileSidebar={openMobileSidebar}
         />
-        <main className="min-w-0 px-5 pb-12 pt-7 sm:px-8 sm:pt-10 lg:px-12">
+        <main className="min-w-0 flex-1 px-5 pb-12 pt-7 sm:px-8 sm:pt-10 lg:px-12">
           <Outlet />
         </main>
+        <AppFooter />
       </div>
       <MobileSidebar
         open={mobileSidebarOpen}

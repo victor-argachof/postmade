@@ -2,8 +2,20 @@ import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 import type { ScheduledPublication, SocialChannel } from "@postmade/types";
 
 export type WorkspacePlan = "creator" | "growth" | "pro";
+export type SubscriptionStatus = "trialing" | "active" | "past_due" | "canceled" | "expired";
+export type BillingCycle = "monthly" | "annual";
 export type WorkspaceRole = "owner" | "admin" | "editor" | "viewer";
 export type InvitationStatus = "pending" | "accepted" | "revoked";
+
+export interface WorkspaceBilling {
+  cycle: BillingCycle | null;
+  currentPeriodEndsAt: string | null;
+  cancelAtPeriodEnd: boolean;
+  currency: string | null;
+  nextInvoiceAmount: number | null;
+  paymentMethodBrand: string | null;
+  paymentMethodLast4: string | null;
+}
 
 export interface WorkspaceMember {
   id: string;
@@ -27,9 +39,10 @@ export interface Workspace {
   name: string;
   ownerId: string;
   plan: WorkspacePlan;
-  subscriptionStatus: "trialing" | "active";
+  subscriptionStatus: SubscriptionStatus;
   trialStartedAt: string;
   trialEndsAt: string;
+  billing?: WorkspaceBilling;
   createdAt: string;
   members: WorkspaceMember[];
   invitations: WorkspaceInvitation[];
@@ -46,6 +59,18 @@ export const WORKSPACE_PLAN_LIMITS: Record<WorkspacePlan, number> = {
   pro: 15,
 };
 
+export const WORKSPACE_PLAN_CHANNEL_LIMITS: Record<WorkspacePlan, number | null> = {
+  creator: 15,
+  growth: 50,
+  pro: null,
+};
+
+export const WORKSPACE_TRIAL_LIMITS = {
+  days: 15,
+  posts: 3,
+  channels: 3,
+} as const;
+
 interface WorkspacesState {
   items: Workspace[];
   activeWorkspaceId: string | null;
@@ -58,7 +83,7 @@ const initialState: WorkspacesState = {
 
 function trialEnd(startedAt: string) {
   const end = new Date(startedAt);
-  end.setDate(end.getDate() + 15);
+  end.setDate(end.getDate() + WORKSPACE_TRIAL_LIMITS.days);
   return end.toISOString();
 }
 
@@ -240,7 +265,6 @@ const workspacesSlice = createSlice({
         + workspace.invitations.filter((invitation) => invitation.status === "pending").length;
       if (action.payload.plan === "creator" && occupiedSeats > 1) return;
       workspace.plan = action.payload.plan;
-      workspace.subscriptionStatus = "active";
     },
     updateMemberIdentity: (state, action: PayloadAction<{ userId: string; name?: string; email?: string }>) => {
       for (const workspace of state.items) {

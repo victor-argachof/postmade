@@ -60,14 +60,23 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
                 key={workspace.id}
                 type="button"
                 onClick={() => chooseWorkspace(workspace.id)}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-muted"
+                className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-muted"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Building2 className="size-4" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{workspace.name}</span>
-                  <span className="block text-xs capitalize text-muted-foreground">{workspace.plan}</span>
+                  <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      {t("planLabel", { plan: workspace.plan })}
+                    </span>
+                    {workspace.subscriptionStatus === "trialing" && (
+                      <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold leading-none text-secondary-foreground">
+                        {t("freeTrialBadge")}
+                      </span>
+                    )}
+                  </span>
                 </span>
                 {workspace.id === activeWorkspaceId && <Check className="size-4 text-primary" aria-hidden="true" />}
               </button>
@@ -80,7 +89,7 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
                 menuRef.current?.removeAttribute("open");
                 setCreateOpen(true);
               }}
-              className="mt-2 flex w-full items-center gap-3 border-t border-border px-3 pb-2 pt-4 text-sm font-bold text-primary hover:underline"
+              className="mt-2 flex w-full cursor-pointer items-center gap-3 border-t border-border px-3 pb-2 pt-4 text-sm font-bold text-primary hover:underline"
             >
               <Plus className="size-4" aria-hidden="true" />
               {t("createWorkspace")}

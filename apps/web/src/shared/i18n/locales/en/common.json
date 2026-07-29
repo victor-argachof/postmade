@@ -6,5 +6,14 @@
   "theme": "Theme",
   "selectLanguage": "Select language",
   "useLightTheme": "Use light theme",
-  "useDarkTheme": "Use dark theme"
+  "useDarkTheme": "Use dark theme",
+  "footer": {
+    "madeWith": "Made with",
+    "love": "love",
+    "byTeam": "by the Postmade team",
+    "termsOfUse": "Terms of Use",
+    "privacyPolicy": "Privacy Policy",
+    "support": "Support",
+    "navigationLabel": "Footer links"
+  }
 }

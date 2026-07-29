@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { ROUTES } from "@/routes/route-paths";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { SectionCard } from "@/shared/components/section-card";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 import {
   changeMemberRole,
@@ -60,33 +61,26 @@ export function WorkspaceSettings() {
 
   return (
     <>
-      <div className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
-        <div className="flex items-start gap-4">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Settings2 className="size-5" aria-hidden="true" /></span>
-          <div>
-            <h2 className="text-lg font-bold">{t("settingsTitle")}</h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("settingsDescription")}</p>
-          </div>
-        </div>
+      <SectionCard
+        className="mt-6"
+        icon={Settings2}
+        title={t("settingsTitle")}
+        description={t("settingsDescription")}
+      >
         <form className="mt-8" onSubmit={saveName}>
           <label className="block text-sm font-medium" htmlFor="workspace-name">{t("workspaceName")}</label>
           <Input className="mt-2" id="workspace-name" maxLength={80} value={name} disabled={!canManage} onChange={(event) => setName(event.target.value)} />
           <Button className="mt-5 w-full sm:w-auto" type="submit" disabled={!canManage || !name.trim() || name.trim() === workspace.name}>{t("save")}</Button>
         </form>
-      </div>
+      </SectionCard>
 
-      <div className="mt-6 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary"><Users className="size-5" aria-hidden="true" /></span>
-            <div>
-              <h2 className="text-lg font-bold">{t("teamTitle")}</h2>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("teamDescription")}</p>
-            </div>
-          </div>
-          <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold">{t("seats", { used: occupiedSeats, limit: memberLimit })}</span>
-        </div>
-
+      <SectionCard
+        className="mt-6"
+        icon={Users}
+        title={t("teamTitle")}
+        description={t("teamDescription")}
+        action={<span className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold">{t("seats", { used: occupiedSeats, limit: memberLimit })}</span>}
+      >
         {inviteLocked ? (
           <div className="mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-5">
             <div className="flex gap-3">
@@ -141,7 +135,7 @@ export function WorkspaceSettings() {
           ))}
         </div>
         <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground"><Building2 className="size-3.5" aria-hidden="true" />{t("workspaceScopedNote")}</p>
-      </div>
+      </SectionCard>
     </>
   );
 }
