@@ -23,6 +23,8 @@
   "seats": "{{used}} de {{limit}} vagas",
   "upgradeTitle": "Colaboração disponível no Growth e Pro",
   "upgradeDescription": "O plano Creator permite apenas o proprietário. Faça upgrade deste workspace para convidar membros.",
+  "trialMembersTitle": "Membros disponíveis após a avaliação",
+  "trialMembersDescription": "Durante a avaliação gratuita, somente o proprietário pode acessar o workspace. Assine Growth ou Pro para convidar membros.",
   "viewPlans": "Ver planos",
   "inviteEmail": "E-mail da pessoa convidada",
   "role": "Função",

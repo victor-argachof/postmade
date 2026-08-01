@@ -34,6 +34,6 @@ describe("WorkspaceSettingsPage", () => {
     expect(screen.getByRole("textbox", { name: /nome do workspace|workspace name/i })).toHaveValue(
       "Workspace de Workspace Owner",
     );
-    expect(screen.getByRole("heading", { name: /equipe do workspace|workspace team/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /membros do workspace|workspace members/i })).toBeInTheDocument();
   });
 });

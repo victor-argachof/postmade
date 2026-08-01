@@ -30,7 +30,13 @@ function loadPersistedWorkspaces() {
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as unknown;
     if (!parsed || typeof parsed !== "object" || !("items" in parsed) || !Array.isArray(parsed.items)) return undefined;
-    return parsed as ReturnType<typeof workspacesReducer>;
+    const persisted = parsed as ReturnType<typeof workspacesReducer>;
+    return {
+      ...persisted,
+      items: persisted.items.map((workspace) => workspace.subscriptionStatus === "trialing"
+        ? { ...workspace, plan: "pro" as const }
+        : workspace),
+    };
   } catch {
     return undefined;
   }

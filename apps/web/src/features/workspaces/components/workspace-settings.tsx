@@ -14,7 +14,7 @@ import {
   removeMember,
   renameWorkspace,
   revokeInvitation,
-  WORKSPACE_PLAN_LIMITS,
+  getWorkspaceMemberLimit,
   type WorkspaceRole,
 } from "../store/workspaces-slice";
 
@@ -38,10 +38,10 @@ export function WorkspaceSettings() {
   const currentMember = workspace.members.find((member) => member.id === user.id);
   const canManage = currentMember?.role === "owner" || currentMember?.role === "admin";
   const isOwner = currentMember?.role === "owner";
-  const memberLimit = WORKSPACE_PLAN_LIMITS[workspace.plan];
+  const memberLimit = getWorkspaceMemberLimit(workspace.plan, workspace.subscriptionStatus);
   const pendingInvitations = workspace.invitations.filter((invitation) => invitation.status === "pending");
   const occupiedSeats = workspace.members.length + pendingInvitations.length;
-  const inviteLocked = workspace.plan === "creator";
+  const inviteLocked = workspace.subscriptionStatus === "trialing" || workspace.plan === "creator";
 
   const saveName = (event: React.FormEvent) => {
     event.preventDefault();
@@ -86,8 +86,8 @@ export function WorkspaceSettings() {
             <div className="flex gap-3">
               <LockKeyhole className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
               <div>
-                <p className="font-bold">{t("upgradeTitle")}</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("upgradeDescription")}</p>
+                <p className="font-bold">{t(workspace.subscriptionStatus === "trialing" ? "trialMembersTitle" : "upgradeTitle")}</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{t(workspace.subscriptionStatus === "trialing" ? "trialMembersDescription" : "upgradeDescription")}</p>
                 <Button className="mt-4" type="button" onClick={() => navigate(ROUTES.workspaceSubscription)}>{t("viewPlans")}</Button>
               </div>
             </div>

@@ -103,7 +103,6 @@ export function SubscriptionPage() {
       )}
       {(!workspace || workspace.subscriptionStatus === "trialing") && (
         <TrialDetailsCard
-          plan={workspace?.plan ?? "creator"}
           remainingDays={remainingDays}
           totalDays={WORKSPACE_TRIAL_LIMITS.days}
           trialEndsAt={workspace?.trialEndsAt}

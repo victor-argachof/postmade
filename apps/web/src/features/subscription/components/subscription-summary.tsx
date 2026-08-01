@@ -4,8 +4,8 @@ import { Button } from "@/shared/components/ui/button";
 import { SectionCard } from "@/shared/components/section-card";
 import {
   WORKSPACE_PLAN_CHANNEL_LIMITS,
-  WORKSPACE_PLAN_LIMITS,
   WORKSPACE_TRIAL_LIMITS,
+  getWorkspaceMemberLimit,
   type SubscriptionStatus,
   type WorkspacePlan,
 } from "@/features/workspaces/store/workspaces-slice";
@@ -100,7 +100,7 @@ export function SubscriptionSummary({
   const trialing = status === "trialing";
   const postLimit = trialing ? WORKSPACE_TRIAL_LIMITS.posts : null;
   const channelLimit = trialing ? WORKSPACE_TRIAL_LIMITS.channels : WORKSPACE_PLAN_CHANNEL_LIMITS[plan];
-  const memberLimit = WORKSPACE_PLAN_LIMITS[plan];
+  const memberLimit = getWorkspaceMemberLimit(plan, status);
   const showSubscribeCard = status === "trialing" || status === "canceled" || status === "expired";
   const showUpgradeAction = (status === "active" || status === "past_due") && plan !== "pro" && Boolean(onUpgrade);
   const usageLabel = (used: number, limit: number | null) => limit === null
@@ -115,7 +115,7 @@ export function SubscriptionSummary({
       <SectionCard
         className="border-primary/25"
         icon={BarChart3}
-        title={t(trialing ? "trialLimitsTitle" : "limitsTitle", { plan: t(`plans.${plan}.name`) })}
+        title={t(trialing ? "trialLimitsTitle" : "limitsTitle")}
         description={t(trialing ? "trialLimitsDescription" : "limitsDescription")}
       >
         <div className="mt-8 space-y-6 rounded-2xl bg-muted p-5">

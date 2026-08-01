@@ -17,10 +17,12 @@ type SubscriptionStatus =
   | "expired";
 ```
 
-- `plan` define os recursos e limites do workspace.
+- `plan` define os recursos disponíveis no workspace e, fora da avaliação, seus limites quantitativos.
 - `subscriptionStatus` representa a situação comercial da assinatura.
 - A assinatura pertence ao workspace, não diretamente ao usuário.
 - Somente o proprietário do workspace pode alterar o plano ou gerenciar a cobrança.
+
+Durante a avaliação gratuita, todo workspace utiliza `plan: "pro"`. Isso libera o conjunto completo de recursos do Pro, inclusive funcionalidades adicionadas futuramente, enquanto limites temporários controlam apenas as quantidades permitidas.
 
 ## Planos e limites
 
@@ -30,60 +32,56 @@ type SubscriptionStatus =
 | Growth | 5 | 50 | Ilimitados |
 | Pro | 15 | Ilimitados | Ilimitados |
 
-Durante a avaliação gratuita, os limites temporários de posts e canais substituem os limites do plano:
+Durante a avaliação gratuita, os limites temporários substituem os limites quantitativos do Pro:
 
 | Recurso | Limite durante a avaliação |
 | --- | ---: |
 | Duração | 15 dias |
 | Posts | 3 |
 | Canais | 3 |
-| Membros | Conforme o plano selecionado |
+| Membros | 1 (somente o proprietário) |
 
-Exemplos:
+Assim, `Pro + trialing` significa:
 
-- Creator em avaliação: 1 membro, 3 canais e 3 posts.
-- Growth em avaliação: 5 membros, 3 canais e 3 posts.
-- Pro em avaliação: 15 membros, 3 canais e 3 posts.
+- acesso a todos os recursos disponíveis no Pro;
+- até 3 posts;
+- até 3 canais;
+- somente o proprietário como membro do workspace.
+
+Recursos e quantidades devem ser avaliados separadamente. Por exemplo, um futuro estúdio de edição exclusivo do Pro ficará disponível durante a avaliação, mas a quantidade de posts continuará limitada a 3.
 
 ## Criação do workspace
 
-Na implementação atual, todo novo workspace começa com:
+Todo novo workspace começa com:
 
 ```ts
 {
-  plan: "creator",
+  plan: "pro",
   subscriptionStatus: "trialing"
 }
 ```
 
 O período de avaliação começa na criação do workspace e termina 15 dias depois.
 
-No fluxo futuro, a landing page poderá enviar o plano escolhido como parâmetro da URL. O back-end deverá:
+O CTA genérico da landing page e os CTAs específicos dos planos iniciam a mesma avaliação `Pro + trialing`. Um plano selecionado antes do cadastro pode ser registrado como intenção comercial ou dado de aquisição, mas não deve reduzir os recursos da avaliação nem ser tratado como uma contratação.
 
-1. Validar se o valor recebido corresponde a `creator`, `growth` ou `pro`.
-2. Usar o plano recebido quando ele for válido.
-3. Usar `creator` quando o parâmetro estiver ausente ou for inválido.
-4. Criar o workspace com status `trialing`.
+## Plano durante a avaliação
 
-O parâmetro de URL é apenas uma intenção do usuário. O back-end deve validar e persistir o plano; o front-end não deve ser a fonte de verdade.
-
-## Alteração de plano durante a avaliação
-
-O proprietário pode trocar entre Creator, Growth e Pro durante a avaliação.
-
-A troca modifica somente `plan`. Ela não encerra nem reinicia o período de avaliação:
+O plano do workspace não é alterado durante a avaliação. Os cards de preços iniciam diretamente o checkout do plano escolhido e não modificam o estado local antes do pagamento.
 
 ```text
-Creator + trialing
-        |
-        | troca de plano
-        v
-Growth + trialing
+Pro + trialing
+      |
+      | checkout do Growth criado
+      v
+aguardando confirmação externa
+      |
+      | webhook confirma pagamento
+      v
+Growth + active
 ```
 
-As datas `trialStartedAt` e `trialEndsAt` devem permanecer inalteradas. Os novos limites entram em vigor imediatamente.
-
-Uma redução para Creator deve ser recusada enquanto o workspace possuir mais de um membro ou convite pendente.
+Como a avaliação permite no máximo 3 canais e 1 membro, o usuário pode contratar Creator, Growth ou Pro sem precisar reduzir o uso antes do checkout.
 
 ## Contratação
 
@@ -104,6 +102,8 @@ active
 ```
 
 O back-end deve ser a fonte de verdade para a ativação. O retorno do navegador após o checkout não é suficiente para marcar uma assinatura como ativa.
+
+O plano enviado ao checkout representa a escolha definitiva do usuário. Após a confirmação do pagamento, o webhook deve atualizar `plan` e `subscriptionStatus` de forma atômica.
 
 ## Status
 
@@ -132,20 +132,21 @@ As regras de acesso durante `past_due` e após o cancelamento devem ser definida
 
 ## Comportamento atual da interface
 
-- O plano atual é exibido separadamente do status.
+- Durante a avaliação, o workspace utiliza os recursos do Pro sem exibir um plano pago como contratado.
 - O badge de avaliação aparece no seletor de workspace somente para `trialing`.
 - A página de assinatura apresenta status, uso e limites do workspace.
 - Recursos ilimitados são identificados como `Ilimitado`.
 - O card de contratação aparece para `trialing`, `canceled` e `expired`.
 - O card de contratação fica oculto para `active` e `past_due`.
-- A troca de plano no front-end preserva o status atual.
+- Durante a avaliação, todos os cards de planos exibem uma ação de contratação e criam checkout sem alterar o plano local.
+- Para assinaturas ativas, mudanças de plano ou ciclo são gerenciadas pela Stripe e refletidas por webhook.
 
 ## Responsabilidades do back-end
 
 O back-end deverá:
 
 1. Persistir plano, status, datas da avaliação e períodos de cobrança por workspace.
-2. Validar limites no servidor antes de criar posts, conectar canais ou adicionar membros.
+2. Validar no servidor os limites temporários de 3 posts, 3 canais e 1 membro quando o status for `trialing`.
 3. Restringir operações de cobrança ao proprietário do workspace.
 4. Criar sessões de checkout e associá-las ao workspace correto.
 5. Processar webhooks do provedor de pagamentos de forma idempotente.
@@ -153,6 +154,7 @@ O back-end deverá:
 7. Expirar avaliações vencidas por rotina agendada ou durante a validação de acesso.
 8. Registrar alterações de plano e status para auditoria.
 9. Impedir downgrade quando o uso atual exceder os limites do plano de destino.
+10. Separar autorização de recursos, baseada no plano Pro durante a avaliação, de limites quantitativos, baseados no status `trialing`.
 
 Campos recomendados para a assinatura:
 

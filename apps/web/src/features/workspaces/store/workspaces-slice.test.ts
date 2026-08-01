@@ -15,12 +15,12 @@ const owner = {
 };
 
 describe("workspacesSlice", () => {
-  it("creates the initial workspace with an isolated trial and the creator as owner", () => {
+  it("creates the initial workspace with a Pro trial and quantitative trial limits", () => {
     const state = reducer(undefined, createInitialWorkspace(owner));
     const workspace = state.items[0]!;
 
     expect(workspace.name).toBe("Workspace de Ada Lovelace");
-    expect(workspace.plan).toBe("creator");
+    expect(workspace.plan).toBe("pro");
     expect(workspace.subscriptionStatus).toBe("trialing");
     expect(workspace.members).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: owner.userId, role: "owner" }),
@@ -43,7 +43,7 @@ describe("workspacesSlice", () => {
     expect(state.activeWorkspaceId).toBe(firstId);
   });
 
-  it("blocks invitations on Creator and accepts them after this workspace upgrades", () => {
+  it("blocks invitations during the trial and accepts them after a Growth subscription activates", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
     const workspaceId = state.activeWorkspaceId!;
     const invitationInput = {
@@ -58,9 +58,16 @@ describe("workspacesSlice", () => {
 
     state = reducer(state, setWorkspacePlan({ workspaceId, plan: "growth", actorId: owner.userId }));
     expect(state.items[0]).toEqual(expect.objectContaining({
-      plan: "growth",
+      plan: "pro",
       subscriptionStatus: "trialing",
     }));
+
+    state = {
+      ...state,
+      items: state.items.map((workspace) => workspace.id === workspaceId
+        ? { ...workspace, plan: "growth" as const, subscriptionStatus: "active" as const }
+        : workspace),
+    };
     state = reducer(state, inviteMember(invitationInput));
     const invitation = state.items[0]!.invitations[0]!;
     expect(invitation.status).toBe("pending");

@@ -1,17 +1,14 @@
 import { ReceiptText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SectionCard } from "@/shared/components/section-card";
-import type { WorkspacePlan } from "@/features/workspaces/store/workspaces-slice";
 
 interface TrialDetailsCardProps {
-  plan: WorkspacePlan;
   remainingDays: number;
   totalDays: number;
   trialEndsAt?: string | null;
 }
 
 export function TrialDetailsCard({
-  plan,
   remainingDays,
   totalDays,
   trialEndsAt,
@@ -32,7 +29,7 @@ export function TrialDetailsCard({
       title={t("billingDetailsTitle")}
       description={t("billingDetailsDescription")}
     >
-      <dl className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <dl className="mt-8 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-muted p-4">
           <dt className="text-xs font-semibold text-muted-foreground">{t("statusTitle")}</dt>
           <dd className="mt-2">
@@ -40,10 +37,6 @@ export function TrialDetailsCard({
               {t("subscriptionStatuses.trialing")}
             </span>
           </dd>
-        </div>
-        <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("selectedPlanLabel")}</dt>
-          <dd className="mt-2 text-sm font-bold">{t(`plans.${plan}.name`)}</dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
           <dt className="text-xs font-semibold text-muted-foreground">{t("progressLabel")}</dt>

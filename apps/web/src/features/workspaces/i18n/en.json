@@ -23,6 +23,8 @@
   "seats": "{{used}} of {{limit}} seats",
   "upgradeTitle": "Collaboration is available on Growth and Pro",
   "upgradeDescription": "The Creator plan allows only the owner. Upgrade this workspace to invite members.",
+  "trialMembersTitle": "Members are available after the trial",
+  "trialMembersDescription": "During the free trial, only the owner can access the workspace. Subscribe to Growth or Pro to invite members.",
   "viewPlans": "View plans",
   "inviteEmail": "Invitee email",
   "role": "Role",

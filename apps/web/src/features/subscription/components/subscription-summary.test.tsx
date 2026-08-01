@@ -13,6 +13,9 @@ describe("SubscriptionSummary", () => {
     expect(screen.getByRole("progressbar", {
       name: /posts utilizados|posts used/i,
     })).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", {
+      name: /membros do workspace|workspace members/i,
+    })).toHaveAttribute("aria-valuemax", "1");
   });
 
   it.each(["active", "past_due"] as const)(
@@ -54,7 +57,7 @@ describe("SubscriptionSummary", () => {
       name: /membros do workspace|workspace members/i,
     })).toHaveAttribute("aria-valuemax", "15");
     expect(screen.getByRole("heading", {
-      name: /uso e limites do plano pro|pro plan usage and limits/i,
+      name: /^uso e limites$|^usage and limits$/i,
     })).toBeInTheDocument();
   });
 
