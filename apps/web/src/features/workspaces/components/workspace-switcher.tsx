@@ -1,5 +1,6 @@
 import { Building2, Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -21,11 +22,27 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
   const menuRef = useDismissibleDetails();
   const [createOpen, setCreateOpen] = useState(false);
   const [name, setName] = useState("");
+  const [switchingWorkspaceName, setSwitchingWorkspaceName] = useState<string | null>(null);
+  const switchTimerRef = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (switchTimerRef.current !== null) window.clearTimeout(switchTimerRef.current);
+  }, []);
 
   const chooseWorkspace = (workspaceId: string) => {
     if (!user) return;
-    dispatch(selectWorkspace({ workspaceId, userId: user.id }));
     menuRef.current?.removeAttribute("open");
+    if (workspaceId === activeWorkspaceId) return;
+
+    const workspace = workspaces.find((item) => item.id === workspaceId);
+    if (!workspace) return;
+
+    setSwitchingWorkspaceName(workspace.name);
+    switchTimerRef.current = window.setTimeout(() => {
+      dispatch(selectWorkspace({ workspaceId, userId: user.id }));
+      setSwitchingWorkspaceName(null);
+      switchTimerRef.current = null;
+    }, 1_200);
   };
 
   const submitWorkspace = (event: React.FormEvent) => {
@@ -68,12 +85,13 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm font-semibold">{workspace.name}</span>
                   <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs capitalize text-muted-foreground">
-                      {t("planLabel", { plan: workspace.plan })}
-                    </span>
-                    {workspace.subscriptionStatus === "trialing" && (
+                    {workspace.subscriptionStatus === "trialing" ? (
                       <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold leading-none text-secondary-foreground">
                         {t("freeTrialBadge")}
+                      </span>
+                    ) : (
+                      <span className="text-xs capitalize text-muted-foreground">
+                        {t("planLabel", { plan: workspace.plan })}
                       </span>
                     )}
                   </span>
@@ -97,6 +115,32 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
           )}
         </div>
       </details>
+
+      {switchingWorkspaceName && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex min-h-dvh w-screen items-center justify-center bg-background px-6"
+          role="status"
+          aria-live="polite"
+          aria-label={t("switchingWorkspace", { name: switchingWorkspaceName })}
+        >
+          <div className="absolute inset-x-0 top-0 h-1.5 overflow-hidden bg-transparent" aria-hidden="true">
+            <span className="workspace-loading-progress block h-full bg-primary" />
+          </div>
+          <div className="flex max-w-sm flex-col items-center text-center">
+            <div className="relative grid size-16 place-items-center">
+              <img
+                className="workspace-logo-pulse size-14 object-contain"
+                src="/postmade-logo.png"
+                alt=""
+                aria-hidden="true"
+              />
+            </div>
+            <p className="mt-6 text-lg font-black">{t("switchingTitle")}</p>
+            <p className="mt-2 max-w-xs truncate text-sm text-muted-foreground">{switchingWorkspaceName}</p>
+          </div>
+        </div>,
+        document.body,
+      )}
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t("createTitle")} closeLabel={t("closeCreate")}>
         <form className="mt-6" onSubmit={submitWorkspace}>

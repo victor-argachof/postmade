@@ -55,3 +55,33 @@
 * { border-color: var(--border); }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--background); }
 button, input { font-family: inherit; }
+
+@keyframes workspace-loading-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes workspace-logo-pulse {
+  0%, 100% { transform: scale(0.9); }
+  50% { transform: scale(1.08); }
+}
+
+.workspace-loading-progress {
+  width: 0;
+  animation: workspace-loading-fill 1200ms linear forwards;
+}
+
+.workspace-logo-pulse {
+  animation: workspace-logo-pulse 700ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-loading-progress {
+    width: 100%;
+    animation: none;
+  }
+
+  .workspace-logo-pulse {
+    animation: none;
+  }
+}
