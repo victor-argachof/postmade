@@ -16,12 +16,15 @@ describe("PricingPlans", () => {
       />,
     );
 
-    expect(screen.getByText(/plano da sua avaliação|your trial plan/i)).toBeInTheDocument();
+    expect(screen.queryByText(/plano da sua avaliação|your trial plan/i)).not.toBeInTheDocument();
     const subscribeButtons = screen.getAllByRole("button", {
       name: /assinar plano|subscribe to the .* plan/i,
     });
     expect(subscribeButtons).toHaveLength(3);
     expect(subscribeButtons[0]!).toBeEnabled();
+    subscribeButtons.forEach((button) => {
+      expect(button).toHaveClass("bg-primary");
+    });
 
     await user.click(subscribeButtons[1]!);
     expect(onSelectPlan).toHaveBeenCalledWith("growth", "monthly");

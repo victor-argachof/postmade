@@ -64,8 +64,6 @@
   "billedMonthly": "Billed monthly",
   "billedAnnually": "{{total}} billed annually",
   "mostPopular": "Most popular",
-  "bestDeal": "Best deal",
-  "trialPlanBadge": "Your trial plan",
   "switchToPlan": "Switch to {{plan}}",
   "switchToMonthly": "Switch to monthly",
   "switchToAnnual": "Switch to annual",

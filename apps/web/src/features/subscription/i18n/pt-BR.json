@@ -64,8 +64,6 @@
   "billedMonthly": "Cobrado mensalmente",
   "billedAnnually": "{{total}} cobrados por ano",
   "mostPopular": "Mais popular",
-  "bestDeal": "Melhor oferta",
-  "trialPlanBadge": "Plano da sua avaliação",
   "switchToPlan": "Mudar para {{plan}}",
   "switchToMonthly": "Mudar para mensal",
   "switchToAnnual": "Mudar para anual",

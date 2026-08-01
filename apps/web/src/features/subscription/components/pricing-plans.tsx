@@ -42,7 +42,6 @@ const plans: Array<{
     id: "pro",
     accountFeature: "accountsUnlimited",
     extraFeatures: ["prioritySupport"],
-    badge: "bestDeal",
     monthly: { USD: 99, BRL: 499 },
   },
 ];
@@ -112,9 +111,8 @@ export function PricingPlans({
           const isCurrentPlan = currentPlan === plan.id;
           const isCurrentSubscription = isCurrentPlan
             && effectiveCurrentBillingCycle === billingCycle;
-          const isTrialPlan = status === "trialing" && isCurrentPlan;
-          const highlighted = isTrialPlan || plan.badge === "mostPopular";
-          const badge = isTrialPlan ? "trialPlanBadge" : plan.badge;
+          const highlighted = status !== "trialing" && plan.badge === "mostPopular";
+          const badge = plan.badge;
 
           return (
             <article
@@ -138,7 +136,7 @@ export function PricingPlans({
               <Button
                 type="button"
                 className="mt-6 w-full"
-                variant={highlighted ? "default" : "outline"}
+                variant={status === "trialing" || highlighted ? "default" : "outline"}
                 onClick={() => onSelectPlan?.(plan.id, billingCycle)}
                 disabled={!onSelectPlan || (!checkoutFlow && isCurrentSubscription)}
               >
