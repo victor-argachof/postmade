@@ -6,9 +6,11 @@ import {
   WORKSPACE_PLAN_CHANNEL_LIMITS,
   WORKSPACE_TRIAL_LIMITS,
   getWorkspaceMemberLimit,
-  type SubscriptionStatus,
-  type WorkspacePlan,
-} from "@/features/workspaces/store/workspaces-slice";
+} from "@/features/workspaces/lib/workspace-limits";
+import type {
+  SubscriptionStatus,
+  WorkspacePlan,
+} from "@/features/workspaces/types";
 import { cn } from "@/shared/lib/utils";
 
 const benefitKeys = [

@@ -1,80 +1,11 @@
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
-import type { ScheduledPublication, SocialChannel } from "@postmade/types";
-
-export type WorkspacePlan = "creator" | "growth" | "pro";
-export type SubscriptionStatus = "trialing" | "active" | "past_due" | "canceled" | "expired";
-export type BillingCycle = "monthly" | "annual";
-export type WorkspaceRole = "owner" | "admin" | "editor" | "viewer";
-export type InvitationStatus = "pending" | "accepted" | "revoked";
-
-export interface WorkspaceBilling {
-  cycle: BillingCycle | null;
-  currentPeriodEndsAt: string | null;
-  cancelAtPeriodEnd: boolean;
-  currency: string | null;
-  nextInvoiceAmount: number | null;
-  paymentMethodBrand: string | null;
-  paymentMethodLast4: string | null;
-}
-
-export interface WorkspaceMember {
-  id: string;
-  name: string;
-  email: string;
-  role: WorkspaceRole;
-  joinedAt: string;
-}
-
-export interface WorkspaceInvitation {
-  id: string;
-  token: string;
-  email: string;
-  role: Exclude<WorkspaceRole, "owner">;
-  status: InvitationStatus;
-  invitedAt: string;
-}
-
-export interface Workspace {
-  id: string;
-  name: string;
-  ownerId: string;
-  plan: WorkspacePlan;
-  subscriptionStatus: SubscriptionStatus;
-  trialStartedAt: string;
-  trialEndsAt: string;
-  billing?: WorkspaceBilling;
-  createdAt: string;
-  members: WorkspaceMember[];
-  invitations: WorkspaceInvitation[];
-  resources: {
-    channels: SocialChannel[];
-    posts: ScheduledPublication[];
-    selectedCalendarDate: string | null;
-  };
-}
-
-export const WORKSPACE_PLAN_LIMITS: Record<WorkspacePlan, number> = {
-  creator: 1,
-  growth: 5,
-  pro: 15,
-};
-
-export const WORKSPACE_PLAN_CHANNEL_LIMITS: Record<WorkspacePlan, number | null> = {
-  creator: 15,
-  growth: 50,
-  pro: null,
-};
-
-export const WORKSPACE_TRIAL_LIMITS = {
-  days: 15,
-  posts: 3,
-  channels: 3,
-  members: 1,
-} as const;
-
-export function getWorkspaceMemberLimit(plan: WorkspacePlan, status: SubscriptionStatus) {
-  return status === "trialing" ? WORKSPACE_TRIAL_LIMITS.members : WORKSPACE_PLAN_LIMITS[plan];
-}
+import { WORKSPACE_TRIAL_LIMITS, getWorkspaceMemberLimit } from "../lib/workspace-limits";
+import type {
+  Workspace,
+  WorkspaceInvitation,
+  WorkspacePlan,
+  WorkspaceRole,
+} from "../types";
 
 interface WorkspacesState {
   items: Workspace[];

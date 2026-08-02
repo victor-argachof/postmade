@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
-import {
-  WORKSPACE_PLAN_LIMITS,
-  type BillingCycle,
-  type SubscriptionStatus,
-  type WorkspacePlan,
-} from "@/features/workspaces/store/workspaces-slice";
+import { WORKSPACE_PLAN_LIMITS } from "@/features/workspaces/lib/workspace-limits";
+import type {
+  BillingCycle,
+  SubscriptionStatus,
+  WorkspacePlan,
+} from "@/features/workspaces/types";
 
 const commonFeatures = [
   "multipleAccounts",

@@ -5,7 +5,7 @@ import { useAppSelector } from "@/shared/hooks/store-hooks";
 import {
   type BillingCycle,
   type WorkspacePlan,
-} from "@/features/workspaces/store/workspaces-slice";
+} from "@/features/workspaces/types";
 import { toast } from "sonner";
 import { PageHeader } from "@/shared/components/page-header";
 import { BillingDetailsCard } from "../components/billing-details-card";
@@ -14,7 +14,7 @@ import {
   useCreateCheckoutSessionMutation,
 } from "../services/billing-api";
 import { TrialDetailsCard } from "../components/trial-details-card";
-import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/store/workspaces-slice";
+import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 
 export function SubscriptionPage() {
   const { t } = useTranslation("subscription");

@@ -1,5 +1,5 @@
 import { api } from "@/shared/api/api";
-import type { BillingCycle, WorkspacePlan } from "@/features/workspaces/store/workspaces-slice";
+import type { BillingCycle, WorkspacePlan } from "@/features/workspaces/types";
 
 export const billingApi = api.injectEndpoints({
   endpoints: (build) => ({

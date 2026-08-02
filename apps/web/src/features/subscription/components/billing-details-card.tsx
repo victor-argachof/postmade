@@ -6,7 +6,7 @@ import { Tooltip } from "@/shared/components/ui/tooltip";
 import type {
   SubscriptionStatus,
   WorkspacePlan,
-} from "@/features/workspaces/store/workspaces-slice";
+} from "@/features/workspaces/types";
 
 const statusStyles: Record<Exclude<SubscriptionStatus, "trialing">, string> = {
   active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",

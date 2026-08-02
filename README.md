@@ -31,5 +31,9 @@ pnpm build
 - `packages/types`: contratos TypeScript compartilháveis entre aplicações.
 - `apps/web/src/features`: módulos de negócio isolados.
 - `apps/web/src/shared`: infraestrutura e componentes genéricos.
+- `docs`: decisões e convenções de arquitetura do projeto.
+
+A convenção para posicionamento de tipos no front-end está documentada em
+[`docs/type-organization.md`](docs/type-organization.md).
 
 As telas de autenticação são somente visuais nesta fase. O botão de acesso cria uma sessão local temporária no Redux para permitir a navegação pelo shell do dashboard.

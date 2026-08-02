@@ -14,9 +14,9 @@ import {
   removeMember,
   renameWorkspace,
   revokeInvitation,
-  getWorkspaceMemberLimit,
-  type WorkspaceRole,
 } from "../store/workspaces-slice";
+import { getWorkspaceMemberLimit } from "../lib/workspace-limits";
+import type { WorkspaceRole } from "../types";
 
 const roles: Array<Exclude<WorkspaceRole, "owner">> = ["admin", "editor", "viewer"];
 

@@ -1,0 +1,42 @@
+import type { ScheduledPublication, SocialChannel } from "@postmade/types";
+import type { SubscriptionStatus, WorkspaceBilling, WorkspacePlan } from "./billing";
+
+export type WorkspaceRole = "owner" | "admin" | "editor" | "viewer";
+
+export type InvitationStatus = "pending" | "accepted" | "revoked";
+
+export interface WorkspaceMember {
+  id: string;
+  name: string;
+  email: string;
+  role: WorkspaceRole;
+  joinedAt: string;
+}
+
+export interface WorkspaceInvitation {
+  id: string;
+  token: string;
+  email: string;
+  role: Exclude<WorkspaceRole, "owner">;
+  status: InvitationStatus;
+  invitedAt: string;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  ownerId: string;
+  plan: WorkspacePlan;
+  subscriptionStatus: SubscriptionStatus;
+  trialStartedAt: string;
+  trialEndsAt: string;
+  billing?: WorkspaceBilling;
+  createdAt: string;
+  members: WorkspaceMember[];
+  invitations: WorkspaceInvitation[];
+  resources: {
+    channels: SocialChannel[];
+    posts: ScheduledPublication[];
+    selectedCalendarDate: string | null;
+  };
+}
