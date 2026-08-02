@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { SectionCard } from "@/shared/components/section-card";
 import {
-  WORKSPACE_PLAN_CHANNEL_LIMITS,
   WORKSPACE_TRIAL_LIMITS,
+  getWorkspaceChannelLimit,
   getWorkspaceMemberLimit,
 } from "@/features/workspaces/lib/workspace-limits";
 import type {
@@ -101,7 +101,7 @@ export function SubscriptionSummary({
   const { t } = useTranslation("subscription");
   const trialing = status === "trialing";
   const postLimit = trialing ? WORKSPACE_TRIAL_LIMITS.posts : null;
-  const channelLimit = trialing ? WORKSPACE_TRIAL_LIMITS.channels : WORKSPACE_PLAN_CHANNEL_LIMITS[plan];
+  const channelLimit = getWorkspaceChannelLimit(plan, status);
   const memberLimit = getWorkspaceMemberLimit(plan, status);
   const showSubscribeCard = status === "trialing" || status === "canceled" || status === "expired";
   const showUpgradeAction = (status === "active" || status === "past_due") && plan !== "pro" && Boolean(onUpgrade);

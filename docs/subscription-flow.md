@@ -50,6 +50,13 @@ Assim, `Pro + trialing` significa:
 
 Recursos e quantidades devem ser avaliados separadamente. Por exemplo, um futuro estúdio de edição exclusivo do Pro ficará disponível durante a avaliação, mas a quantidade de posts continuará limitada a 3.
 
+No front-end, o limite de canais deve ser obtido por
+`getWorkspaceChannelLimit(plan, subscriptionStatus)`. Esse helper concentra a
+precedência do limite temporário da avaliação sobre o limite do plano e retorna
+`null` para o Pro ilimitado. Componentes de canais e assinatura não devem repetir
+essa regra ou seus valores numéricos. Consulte também
+[Gerenciamento de canais sociais](channels-management.md).
+
 ## Criação do workspace
 
 Todo novo workspace começa com:

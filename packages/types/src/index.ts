@@ -1,5 +1,5 @@
 export type SocialPlatform =
-  | "x"
+  | "facebook"
   | "linkedin"
   | "instagram"
   | "tiktok"

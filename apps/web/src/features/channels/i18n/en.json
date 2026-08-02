@@ -1,3 +1,77 @@
 {
-  "comingSoonDescription": "OAuth and social account management will be implemented in the next module."
+  "pageTitle": "Channels",
+  "pageDescription": "Connect your social accounts to publish and schedule content through Postmade.",
+  "usage": {
+    "label": "Usage",
+    "limited": "{{count}} of {{limit}} channels connected",
+    "unlimited": { "singular": "{{count}} channel connected — unlimited", "plural": "{{count}} channels connected — unlimited" }
+  },
+  "platforms": {
+    "title": "Available platforms",
+    "description": "Choose a platform to connect a new account to the workspace.",
+    "connectedCount": { "singular": "{{count}} connected account", "plural": "{{count}} connected accounts" },
+    "facebook": { "name": "Facebook", "description": "Publish content to Facebook pages and professional profiles." },
+    "linkedin": { "name": "LinkedIn", "description": "Share updates with your profile and professional pages." },
+    "instagram": { "name": "Instagram", "description": "Manage visual content for your professional accounts." },
+    "tiktok": { "name": "TikTok", "description": "Distribute videos to your TikTok audience." },
+    "youtube": { "name": "YouTube", "description": "Publish videos to your connected YouTube channels." }
+  },
+  "connected": {
+    "title": "Connected channels",
+    "description": "Accounts available for publishing and scheduling content from this workspace."
+  },
+  "table": {
+    "label": "Connected channels",
+    "platform": "Platform",
+    "account": "Account",
+    "status": "Status",
+    "actions": "Actions",
+    "results": { "singular": "{{count}} result", "plural": "{{count}} results" }
+  },
+  "pagination": {
+    "perPage": "Results per page",
+    "navigation": "Channel pagination",
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Go to page {{page}}"
+  },
+  "filters": {
+    "searchLabel": "Search connected channels",
+    "searchPlaceholder": "Search by name or username",
+    "clearSearch": "Clear search",
+    "platformLabel": "Filter by social network",
+    "allPlatforms": "All social networks",
+    "clearAll": "Clear filters",
+    "emptyTitle": "No channels found",
+    "emptyDescription": "Try changing your search or selected filters."
+  },
+  "empty": {
+    "title": "No connected channels",
+    "description": "Connect your first account using one of the platforms above to start publishing."
+  },
+  "status": { "connected": "Connected" },
+  "actions": {
+    "connect": "Connect account",
+    "connecting": "Connecting…",
+    "disconnectNamed": "Disconnect {{name}}",
+    "confirmDisconnect": "Disconnect channel",
+    "cancel": "Cancel",
+    "close": "Close"
+  },
+  "permissions": {
+    "readOnly": "Your role can view channels, but only owners and admins can connect or disconnect accounts."
+  },
+  "limit": {
+    "title": "Channel limit reached",
+    "description": "Disconnect an account or change your subscription to connect another channel.",
+    "action": "View subscription"
+  },
+  "disconnectModal": {
+    "title": "Disconnect channel?",
+    "description": "You will no longer be able to publish or schedule content using the {{name}} account on {{platform}}."
+  },
+  "feedback": {
+    "connectError": "We couldn't start the {{platform}} connection. Try again.",
+    "disconnectSuccess": "{{name}} was disconnected."
+  }
 }

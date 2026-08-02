@@ -210,6 +210,18 @@ const workspacesSlice = createSlice({
         if (action.payload.email) member.email = action.payload.email.toLowerCase();
       }
     },
+    disconnectWorkspaceChannel: (state, action: PayloadAction<{
+      workspaceId: string;
+      channelId: string;
+      actorId: string;
+    }>) => {
+      const workspace = state.items.find((item) => item.id === action.payload.workspaceId);
+      const actor = workspace?.members.find((member) => member.id === action.payload.actorId);
+      if (!workspace || !actor || (actor.role !== "owner" && actor.role !== "admin")) return;
+      workspace.resources.channels = workspace.resources.channels.filter(
+        (channel) => channel.id !== action.payload.channelId,
+      );
+    },
     clearWorkspaceSession: (state) => {
       state.activeWorkspaceId = null;
     },
@@ -235,6 +247,7 @@ export const {
   clearWorkspaceSession,
   createInitialWorkspace,
   createWorkspace,
+  disconnectWorkspaceChannel,
   inviteMember,
   removeMember,
   renameWorkspace,

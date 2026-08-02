@@ -22,3 +22,7 @@ export const WORKSPACE_TRIAL_LIMITS = {
 export function getWorkspaceMemberLimit(plan: WorkspacePlan, status: SubscriptionStatus) {
   return status === "trialing" ? WORKSPACE_TRIAL_LIMITS.members : WORKSPACE_PLAN_LIMITS[plan];
 }
+
+export function getWorkspaceChannelLimit(plan: WorkspacePlan, status: SubscriptionStatus) {
+  return status === "trialing" ? WORKSPACE_TRIAL_LIMITS.channels : WORKSPACE_PLAN_CHANNEL_LIMITS[plan];
+}

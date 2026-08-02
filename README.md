@@ -12,7 +12,7 @@ texto, imagens ou vídeos e distribuí-las simultaneamente entre diferentes
 plataformas. O usuário poderá personalizar o conteúdo por rede, publicar
 imediatamente ou programar o envio por meio de um calendário.
 
-As integrações planejadas inicialmente incluem X/Twitter, LinkedIn, Instagram,
+As integrações planejadas inicialmente incluem Facebook, LinkedIn, Instagram,
 TikTok e YouTube. Entre os principais recursos previstos estão:
 
 - publicação em múltiplas redes sociais;

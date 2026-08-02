@@ -1,3 +1,77 @@
 {
-  "comingSoonDescription": "O fluxo OAuth e a gestão das redes serão implementados no próximo módulo."
+  "pageTitle": "Canais",
+  "pageDescription": "Conecte suas contas de redes sociais para publicar e agendar conteúdos pelo Postmade.",
+  "usage": {
+    "label": "Utilização",
+    "limited": "{{count}} de {{limit}} canais conectados",
+    "unlimited": { "singular": "{{count}} canal conectado — ilimitado", "plural": "{{count}} canais conectados — ilimitado" }
+  },
+  "platforms": {
+    "title": "Plataformas disponíveis",
+    "description": "Escolha uma plataforma para conectar uma nova conta ao workspace.",
+    "connectedCount": { "singular": "{{count}} conta conectada", "plural": "{{count}} contas conectadas" },
+    "facebook": { "name": "Facebook", "description": "Publique conteúdo em páginas e perfis profissionais do Facebook." },
+    "linkedin": { "name": "LinkedIn", "description": "Compartilhe atualizações com seu perfil e páginas profissionais." },
+    "instagram": { "name": "Instagram", "description": "Gerencie conteúdo visual para suas contas profissionais." },
+    "tiktok": { "name": "TikTok", "description": "Distribua vídeos para sua audiência no TikTok." },
+    "youtube": { "name": "YouTube", "description": "Publique vídeos nos canais conectados do YouTube." }
+  },
+  "connected": {
+    "title": "Canais conectados",
+    "description": "Contas disponíveis para publicar e agendar conteúdos deste workspace."
+  },
+  "table": {
+    "label": "Canais conectados",
+    "platform": "Plataforma",
+    "account": "Conta",
+    "status": "Status",
+    "actions": "Ações",
+    "results": { "singular": "{{count}} resultado", "plural": "{{count}} resultados" }
+  },
+  "pagination": {
+    "perPage": "Resultados por página",
+    "navigation": "Paginação dos canais",
+    "previous": "Página anterior",
+    "next": "Próxima página",
+    "page": "Ir para a página {{page}}"
+  },
+  "filters": {
+    "searchLabel": "Buscar canais conectados",
+    "searchPlaceholder": "Buscar por nome ou usuário",
+    "clearSearch": "Limpar busca",
+    "platformLabel": "Filtrar por rede social",
+    "allPlatforms": "Todas as redes sociais",
+    "clearAll": "Limpar filtros",
+    "emptyTitle": "Nenhum canal encontrado",
+    "emptyDescription": "Tente alterar a busca ou os filtros selecionados."
+  },
+  "empty": {
+    "title": "Nenhum canal conectado",
+    "description": "Conecte sua primeira conta usando uma das plataformas acima para começar a publicar."
+  },
+  "status": { "connected": "Conectado" },
+  "actions": {
+    "connect": "Conectar conta",
+    "connecting": "Conectando…",
+    "disconnectNamed": "Desconectar {{name}}",
+    "confirmDisconnect": "Desconectar canal",
+    "cancel": "Cancelar",
+    "close": "Fechar"
+  },
+  "permissions": {
+    "readOnly": "Seu papel permite visualizar os canais, mas somente owners e admins podem conectar ou desconectar contas."
+  },
+  "limit": {
+    "title": "Limite de canais atingido",
+    "description": "Desconecte uma conta ou altere sua assinatura para conectar outro canal.",
+    "action": "Ver assinatura"
+  },
+  "disconnectModal": {
+    "title": "Desconectar canal?",
+    "description": "Você não poderá mais publicar nem agendar conteúdos usando a conta {{name}} no {{platform}}."
+  },
+  "feedback": {
+    "connectError": "Não foi possível iniciar a conexão com {{platform}}. Tente novamente.",
+    "disconnectSuccess": "{{name}} foi desconectado."
+  }
 }

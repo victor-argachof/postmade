@@ -47,6 +47,12 @@ tipo desde o início.
 | Tipos consumidos por outras features | API pública da feature ou pacote compartilhado |
 | DTOs/contratos entre front-end e back-end | `packages/types` (que pode evoluir para `packages/contracts`) |
 
+`SocialPlatform` e `SocialChannel` são exemplos de contratos em `packages/types`:
+eles são consumidos por workspaces, canais e publicação. O estado dos canais,
+porém, pertence a `workspace.resources.channels`; o pacote compartilhado define
+o formato dos dados, não uma segunda fonte de estado. As decisões específicas
+desse domínio estão registradas em [Gerenciamento de canais sociais](channels-management.md).
+
 ## Princípios
 
 - Tipos devem permanecer próximos do código que lhes dá significado.
