@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { setSession } from "@/features/auth/store/auth-slice";
+import { updateProfile } from "@/features/auth/store/auth-slice";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
@@ -34,7 +34,7 @@ export function ProfileForm() {
   }, [fallbackName, reset]);
 
   const saveProfile = (values: ProfileFormValues) => {
-    dispatch(setSession({ name: values.name, email: currentEmail }));
+    dispatch(updateProfile({ name: values.name }));
     if (user) dispatch(updateMemberIdentity({ userId: user.id, name: values.name }));
     reset(values);
     toast.success(t("saveSuccess"));

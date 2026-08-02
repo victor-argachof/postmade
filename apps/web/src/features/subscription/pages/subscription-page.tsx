@@ -81,7 +81,7 @@ export function SubscriptionPage() {
   };
 
   return (
-    <section className="mx-auto max-w-7xl">
+    <section className="mx-auto max-w-5xl">
       <PageHeader
         title={t("pageTitle")}
         description={t("pageDescription", { workspace: workspace?.name ?? "" })}

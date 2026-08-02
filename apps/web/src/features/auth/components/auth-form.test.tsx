@@ -2,8 +2,9 @@ import { Provider } from "react-redux";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll, beforeEach } from "vitest";
 import { store } from "@/shared/store";
+import { clearKnownAccounts, setSession } from "../store/auth-slice";
 import i18n from "@/shared/i18n";
 import { LoginPage } from "../pages/login-page";
 import { AuthForm } from "./auth-form";
@@ -16,6 +17,10 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await i18n.changeLanguage(initialLanguage);
+});
+
+beforeEach(() => {
+  store.dispatch(clearKnownAccounts());
 });
 
 function renderForm(mode: "login" | "register") {
@@ -120,6 +125,39 @@ describe("AuthForm", () => {
 
     expect(await screen.findByText("Dashboard carregado")).toBeInTheDocument();
     expect(screen.queryByText("Verifique seu e-mail")).not.toBeInTheDocument();
+  });
+
+  it("directs Google accounts back to Google instead of accepting a password", async () => {
+    const user = userEvent.setup();
+    store.dispatch(setSession({
+      name: "Google User",
+      email: "google@postmade.app",
+      identity: { provider: "google", providerSubject: "google-sub-456", emailVerified: true },
+    }));
+    renderForm("login");
+
+    await user.type(screen.getByLabelText("E-mail"), "google@postmade.app");
+    await user.type(screen.getByLabelText("Senha"), "qualquer-senha");
+    await user.click(screen.getByRole("button", { name: /^entrar$/i }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/criada com o Google/i);
+    expect(screen.queryByText("Verifique seu e-mail")).not.toBeInTheDocument();
+  });
+
+  it("does not automatically link a Google login to an existing password account", async () => {
+    const user = userEvent.setup();
+    store.dispatch(setSession({
+      name: "Password User",
+      email: "password@postmade.app",
+      identity: { provider: "password", providerSubject: "password-sub-789", emailVerified: true },
+    }));
+    renderForm("login");
+
+    await user.type(screen.getByLabelText("E-mail"), "password@postmade.app");
+    await user.click(screen.getByRole("button", { name: /entrar com o google/i }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/entre usando e-mail e senha/i);
+    expect(screen.queryByText("Dashboard carregado")).not.toBeInTheDocument();
   });
 
   it("replaces the login title while verifying the email", async () => {

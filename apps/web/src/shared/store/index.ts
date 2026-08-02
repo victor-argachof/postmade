@@ -15,7 +15,20 @@ function loadPersistedAuth() {
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as ReturnType<typeof authReducer>;
     const user = parsed?.user;
-    if (!user || typeof user.id !== "string" || typeof user.name !== "string" || typeof user.email !== "string") {
+    const isValidUser = (value: typeof user) => Boolean(
+      value
+      && typeof value.id === "string"
+      && typeof value.name === "string"
+      && typeof value.email === "string"
+      && value.identity
+      && typeof value.identity.providerSubject === "string",
+    );
+    if (
+      !parsed
+      || !Array.isArray(parsed.accounts)
+      || parsed.accounts.some((account) => !isValidUser(account))
+      || (user !== null && !isValidUser(user))
+    ) {
       return undefined;
     }
     return parsed;
@@ -67,7 +80,7 @@ export const store = configureStore({
 store.subscribe(() => {
   const state = store.getState();
   window.localStorage.setItem(WORKSPACES_STORAGE_KEY, JSON.stringify(state.workspaces));
-  if (state.auth.user) {
+  if (state.auth.user || state.auth.accounts.length > 0) {
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state.auth));
   } else {
     window.localStorage.removeItem(AUTH_STORAGE_KEY);

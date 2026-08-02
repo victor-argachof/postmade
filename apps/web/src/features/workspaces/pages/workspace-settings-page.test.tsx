@@ -17,7 +17,7 @@ describe("WorkspaceSettingsPage", () => {
     store.dispatch(setSession({
       name: user.userName,
       email: user.userEmail,
-      provider: "email",
+      identity: { provider: "password", emailVerified: true },
     }));
     store.dispatch(createInitialWorkspace(user));
 

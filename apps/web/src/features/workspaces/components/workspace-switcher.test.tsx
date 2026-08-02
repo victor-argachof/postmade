@@ -14,7 +14,7 @@ describe("WorkspaceSwitcher", () => {
     store.dispatch(setSession({
       name: "Ada Lovelace",
       email: "ada-switcher@postmade.app",
-      provider: "email",
+      identity: { provider: "password", emailVerified: true },
     }));
     const sessionUser = store.getState().auth.user!;
     store.dispatch(createWorkspace({

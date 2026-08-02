@@ -47,8 +47,10 @@ export function AuthForm({
   const knownMember = useAppSelector((state) => state.workspaces.items
     .flatMap((workspace) => workspace.members)
     .find((member) => member.email === (invitation?.email ?? "").toLowerCase()));
+  const knownAccounts = useAppSelector((state) => state.auth.accounts);
   const [showPassword, setShowPassword] = useState(false);
   const [pendingCredentials, setPendingCredentials] = useState<AuthFormValues | null>(null);
+  const [authenticationError, setAuthenticationError] = useState<string | null>(null);
   const isRegister = mode === "register";
   const schema = useMemo(() => createAuthSchema(t, isRegister), [isRegister, t]);
   const {
@@ -66,6 +68,19 @@ export function AuthForm({
   const password = watch("password") ?? "";
 
   const submitCredentials = (values: AuthFormValues) => {
+    const normalizedEmail = values.email.trim().toLowerCase();
+    const existingAccount = knownAccounts.find((account) => account.email === normalizedEmail);
+
+    if (existingAccount?.identity.provider === "google") {
+      setAuthenticationError(t("accountUsesGoogle"));
+      return;
+    }
+    if (isRegister && existingAccount) {
+      setAuthenticationError(t("emailAlreadyRegistered"));
+      return;
+    }
+
+    setAuthenticationError(null);
     setPendingCredentials(values);
     onVerificationChange?.(true);
   };
@@ -73,13 +88,16 @@ export function AuthForm({
   const completeEmailAuthentication = () => {
     if (!pendingCredentials) return;
 
-    const userName = isRegister ? pendingCredentials.name ?? "" : knownMember?.name ?? "Creator";
-    const userId = `user:${pendingCredentials.email.trim().toLowerCase()}`;
-    dispatch(setSession({
+    const normalizedEmail = pendingCredentials.email.trim().toLowerCase();
+    const existingAccount = knownAccounts.find((account) => account.email === normalizedEmail);
+    const userName = existingAccount?.name ?? (isRegister ? pendingCredentials.name ?? "" : knownMember?.name ?? "Creator");
+    const sessionAction = setSession(existingAccount ?? {
       name: userName,
-      email: pendingCredentials.email,
-      provider: "email",
-    }));
+      email: normalizedEmail,
+      identity: { provider: "password", emailVerified: true },
+    });
+    const userId = sessionAction.payload.id;
+    dispatch(sessionAction);
     if (invitationToken) {
       dispatch(acceptInvitation({
         token: invitationToken,
@@ -100,13 +118,23 @@ export function AuthForm({
 
   const handleGoogleSignIn = () => {
     const userName = getValues("name") || t("googleUser");
-    const userEmail = invitation?.email || getValues("email") || "google-user@postmade.app";
-    const userId = `user:${userEmail.trim().toLowerCase()}`;
-    dispatch(setSession({
+    const userEmail = (invitation?.email || getValues("email") || "google-user@postmade.app").trim().toLowerCase();
+    const existingAccount = knownAccounts.find((account) => account.email === userEmail);
+
+    if (existingAccount?.identity.provider === "password") {
+      setAuthenticationError(t("accountUsesPassword"));
+      return;
+    }
+
+    setAuthenticationError(null);
+    const sessionAction = setSession(existingAccount ?? {
       name: userName,
       email: userEmail,
-      provider: "google",
-    }));
+      // A integração real deve fornecer aqui o claim OIDC `sub` validado pelo backend.
+      identity: { provider: "google", emailVerified: true },
+    });
+    const userId = sessionAction.payload.id;
+    dispatch(sessionAction);
     if (invitationToken) {
       dispatch(acceptInvitation({
         token: invitationToken,
@@ -146,6 +174,12 @@ export function AuthForm({
         <span>{t("orContinueWithEmail")}</span>
         <span className="h-px flex-1 bg-border" />
       </div>
+
+      {authenticationError && (
+        <p className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700" role="alert">
+          {authenticationError}
+        </p>
+      )}
 
       {isRegister && (
         <div>

@@ -4,7 +4,7 @@ import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { setSession } from "@/features/auth/store/auth-slice";
+import { updateProfile } from "@/features/auth/store/auth-slice";
 import { updateMemberIdentity } from "@/features/workspaces/store/workspaces-slice";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -17,7 +17,7 @@ export function ChangeEmailForm() {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const currentEmail = user?.email ?? "creator@postmade.app";
-  const provider = user?.provider ?? "email";
+  const provider = user?.identity.provider ?? "password";
   const [pendingEmail, setPendingEmail] = useState("");
   const schema = useMemo(() => createChangeEmailSchema(t, currentEmail), [currentEmail, t]);
   const {
@@ -51,12 +51,7 @@ export function ChangeEmailForm() {
   const completeEmailChange = () => {
     if (!pendingEmail) return;
 
-    dispatch(setSession({
-      name: user?.name ?? t("fallbackName"),
-      email: pendingEmail,
-      provider,
-      preserveId: true,
-    }));
+    dispatch(updateProfile({ email: pendingEmail }));
     if (user) dispatch(updateMemberIdentity({ userId: user.id, email: pendingEmail }));
     setPendingEmail("");
     toast.success(t("emailChangeSuccess"));

@@ -16,7 +16,7 @@ import { createChangePasswordSchema, type ChangePasswordFormValues } from "../sc
 export function ChangePasswordForm() {
   const { t } = useTranslation("account");
   const { t: tAuth } = useTranslation("auth");
-  const provider = useAppSelector((state) => state.auth.user?.provider ?? "email");
+  const provider = useAppSelector((state) => state.auth.user?.identity.provider ?? "password");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const schema = useMemo(() => createChangePasswordSchema(t), [t]);

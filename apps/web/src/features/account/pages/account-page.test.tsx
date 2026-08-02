@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 import { store } from "@/shared/store";
-import { setSession } from "@/features/auth/store/auth-slice";
+import { clearKnownAccounts, setSession } from "@/features/auth/store/auth-slice";
 import i18n from "@/shared/i18n";
 import { AccountPage } from "./account-page";
 
@@ -26,10 +26,11 @@ afterAll(async () => {
 
 beforeEach(() => {
   toastSuccess.mockClear();
+  store.dispatch(clearKnownAccounts());
   store.dispatch(setSession({
     name: "Creator Example",
     email: "creator@postmade.app",
-    provider: "email",
+    identity: { provider: "password", emailVerified: true },
   }));
 });
 
@@ -71,6 +72,7 @@ describe("AccountPage", () => {
 
   it("changes the email only after code verification", async () => {
     const user = userEvent.setup();
+    const originalUserId = store.getState().auth.user?.id;
     renderPage();
 
     const newEmail = screen.getByRole("textbox", { name: "Novo e-mail" });
@@ -92,6 +94,7 @@ describe("AccountPage", () => {
 
     expect(toastSuccess).toHaveBeenCalledWith("E-mail alterado com sucesso nesta sessão.");
     expect(store.getState().auth.user?.email).toBe("novo@postmade.app");
+    expect(store.getState().auth.user?.id).toBe(originalUserId);
   });
 
   it("validates and updates the password for email accounts", async () => {
@@ -111,7 +114,7 @@ describe("AccountPage", () => {
     store.dispatch(setSession({
       name: "Google User",
       email: "google-user@postmade.app",
-      provider: "google",
+      identity: { provider: "google", providerSubject: "google-subject-123", emailVerified: true },
     }));
     renderPage();
 
