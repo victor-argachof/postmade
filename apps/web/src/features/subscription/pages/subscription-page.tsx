@@ -112,7 +112,7 @@ export function SubscriptionPage() {
         plan={workspace?.plan}
         status={workspace?.subscriptionStatus}
         postsUsed={workspace?.resources.posts.length}
-        channelsConnected={workspace?.resources.channels.length}
+        channelsConnected={workspace?.resources.channels.filter((channel) => channel.connected).length}
         membersUsed={workspace?.members.length}
         onSubscribe={scrollToPlans}
         onUpgrade={canManageBilling ? scrollToPlans : undefined}
