@@ -16,7 +16,7 @@ export function ChangeEmailForm() {
   const { t } = useTranslation("account");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const currentEmail = user?.email ?? "creator@postmade.app";
+  const currentEmail = user?.email ?? "user@postmade.app";
   const provider = user?.identity.provider ?? "password";
   const [pendingEmail, setPendingEmail] = useState("");
   const schema = useMemo(() => createChangeEmailSchema(t, currentEmail), [currentEmail, t]);

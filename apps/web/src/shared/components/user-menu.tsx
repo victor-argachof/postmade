@@ -23,7 +23,7 @@ export function UserMenu() {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const name = user?.name ?? t("fallbackName");
-  const email = user?.email ?? "creator@postmade.app";
+  const email = user?.email ?? "user@postmade.app";
 
   const signOut = () => {
     menuRef.current?.removeAttribute("open");

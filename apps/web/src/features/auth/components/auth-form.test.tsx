@@ -86,11 +86,11 @@ describe("AuthForm", () => {
     const user = userEvent.setup();
     renderForm("login");
 
-    await user.type(screen.getByLabelText("E-mail"), "creator@postmade.app");
+    await user.type(screen.getByLabelText("E-mail"), "user@postmade.app");
     await user.type(screen.getByLabelText("Senha"), "minha-senha");
     await user.click(screen.getByRole("button", { name: /^entrar$/i }));
 
-    expect(await screen.findByText(/enviamos um código de 6 dígitos para creator@postmade\.app/i)).toBeInTheDocument();
+    expect(await screen.findByText(/enviamos um código de 6 dígitos para user@postmade\.app/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Reenviar código (01:00)" })).toBeDisabled();
 
     const code = screen.getByLabelText("Código de verificação");
@@ -174,7 +174,7 @@ describe("AuthForm", () => {
     );
 
     expect(screen.getByRole("heading", { name: "Bem-vindo de volta" })).toBeInTheDocument();
-    await user.type(screen.getByLabelText("E-mail"), "creator@postmade.app");
+    await user.type(screen.getByLabelText("E-mail"), "user@postmade.app");
     await user.type(screen.getByLabelText("Senha"), "minha-senha");
     await user.click(screen.getByRole("button", { name: /^entrar$/i }));
 

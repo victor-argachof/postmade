@@ -3,9 +3,9 @@ import { WORKSPACE_TRIAL_LIMITS, getWorkspaceMemberLimit } from "../lib/workspac
 import type {
   Workspace,
   WorkspaceInvitation,
-  WorkspacePlan,
   WorkspaceRole,
 } from "../types";
+import { SUBSCRIPTION_INCLUDED_QUANTITIES } from "../lib/subscription-pricing";
 
 interface WorkspacesState {
   items: Workspace[];
@@ -35,7 +35,7 @@ function createOwnedWorkspace(payload: {
     id: payload.id,
     name: payload.name.trim(),
     ownerId: payload.userId,
-    plan: "pro",
+    subscriptionConfiguration: { ...SUBSCRIPTION_INCLUDED_QUANTITIES },
     subscriptionStatus: "trialing",
     trialStartedAt: payload.createdAt,
     trialEndsAt: trialEnd(payload.createdAt),
@@ -113,8 +113,8 @@ const workspacesSlice = createSlice({
         const workspace = state.items.find((item) => item.id === action.payload.workspaceId);
         const actor = workspace?.members.find((member) => member.id === action.payload.actorId);
         if (!workspace || !actor || (actor.role !== "owner" && actor.role !== "admin")) return;
-        const occupiedSeats = workspace.members.length + workspace.invitations.filter((invite) => invite.status === "pending").length;
-        if (occupiedSeats >= getWorkspaceMemberLimit(workspace.plan, workspace.subscriptionStatus)) return;
+        const occupiedMembers = workspace.members.length + workspace.invitations.filter((invite) => invite.status === "pending").length;
+        if (occupiedMembers >= getWorkspaceMemberLimit(workspace.subscriptionConfiguration, workspace.subscriptionStatus)) return;
         const email = action.payload.invitation.email.toLowerCase();
         const duplicate = workspace.members.some((member) => member.email === email)
           || workspace.invitations.some((invite) => invite.email === email && invite.status === "pending");
@@ -159,7 +159,7 @@ const workspacesSlice = createSlice({
       const invitation = workspace?.invitations.find((item) => item.token === action.payload.token);
       if (!workspace || !invitation || invitation.status !== "pending") return;
       if (invitation.email !== action.payload.userEmail.toLowerCase()) return;
-      if (workspace.members.length >= getWorkspaceMemberLimit(workspace.plan, workspace.subscriptionStatus)) return;
+      if (workspace.members.length >= getWorkspaceMemberLimit(workspace.subscriptionConfiguration, workspace.subscriptionStatus)) return;
       if (!workspace.members.some((member) => member.id === action.payload.userId)) {
         workspace.members.push({
           id: action.payload.userId,
@@ -192,15 +192,6 @@ const workspacesSlice = createSlice({
       if (workspace && target?.role !== "owner" && actor && (actor.role === "owner" || actor.role === "admin")) {
         workspace.members = workspace.members.filter((member) => member.id !== action.payload.memberId);
       }
-    },
-    setWorkspacePlan: (state, action: PayloadAction<{ workspaceId: string; plan: WorkspacePlan; actorId: string }>) => {
-      const workspace = state.items.find((item) => item.id === action.payload.workspaceId);
-      if (workspace?.ownerId !== action.payload.actorId) return;
-      if (workspace.subscriptionStatus === "trialing") return;
-      const occupiedSeats = workspace.members.length
-        + workspace.invitations.filter((invitation) => invitation.status === "pending").length;
-      if (action.payload.plan === "creator" && occupiedSeats > 1) return;
-      workspace.plan = action.payload.plan;
     },
     updateMemberIdentity: (state, action: PayloadAction<{ userId: string; name?: string; email?: string }>) => {
       for (const workspace of state.items) {
@@ -253,7 +244,6 @@ export const {
   renameWorkspace,
   revokeInvitation,
   selectWorkspace,
-  setWorkspacePlan,
   updateMemberIdentity,
 } = workspacesSlice.actions;
 

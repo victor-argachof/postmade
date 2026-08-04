@@ -90,8 +90,11 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
                         {t("freeTrialBadge")}
                       </span>
                     ) : (
-                      <span className="text-xs capitalize text-muted-foreground">
-                        {t("planLabel", { plan: workspace.plan })}
+                      <span className="text-xs text-muted-foreground">
+                        {t("subscriptionQuantities", {
+                          channels: t(`channelCount.${workspace.subscriptionConfiguration.channels === 1 ? "singular" : "plural"}`, { count: workspace.subscriptionConfiguration.channels }),
+                          members: t(`memberCount.${workspace.subscriptionConfiguration.members === 1 ? "singular" : "plural"}`, { count: workspace.subscriptionConfiguration.members }),
+                        })}
                       </span>
                     )}
                   </span>

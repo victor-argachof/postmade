@@ -1,5 +1,5 @@
 import { api } from "@/shared/api/api";
-import type { BillingCycle, WorkspacePlan } from "@/features/workspaces/types";
+import type { BillingCycle } from "@/features/workspaces/types";
 
 export const billingApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -11,7 +11,7 @@ export const billingApi = api.injectEndpoints({
     }),
     createCheckoutSession: build.mutation<
       { url: string },
-      { workspaceId: string; plan: WorkspacePlan; billingCycle: BillingCycle }
+      { workspaceId: string; billingCycle: BillingCycle; channelQuantity: number; memberQuantity: number }
     >({
       query: ({ workspaceId, ...body }) => ({
         url: `/workspaces/${workspaceId}/checkout`,

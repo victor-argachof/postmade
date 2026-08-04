@@ -10,7 +10,7 @@ describe("BillingDetailsCard", () => {
 
     render(
       <BillingDetailsCard
-        plan="growth"
+        configuration={{ channels: 50, members: 5 }}
         status="active"
         currentPeriodEndsAt="2026-08-15T12:00:00.000Z"
         currency="BRL"
@@ -23,7 +23,8 @@ describe("BillingDetailsCard", () => {
     );
 
     expect(screen.getByText(/^ativa$|^active$/i)).toHaveClass("bg-emerald-500/10");
-    expect(screen.getByText("Growth")).toBeInTheDocument();
+    expect(screen.getByText("50")).toBeInTheDocument();
+    expect(screen.getByText("5")).toBeInTheDocument();
     expect(screen.queryByText(/^mensal$|^monthly$/i)).not.toBeInTheDocument();
     expect(screen.getByText(/15 de agosto de 2026|august 15, 2026/i)).toBeInTheDocument();
     expect(screen.getByText(/R\$\s*249[.,]00|BRL\s*249[.,]00/i)).toBeInTheDocument();
@@ -40,7 +41,7 @@ describe("BillingDetailsCard", () => {
   it("explains a scheduled cancellation and disables management for non-owners", () => {
     render(
       <BillingDetailsCard
-        plan="creator"
+        configuration={{ channels: 15, members: 1 }}
         status="active"
         currentPeriodEndsAt="2026-09-20T12:00:00.000Z"
         cancelAtPeriodEnd
@@ -58,7 +59,7 @@ describe("BillingDetailsCard", () => {
   it("highlights a past-due payment", () => {
     render(
       <BillingDetailsCard
-        plan="pro"
+        configuration={{ channels: 100, members: 15 }}
         status="past_due"
         canManage
         onManage={() => undefined}

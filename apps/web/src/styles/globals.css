@@ -66,6 +66,16 @@ button, input { font-family: inherit; }
   50% { transform: scale(1.08); }
 }
 
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
 .workspace-loading-progress {
   width: 0;
   animation: workspace-loading-fill 1200ms linear forwards;

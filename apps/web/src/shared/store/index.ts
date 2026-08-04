@@ -3,9 +3,11 @@ import authReducer from "@/features/auth/store/auth-slice";
 import calendarReducer from "@/features/calendar/store/calendar-slice";
 import postsReducer from "@/features/posts/store/posts-slice";
 import workspacesReducer from "@/features/workspaces/store/workspaces-slice";
+import { SUBSCRIPTION_INCLUDED_QUANTITIES, SUBSCRIPTION_MAX_QUANTITIES } from "@/features/workspaces/lib/subscription-pricing";
 import { api } from "@/shared/api/api";
 
-const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v1";
+const LEGACY_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v1";
+const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
 const AUTH_STORAGE_KEY = "postmade.auth-session.v1";
 
 function loadPersistedAuth() {
@@ -43,18 +45,24 @@ function loadPersistedWorkspaces() {
     const parsed = JSON.parse(raw) as unknown;
     if (!parsed || typeof parsed !== "object" || !("items" in parsed) || !Array.isArray(parsed.items)) return undefined;
     const persisted = parsed as ReturnType<typeof workspacesReducer>;
-    return {
-      ...persisted,
-      items: persisted.items.map((workspace) => workspace.subscriptionStatus === "trialing"
-        ? { ...workspace, plan: "pro" as const }
-        : workspace),
-    };
+    const isValid = persisted.items.every((workspace) => {
+      const configuration = workspace.subscriptionConfiguration;
+      return configuration
+        && Number.isInteger(configuration.channels)
+        && configuration.channels >= SUBSCRIPTION_INCLUDED_QUANTITIES.channels
+        && configuration.channels <= SUBSCRIPTION_MAX_QUANTITIES.channels
+        && Number.isInteger(configuration.members)
+        && configuration.members >= SUBSCRIPTION_INCLUDED_QUANTITIES.members
+        && configuration.members <= SUBSCRIPTION_MAX_QUANTITIES.members;
+    });
+    return isValid ? persisted : undefined;
   } catch {
     return undefined;
   }
 }
 
 const persistedWorkspaces = loadPersistedWorkspaces();
+window.localStorage.removeItem(LEGACY_WORKSPACES_STORAGE_KEY);
 const persistedAuth = loadPersistedAuth();
 const initialAuthState = authReducer(undefined, { type: "@@INIT" });
 const initialWorkspacesState = workspacesReducer(undefined, { type: "@@INIT" });

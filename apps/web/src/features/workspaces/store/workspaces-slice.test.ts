@@ -6,7 +6,6 @@ import reducer, {
   inviteMember,
   renameWorkspace,
   selectWorkspace,
-  setWorkspacePlan,
 } from "./workspaces-slice";
 
 const owner = {
@@ -16,12 +15,12 @@ const owner = {
 };
 
 describe("workspacesSlice", () => {
-  it("creates the initial workspace with a Pro trial and quantitative trial limits", () => {
+  it("creates the initial workspace with the trial configuration", () => {
     const state = reducer(undefined, createInitialWorkspace(owner));
     const workspace = state.items[0]!;
 
     expect(workspace.name).toBe("Workspace de Ada Lovelace");
-    expect(workspace.plan).toBe("pro");
+    expect(workspace.subscriptionConfiguration).toEqual({ channels: 3, members: 1 });
     expect(workspace.subscriptionStatus).toBe("trialing");
     expect(workspace.members).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: owner.userId, role: "owner" }),
@@ -44,7 +43,7 @@ describe("workspacesSlice", () => {
     expect(state.activeWorkspaceId).toBe(firstId);
   });
 
-  it("blocks invitations during the trial and accepts them after a Growth subscription activates", () => {
+  it("blocks invitations during the trial and accepts them after a subscription with more members activates", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
     const workspaceId = state.activeWorkspaceId!;
     const invitationInput = {
@@ -57,16 +56,10 @@ describe("workspacesSlice", () => {
     state = reducer(state, inviteMember(invitationInput));
     expect(state.items[0]!.invitations).toHaveLength(0);
 
-    state = reducer(state, setWorkspacePlan({ workspaceId, plan: "growth", actorId: owner.userId }));
-    expect(state.items[0]).toEqual(expect.objectContaining({
-      plan: "pro",
-      subscriptionStatus: "trialing",
-    }));
-
     state = {
       ...state,
       items: state.items.map((workspace) => workspace.id === workspaceId
-        ? { ...workspace, plan: "growth" as const, subscriptionStatus: "active" as const }
+        ? { ...workspace, subscriptionConfiguration: { channels: 3, members: 5 }, subscriptionStatus: "active" as const }
         : workspace),
     };
     state = reducer(state, inviteMember(invitationInput));
@@ -103,6 +96,24 @@ describe("workspacesSlice", () => {
     expect(state.items[0]!.name).toBe("Workspace de Ada Lovelace");
     state = reducer(state, renameWorkspace({ workspaceId, name: "Minha marca", actorId: owner.userId }));
     expect(state.items[0]!.name).toBe("Minha marca");
+  });
+
+  it("counts pending invitations against the configured member allowance", () => {
+    let state = reducer(undefined, createInitialWorkspace(owner));
+    const workspaceId = state.activeWorkspaceId!;
+    state = {
+      ...state,
+      items: state.items.map((workspace) => ({
+        ...workspace,
+        subscriptionStatus: "active" as const,
+        subscriptionConfiguration: { channels: 3, members: 2 },
+      })),
+    };
+
+    state = reducer(state, inviteMember({ workspaceId, actorId: owner.userId, email: "first@postmade.app", role: "editor" }));
+    state = reducer(state, inviteMember({ workspaceId, actorId: owner.userId, email: "second@postmade.app", role: "viewer" }));
+
+    expect(state.items[0]!.invitations.filter((invitation) => invitation.status === "pending")).toHaveLength(1);
   });
 
   it("disconnects a Facebook channel only for a manager of its workspace", () => {

@@ -1,5 +1,3 @@
-export type WorkspacePlan = "creator" | "growth" | "pro";
-
 export type SubscriptionStatus =
   | "trialing"
   | "active"
@@ -8,6 +6,11 @@ export type SubscriptionStatus =
   | "expired";
 
 export type BillingCycle = "monthly" | "annual";
+
+export interface WorkspaceSubscriptionConfiguration {
+  channels: number;
+  members: number;
+}
 
 export interface WorkspaceBilling {
   cycle: BillingCycle | null;

@@ -32,7 +32,6 @@ describe("WorkspaceSwitcher", () => {
 
     await user.click(screen.getByLabelText(/alternar workspace|switch workspace/i));
     expect(screen.getAllByText(/avaliação gratuita|free trial/i).length).toBeGreaterThan(0);
-    expect(screen.queryByText(/^plano: pro$|^plan: pro$/i)).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /criar novo workspace|create new workspace/i }));
 
     const nameInput = screen.getByRole("textbox", { name: /nome do workspace|workspace name/i });

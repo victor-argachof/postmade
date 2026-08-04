@@ -5,7 +5,7 @@ import { SectionCard } from "@/shared/components/section-card";
 import { Tooltip } from "@/shared/components/ui/tooltip";
 import type {
   SubscriptionStatus,
-  WorkspacePlan,
+  WorkspaceSubscriptionConfiguration,
 } from "@/features/workspaces/types";
 
 const statusStyles: Record<Exclude<SubscriptionStatus, "trialing">, string> = {
@@ -16,7 +16,7 @@ const statusStyles: Record<Exclude<SubscriptionStatus, "trialing">, string> = {
 };
 
 interface BillingDetailsCardProps {
-  plan: WorkspacePlan;
+  configuration: WorkspaceSubscriptionConfiguration;
   status: Exclude<SubscriptionStatus, "trialing">;
   currentPeriodEndsAt?: string | null;
   cancelAtPeriodEnd?: boolean;
@@ -30,7 +30,7 @@ interface BillingDetailsCardProps {
 }
 
 export function BillingDetailsCard({
-  plan,
+  configuration,
   status,
   currentPeriodEndsAt,
   cancelAtPeriodEnd = false,
@@ -100,7 +100,7 @@ export function BillingDetailsCard({
         </p>
       )}
 
-      <dl className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 xl:grid-cols-4">
+      <dl className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 xl:grid-cols-5">
         <div className="rounded-2xl bg-muted p-4">
           <dt className="text-xs font-semibold text-muted-foreground">{t("statusTitle")}</dt>
           <dd className="mt-2">
@@ -110,8 +110,12 @@ export function BillingDetailsCard({
           </dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("selectedPlanLabel")}</dt>
-          <dd className="mt-2 text-sm font-bold">{t(`plans.${plan}.name`)}</dd>
+          <dt className="text-xs font-semibold text-muted-foreground">{t("contractedChannels")}</dt>
+          <dd className="mt-2 text-sm font-bold">{configuration.channels}</dd>
+        </div>
+        <div className="rounded-2xl bg-muted p-4">
+          <dt className="text-xs font-semibold text-muted-foreground">{t("contractedMembers")}</dt>
+          <dd className="mt-2 text-sm font-bold">{configuration.members}</dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
           <dt className="text-xs font-semibold text-muted-foreground">{renewalLabel}</dt>

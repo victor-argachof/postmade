@@ -19,7 +19,7 @@ TikTok e YouTube. Entre os principais recursos previstos estão:
 - agendamento e calendário de conteúdo;
 - personalização e preview por plataforma;
 - upload e gerenciamento de mídia;
-- planos de assinatura com limites de uso e canais conectados.
+- assinatura configurável por quantidade de canais e membros.
 
 ## Escopo atual
 

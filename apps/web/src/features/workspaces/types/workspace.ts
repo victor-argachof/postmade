@@ -1,5 +1,5 @@
 import type { ScheduledPublication, SocialChannel } from "@postmade/types";
-import type { SubscriptionStatus, WorkspaceBilling, WorkspacePlan } from "./billing";
+import type { SubscriptionStatus, WorkspaceBilling, WorkspaceSubscriptionConfiguration } from "./billing";
 
 export type WorkspaceRole = "owner" | "admin" | "editor" | "viewer";
 
@@ -26,7 +26,7 @@ export interface Workspace {
   id: string;
   name: string;
   ownerId: string;
-  plan: WorkspacePlan;
+  subscriptionConfiguration: WorkspaceSubscriptionConfiguration;
   subscriptionStatus: SubscriptionStatus;
   trialStartedAt: string;
   trialEndsAt: string;

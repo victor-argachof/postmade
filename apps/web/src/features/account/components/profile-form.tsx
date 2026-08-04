@@ -16,7 +16,7 @@ export function ProfileForm() {
   const user = useAppSelector((state) => state.auth.user);
   const schema = useMemo(() => createProfileSchema(t), [t]);
   const fallbackName = user?.name ?? t("fallbackName");
-  const currentEmail = user?.email ?? "creator@postmade.app";
+  const currentEmail = user?.email ?? "user@postmade.app";
   const {
     register,
     handleSubmit,

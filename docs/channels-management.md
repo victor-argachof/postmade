@@ -49,17 +49,16 @@ Os limites são calculados por `getWorkspaceChannelLimit`, em
 | Situação | Limite de canais |
 | --- | ---: |
 | Avaliação gratuita | 3 |
-| Creator ativo | 15 |
-| Growth ativo | 50 |
-| Pro ativo | Ilimitado |
+| Assinatura ativa | Quantidade contratada (3–500) |
 
-Componentes não devem duplicar esses números. Um limite `null` representa uso
-ilimitado. A quantidade utilizada considera apenas canais com `connected: true`.
+Componentes não devem duplicar esses números. O limite pago vem de
+`workspace.subscriptionConfiguration.channels`. A quantidade utilizada considera
+apenas canais com `connected: true`.
 
 ## Listagem e gerenciamento
 
 Os canais conectados são apresentados em uma tabela, em vez de cards individuais,
-para que a interface continue utilizável em workspaces Pro com muitas contas. A
+para que a interface continue utilizável em workspaces com muitas contas. A
 tabela exibe plataforma, identificação da conta, status e ações disponíveis.
 
 A estrutura genérica fica em `shared/components/data-table.tsx`. A definição das

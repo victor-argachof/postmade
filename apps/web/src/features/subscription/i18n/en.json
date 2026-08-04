@@ -1,8 +1,8 @@
 {
   "menuLabel": "Subscription",
-  "eyebrow": "Plan and billing",
+  "eyebrow": "Subscription and billing",
   "pageTitle": "Subscription",
-  "pageDescription": "Manage the plan and billing for this workspace",
+  "pageDescription": "Manage the subscription and billing for this workspace.",
   "statusTitle": "Subscription status",
   "subscriptionStatuses": {
     "trialing": "Free trial",
@@ -11,21 +11,20 @@
     "canceled": "Canceled",
     "expired": "Expired"
   },
-  "activePlanTitle": "Your workspace is on the {{plan}} plan",
-  "activePlanDescription": "The subscription and limits apply only to the selected workspace.",
   "limitsTitle": "Usage and limits",
   "trialLimitsTitle": "Free trial usage and limits",
-  "limitsDescription": "Track the usage of resources available to this workspace.",
-  "trialLimitsDescription": "Track the usage of resources available during your free trial.",
-  "billingDetailsTitle": "Subscription and billing",
+  "limitsDescription": "Track the contracted resources used by this workspace.",
+  "trialLimitsDescription": "Track the resources available during your free trial.",
+  "billingDetailsTitle": "Postmade subscription",
   "billingDetailsDescription": "View the current subscription details.",
-  "billingPlanSummary": "{{plan}} plan · {{cycle}}",
   "nextRenewalLabel": "Next renewal",
   "accessUntilLabel": "Access available until",
   "nextInvoiceAmount": "Next charge: {{amount}}",
   "paymentMethodLabel": "Payment method",
   "paymentMethodValue": "{{brand}} ending in {{last4}}",
   "billingUnavailable": "Not available",
+  "contractedChannels": "Contracted channels",
+  "contractedMembers": "Contracted members",
   "manageSubscription": "Manage subscription",
   "openingBillingPortal": "Opening portal…",
   "stripePortalNote": "You will be redirected to Stripe's secure portal in a new tab.",
@@ -35,46 +34,29 @@
   "cancellationScheduledNotice": "Cancellation is scheduled. You will continue to have access until {{date}}.",
   "progressLabel": "Trial time remaining",
   "daysUsage": "{{remaining}} of {{total}} days remaining",
-  "selectedPlanLabel": "Current plan",
   "trialEndLabel": "Trial ends",
   "postsLimitLabel": "Posts used",
   "channelsLimitLabel": "Connected channels",
   "membersLimitLabel": "Workspace members",
   "usageOfLimit": "{{used}} of {{limit}}",
   "usageUnlimited": "Unlimited",
-  "viewUpgradeOptions": "View upgrade options",
-  "subscribeToPlan": "Subscribe to the {{plan}} plan",
   "checkoutError": "We couldn't open the checkout page. Please try again.",
   "crossPosting": "Publishing across multiple social networks",
   "scheduling": "Post scheduling",
   "platformCustomization": "Per-platform customization",
   "calendar": "Content calendar",
   "subscribeCardTitle": "Unlock Postmade's full potential",
-  "subscribeCardDescription": "Unlock the platform’s core features and go beyond the limits of the free trial.",
-  "subscribeNow": "Select a plan",
+  "subscribeCardDescription": "Go beyond the free trial limits and configure a plan that fits your needs.",
+  "subscribeNow": "Configure subscription",
   "checkoutPending": "Checkout will be enabled after the secure backend and Stripe integration.",
-  "plansEyebrow": "Plans",
-  "plansTitle": "Choose the right plan for you",
-  "plansDescription": "Every paid plan includes unlimited posts and access to Postmade's essential features.",
   "billingCycleLabel": "Billing cycle",
   "monthly": "Monthly",
   "annual": "Annual",
   "annualSavings": "2 months free",
-  "perMonth": "/month",
-  "billedMonthly": "Billed monthly",
+  "perMonth": "/ month",
   "billedAnnually": "{{total}} billed annually",
-  "mostPopular": "Most popular",
-  "switchToPlan": "Switch to {{plan}}",
-  "switchToMonthly": "Switch to monthly",
-  "switchToAnnual": "Switch to annual",
-  "currentPlan": "Current plan",
-  "ownerOnly": "Only this workspace's owner can change its plan and billing.",
+  "ownerOnly": "Only this workspace's owner can change its subscription and billing.",
   "localizedPricingNote": "Prices are displayed in the currency set by the application language. Taxes may apply at checkout.",
-  "accounts15": "15 connected social accounts",
-  "accounts50": "50 connected social accounts",
-  "accountsUnlimited": "Unlimited connected accounts",
-  "workspaceMembers_one": "{{count}} member per workspace",
-  "workspaceMembers_other": "{{count}} members per workspace",
   "multipleAccounts": "Multiple accounts per platform",
   "unlimitedPosts": "Unlimited posts",
   "schedulePosts": "Schedule posts",
@@ -82,19 +64,48 @@
   "bulkVideo": "Bulk video scheduling",
   "contentStudio": "Content studio access",
   "humanSupport": "Human support",
-  "prioritySupport": "Priority human support",
-  "plans": {
-    "creator": {
-      "name": "Creator",
-      "description": "Best for growing creators"
-    },
-    "growth": {
-      "name": "Growth",
-      "description": "Best for growing teams and agencies"
-    },
-    "pro": {
-      "name": "Pro",
-      "description": "Best for scaling brands"
+  "configurator": {
+    "eyebrow": "One flexible plan",
+    "title": "Configure your subscription",
+    "description": "Choose how many channels and members your workspace needs. Every paid feature is included.",
+    "channels": "Channels",
+    "members": "Members",
+    "decrease": "Decrease {{resource}}",
+    "increase": "Increase {{resource}}",
+    "summary": "Subscription summary",
+    "monthlyEquivalent": "Monthly price",
+    "subscribe": "Subscribe to Postmade",
+    "portalChanges": "Active subscription quantities are changed securely in Stripe's portal. Reductions below current usage are not allowed."
+  },
+  "faq": {
+    "eyebrow": "Frequently asked questions",
+    "title": "Questions about your subscription",
+    "description": "Learn how Postmade subscription pricing, limits, and changes work.",
+    "items": {
+      "pricing": {
+        "question": "How is the subscription price calculated?",
+        "answer": "The subscription includes 3 channels and 1 member for US$19 per month. Each additional channel costs US$2 per month and each additional member costs US$8 per month. The amount shown at checkout prevails over the estimate in the application."
+      },
+      "trial": {
+        "question": "What is included in the free trial?",
+        "answer": "The trial lasts 15 days and includes 3 channels, 1 member, and up to 3 posts. The workspace owner counts as the included member."
+      },
+      "memberUsage": {
+        "question": "Who counts toward the member limit?",
+        "answer": "The owner, other workspace members, and pending invitations count toward the contracted limit. Revoke invitations that will not be used to free up spots."
+      },
+      "changeSubscription": {
+        "question": "Can I change the number of channels and members later?",
+        "answer": "Yes. Once the subscription is active, changes are made securely through Stripe's portal and take effect after payment confirmation."
+      },
+      "reduceQuantities": {
+        "question": "Why can't I reduce a quantity?",
+        "answer": "The new quantity cannot be lower than current usage. Disconnect channels, remove members, or revoke pending invitations before requesting a reduction."
+      },
+      "annualBilling": {
+        "question": "How does annual billing work?",
+        "answer": "With annual billing, you pay the equivalent of 10 monthly payments for 12 months of access. The full amount is billed annually."
+      }
     }
   }
 }

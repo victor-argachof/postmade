@@ -32,12 +32,12 @@ const owner = { id: "owner-1", name: "Ada", email: "ada@postmade.app" };
 function createPageStore({
   channels = [],
   role = "owner",
-  plan = "creator",
+  configuration = { channels: 15, members: 1 },
   status = "active",
 }: {
   channels?: SocialChannel[];
   role?: "owner" | "admin" | "editor" | "viewer";
-  plan?: "creator" | "growth" | "pro";
+  configuration?: { channels: number; members: number };
   status?: "trialing" | "active";
 } = {}) {
   return configureStore({
@@ -58,7 +58,7 @@ function createPageStore({
           id: "workspace-1",
           name: "Postmade",
           ownerId: owner.id,
-          plan,
+          subscriptionConfiguration: configuration,
           subscriptionStatus: status,
           trialStartedAt: "2026-01-01T00:00:00.000Z",
           trialEndsAt: "2026-01-16T00:00:00.000Z",
@@ -117,7 +117,7 @@ describe("ChannelsPage", () => {
       username: `channel${index}`,
       connected: true,
     }));
-    renderPage({ channels, plan: "pro", status: "trialing" });
+    renderPage({ channels, configuration: { channels: 500, members: 100 }, status: "trialing" });
     expect(screen.getByText("3 de 3 canais conectados")).toBeInTheDocument();
     expect(screen.getByText("Limite de canais atingido")).toBeInTheDocument();
     for (const button of screen.getAllByRole("button", { name: "Conectar conta" })) {
@@ -135,9 +135,9 @@ describe("ChannelsPage", () => {
     expect(screen.getByText("1 resultado")).toBeInTheDocument();
   });
 
-  it("shows unlimited channel usage for an active Pro workspace", () => {
-    renderPage({ plan: "pro", status: "active" });
-    expect(screen.getByText("0 canais conectados — ilimitado")).toBeInTheDocument();
+  it("shows a high configured channel allowance for an active workspace", () => {
+    renderPage({ configuration: { channels: 500, members: 100 }, status: "active" });
+    expect(screen.getByText("0 de 500 canais conectados")).toBeInTheDocument();
   });
 
   it("keeps editor actions read-only", () => {
@@ -177,7 +177,7 @@ describe("ChannelsPage", () => {
       username: `@channel${index + 1}`,
       connected: true,
     }));
-    renderPage({ channels, plan: "pro" });
+    renderPage({ channels, configuration: { channels: 500, members: 100 } });
 
     expect(screen.getByText("26 resultados")).toBeInTheDocument();
     expect(screen.getAllByRole("row")).toHaveLength(11);

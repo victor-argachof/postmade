@@ -90,7 +90,7 @@ export function AuthForm({
 
     const normalizedEmail = pendingCredentials.email.trim().toLowerCase();
     const existingAccount = knownAccounts.find((account) => account.email === normalizedEmail);
-    const userName = existingAccount?.name ?? (isRegister ? pendingCredentials.name ?? "" : knownMember?.name ?? "Creator");
+    const userName = existingAccount?.name ?? (isRegister ? pendingCredentials.name ?? "" : knownMember?.name ?? "User");
     const sessionAction = setSession(existingAccount ?? {
       name: userName,
       email: normalizedEmail,

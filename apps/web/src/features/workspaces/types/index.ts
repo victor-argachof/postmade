@@ -2,7 +2,7 @@ export type {
   BillingCycle,
   SubscriptionStatus,
   WorkspaceBilling,
-  WorkspacePlan,
+  WorkspaceSubscriptionConfiguration,
 } from "./billing";
 export type {
   InvitationStatus,

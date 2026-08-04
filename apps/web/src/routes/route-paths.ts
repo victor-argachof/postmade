@@ -12,6 +12,7 @@ export const ROUTES = {
   workspaceSettings: "/workspace/settings",
   account: "/account",
   workspaceSubscription: "/workspace/subscription",
+  workspaceSubscriptionConfigurator: "/workspace/subscription#subscription-configurator",
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

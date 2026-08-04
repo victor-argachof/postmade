@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import "@/shared/i18n";
 import { SubscriptionSummary } from "./subscription-summary";
 
@@ -40,10 +39,10 @@ describe("SubscriptionSummary", () => {
     },
   );
 
-  it("shows plan limits and identifies unlimited resources", () => {
+  it("shows configured limits and identifies unlimited posts", () => {
     render(
       <SubscriptionSummary
-        plan="pro"
+        configuration={{ channels: 80, members: 15 }}
         status="active"
         postsUsed={12}
         channelsConnected={4}
@@ -51,8 +50,11 @@ describe("SubscriptionSummary", () => {
       />,
     );
 
-    expect(screen.getAllByText(/ilimitado|unlimited/i)).toHaveLength(2);
-    expect(screen.getAllByRole("img", { name: /ilimitado|unlimited/i })).toHaveLength(2);
+    expect(screen.getAllByText(/ilimitado|unlimited/i)).toHaveLength(1);
+    expect(screen.getAllByRole("img", { name: /ilimitado|unlimited/i })).toHaveLength(1);
+    expect(screen.getByRole("progressbar", {
+      name: /canais conectados|connected channels/i,
+    })).toHaveAttribute("aria-valuemax", "80");
     expect(screen.getByRole("progressbar", {
       name: /membros do workspace|workspace members/i,
     })).toHaveAttribute("aria-valuemax", "15");
@@ -61,23 +63,4 @@ describe("SubscriptionSummary", () => {
     })).toBeInTheDocument();
   });
 
-  it("offers an upgrade for an active plan below Pro", async () => {
-    const user = userEvent.setup();
-    const onUpgrade = vi.fn();
-
-    render(<SubscriptionSummary plan="growth" status="active" onUpgrade={onUpgrade} />);
-
-    await user.click(screen.getByRole("button", {
-      name: /ver opções de upgrade|view upgrade options/i,
-    }));
-    expect(onUpgrade).toHaveBeenCalledOnce();
-  });
-
-  it("does not offer an upgrade for the Pro plan", () => {
-    render(<SubscriptionSummary plan="pro" status="active" onUpgrade={() => undefined} />);
-
-    expect(screen.queryByRole("button", {
-      name: /ver opções de upgrade|view upgrade options/i,
-    })).not.toBeInTheDocument();
-  });
 });

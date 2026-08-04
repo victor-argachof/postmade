@@ -38,10 +38,10 @@ export function WorkspaceSettings() {
   const currentMember = workspace.members.find((member) => member.id === user.id);
   const canManage = currentMember?.role === "owner" || currentMember?.role === "admin";
   const isOwner = currentMember?.role === "owner";
-  const memberLimit = getWorkspaceMemberLimit(workspace.plan, workspace.subscriptionStatus);
+  const memberLimit = getWorkspaceMemberLimit(workspace.subscriptionConfiguration, workspace.subscriptionStatus);
   const pendingInvitations = workspace.invitations.filter((invitation) => invitation.status === "pending");
-  const occupiedSeats = workspace.members.length + pendingInvitations.length;
-  const inviteLocked = workspace.subscriptionStatus === "trialing" || workspace.plan === "creator";
+  const occupiedMembers = workspace.members.length + pendingInvitations.length;
+  const inviteLocked = workspace.subscriptionStatus === "trialing";
 
   const saveName = (event: React.FormEvent) => {
     event.preventDefault();
@@ -51,7 +51,7 @@ export function WorkspaceSettings() {
 
   const submitInvite = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!email.trim() || inviteLocked || occupiedSeats >= memberLimit) return;
+    if (!email.trim() || inviteLocked || occupiedMembers >= memberLimit) return;
     dispatch(inviteMember({ workspaceId: workspace.id, actorId: user.id, email, role }));
     setEmail("");
     toast.success(t("invitationSent"));
@@ -79,16 +79,16 @@ export function WorkspaceSettings() {
         icon={Users}
         title={t("teamTitle")}
         description={t("teamDescription")}
-        action={<span className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold">{t("seats", { used: occupiedSeats, limit: memberLimit })}</span>}
+        action={<span className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold">{t("membersUsage", { used: occupiedMembers, limit: memberLimit })}</span>}
       >
         {inviteLocked ? (
           <div className="mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-5">
             <div className="flex gap-3">
               <LockKeyhole className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
               <div>
-                <p className="font-bold">{t(workspace.subscriptionStatus === "trialing" ? "trialMembersTitle" : "upgradeTitle")}</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">{t(workspace.subscriptionStatus === "trialing" ? "trialMembersDescription" : "upgradeDescription")}</p>
-                <Button className="mt-4" type="button" onClick={() => navigate(ROUTES.workspaceSubscription)}>{t("viewPlans")}</Button>
+                <p className="font-bold">{t("trialMembersTitle")}</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("trialMembersDescription")}</p>
+                <Button className="mt-4" type="button" onClick={() => navigate(ROUTES.workspaceSubscriptionConfigurator)}>{t("viewPlans")}</Button>
               </div>
             </div>
           </div>
@@ -101,10 +101,10 @@ export function WorkspaceSettings() {
             <select aria-label={t("role")} className="h-11 rounded-xl border border-input bg-background px-3 text-sm" value={role} onChange={(event) => setRole(event.target.value as typeof role)}>
               {roles.map((option) => <option key={option} value={option}>{t(`roles.${option}`)}</option>)}
             </select>
-            <Button type="submit" disabled={occupiedSeats >= memberLimit}><MailPlus className="size-4" aria-hidden="true" />{t("invite")}</Button>
+            <Button type="submit" disabled={occupiedMembers >= memberLimit}><MailPlus className="size-4" aria-hidden="true" />{t("invite")}</Button>
           </form>
         ) : null}
-        {occupiedSeats >= memberLimit && !inviteLocked && <p className="mt-3 text-sm font-medium text-amber-700 dark:text-amber-400">{t("limitReached")}</p>}
+        {occupiedMembers >= memberLimit && !inviteLocked && <p className="mt-3 text-sm font-medium text-amber-700 dark:text-amber-400">{t("limitReached")}</p>}
 
         <div className="mt-8 divide-y divide-border border-y border-border">
           {workspace.members.map((member) => (

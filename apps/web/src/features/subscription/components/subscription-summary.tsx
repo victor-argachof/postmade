@@ -1,4 +1,4 @@
-import { ArrowDown, BarChart3, Check, ShieldCheck } from "lucide-react";
+import { ArrowDown, BarChart3, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { SectionCard } from "@/shared/components/section-card";
@@ -7,9 +7,10 @@ import {
   getWorkspaceChannelLimit,
   getWorkspaceMemberLimit,
 } from "@/features/workspaces/lib/workspace-limits";
+import { SUBSCRIPTION_INCLUDED_QUANTITIES } from "@/features/workspaces/lib/subscription-pricing";
 import type {
   SubscriptionStatus,
-  WorkspacePlan,
+  WorkspaceSubscriptionConfiguration,
 } from "@/features/workspaces/types";
 import { cn } from "@/shared/lib/utils";
 
@@ -22,13 +23,12 @@ const benefitKeys = [
 ] as const;
 
 interface SubscriptionSummaryProps {
-  plan?: WorkspacePlan;
+  configuration?: WorkspaceSubscriptionConfiguration;
   status?: SubscriptionStatus;
   postsUsed?: number;
   channelsConnected?: number;
   membersUsed?: number;
   onSubscribe?: () => void;
-  onUpgrade?: () => void;
 }
 
 interface UsageMeterProps {
@@ -90,21 +90,19 @@ function UsageMeter({ label, valueLabel, value, maximum }: UsageMeterProps) {
 }
 
 export function SubscriptionSummary({
-  plan = "creator",
+  configuration = SUBSCRIPTION_INCLUDED_QUANTITIES,
   status = "trialing",
   postsUsed = 0,
   channelsConnected = 0,
   membersUsed = 1,
   onSubscribe,
-  onUpgrade,
 }: SubscriptionSummaryProps) {
   const { t } = useTranslation("subscription");
   const trialing = status === "trialing";
   const postLimit = trialing ? WORKSPACE_TRIAL_LIMITS.posts : null;
-  const channelLimit = getWorkspaceChannelLimit(plan, status);
-  const memberLimit = getWorkspaceMemberLimit(plan, status);
+  const channelLimit = getWorkspaceChannelLimit(configuration, status);
+  const memberLimit = getWorkspaceMemberLimit(configuration, status);
   const showSubscribeCard = status === "trialing" || status === "canceled" || status === "expired";
-  const showUpgradeAction = (status === "active" || status === "past_due") && plan !== "pro" && Boolean(onUpgrade);
   const usageLabel = (used: number, limit: number | null) => limit === null
     ? t("usageUnlimited")
     : t("usageOfLimit", { used, limit });
@@ -140,18 +138,9 @@ export function SubscriptionSummary({
             maximum={memberLimit}
           />
         </div>
-        {showUpgradeAction && (
-          <div className="mt-6 flex justify-end">
-            <Button type="button" variant="outline" className="w-full sm:w-auto" onClick={onUpgrade}>
-              {t("viewUpgradeOptions")}
-              <ArrowDown className="size-4" aria-hidden="true" />
-            </Button>
-          </div>
-        )}
       </SectionCard>
 
       {showSubscribeCard && <SectionCard
-        icon={ShieldCheck}
         title={t("subscribeCardTitle")}
         description={t("subscribeCardDescription")}
       >

@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { SubscriptionSummary } from "../components/subscription-summary";
-import { PricingPlans } from "../components/pricing-plans";
+import { SubscriptionConfigurator } from "../components/subscription-configurator";
 import { useAppSelector } from "@/shared/hooks/store-hooks";
-import {
-  type BillingCycle,
-  type WorkspacePlan,
-} from "@/features/workspaces/types";
+import type { BillingCycle, WorkspaceSubscriptionConfiguration } from "@/features/workspaces/types";
 import { toast } from "sonner";
 import { PageHeader } from "@/shared/components/page-header";
 import { BillingDetailsCard } from "../components/billing-details-card";
@@ -15,9 +14,12 @@ import {
 } from "../services/billing-api";
 import { TrialDetailsCard } from "../components/trial-details-card";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
+import { getMinimumSubscriptionConfiguration } from "@/features/workspaces/lib/subscription-pricing";
+import { SubscriptionFaq } from "../components/subscription-faq";
 
 export function SubscriptionPage() {
   const { t } = useTranslation("subscription");
+  const location = useLocation();
   const user = useAppSelector((state) => state.auth.user);
   const workspace = useAppSelector((state) => state.workspaces.items.find(
     (item) => item.id === state.workspaces.activeWorkspaceId,
@@ -25,8 +27,21 @@ export function SubscriptionPage() {
   const [createBillingPortalSession, { isLoading: isOpeningPortal }] = useCreateBillingPortalSessionMutation();
   const [createCheckoutSession] = useCreateCheckoutSessionMutation();
 
-  const scrollToPlans = () => {
-    document.getElementById("pricing-plans")?.scrollIntoView({
+  useEffect(() => {
+    if (location.hash !== "#subscription-configurator") return;
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById("subscription-configurator")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.hash]);
+
+  const scrollToConfigurator = () => {
+    document.getElementById("subscription-configurator")?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -53,32 +68,41 @@ export function SubscriptionPage() {
       toast.error(t("billingPortalError"));
     }
   };
-  const startCheckout = async (plan: WorkspacePlan, billingCycle: BillingCycle) => {
+  const startCheckout = async (configuration: WorkspaceSubscriptionConfiguration, billingCycle: BillingCycle) => {
     if (!workspace || !canManageBilling) return;
 
     try {
       const { url } = await createCheckoutSession({
         workspaceId: workspace.id,
-        plan,
         billingCycle,
+        channelQuantity: configuration.channels,
+        memberQuantity: configuration.members,
       }).unwrap();
       window.location.assign(url);
     } catch {
       toast.error(t("checkoutError"));
     }
   };
-  const selectPlan = (plan: WorkspacePlan, billingCycle: BillingCycle) => {
+  const subscribe = (configuration: WorkspaceSubscriptionConfiguration, billingCycle: BillingCycle) => {
     if (!workspace || !user || workspace.ownerId !== user.id) return;
     if (
       workspace.subscriptionStatus === "trialing"
       || workspace.subscriptionStatus === "canceled"
       || workspace.subscriptionStatus === "expired"
     ) {
-      void startCheckout(plan, billingCycle);
-      return;
+      void startCheckout(configuration, billingCycle);
     }
-    void openBillingPortal();
   };
+
+  const connectedChannels = workspace?.resources.channels.filter((channel) => channel.connected).length ?? 0;
+  const occupiedMembers = workspace
+    ? workspace.members.length + workspace.invitations.filter((invitation) => invitation.status === "pending").length
+    : 1;
+  const minimumConfiguration = getMinimumSubscriptionConfiguration({ connectedChannels, occupiedMembers });
+  const configuredQuantities = workspace ? {
+    channels: Math.max(workspace.subscriptionConfiguration.channels, minimumConfiguration.channels),
+    members: Math.max(workspace.subscriptionConfiguration.members, minimumConfiguration.members),
+  } : minimumConfiguration;
 
   return (
     <section className="mx-auto max-w-5xl">
@@ -88,7 +112,7 @@ export function SubscriptionPage() {
       />
       {workspace && workspace.subscriptionStatus !== "trialing" && (
         <BillingDetailsCard
-          plan={workspace.plan}
+          configuration={workspace.subscriptionConfiguration}
           status={workspace.subscriptionStatus}
           currentPeriodEndsAt={workspace.billing?.currentPeriodEndsAt}
           cancelAtPeriodEnd={workspace.billing?.cancelAtPeriodEnd}
@@ -109,21 +133,23 @@ export function SubscriptionPage() {
         />
       )}
       <SubscriptionSummary
-        plan={workspace?.plan}
+        configuration={workspace?.subscriptionConfiguration}
         status={workspace?.subscriptionStatus}
         postsUsed={workspace?.resources.posts.length}
-        channelsConnected={workspace?.resources.channels.filter((channel) => channel.connected).length}
+        channelsConnected={connectedChannels}
         membersUsed={workspace?.members.length}
-        onSubscribe={scrollToPlans}
-        onUpgrade={canManageBilling ? scrollToPlans : undefined}
+        onSubscribe={scrollToConfigurator}
       />
       {!canManageBilling && workspace && <p className="mt-8 rounded-2xl border border-border bg-muted p-4 text-sm text-muted-foreground">{t("ownerOnly")}</p>}
-      <PricingPlans
-        currentPlan={workspace?.plan}
+      <SubscriptionConfigurator
+        configuration={configuredQuantities}
         currentBillingCycle={workspace?.billing?.cycle}
+        minimumConfiguration={minimumConfiguration}
         status={workspace?.subscriptionStatus}
-        onSelectPlan={!workspace || canManageBilling ? selectPlan : undefined}
+        onManage={canManageBilling ? openBillingPortal : undefined}
+        onSubscribe={!workspace || canManageBilling ? subscribe : undefined}
       />
+      <SubscriptionFaq />
     </section>
   );
 }

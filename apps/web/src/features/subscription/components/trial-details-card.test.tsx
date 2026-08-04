@@ -3,7 +3,7 @@ import "@/shared/i18n";
 import { TrialDetailsCard } from "./trial-details-card";
 
 describe("TrialDetailsCard", () => {
-  it("shows the selected plan, remaining time, and trial end date", () => {
+  it("shows the remaining time and trial end date", () => {
     render(
       <TrialDetailsCard
         remainingDays={8}

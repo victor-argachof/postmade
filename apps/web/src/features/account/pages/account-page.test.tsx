@@ -28,8 +28,8 @@ beforeEach(() => {
   toastSuccess.mockClear();
   store.dispatch(clearKnownAccounts());
   store.dispatch(setSession({
-    name: "Creator Example",
-    email: "creator@postmade.app",
+    name: "User Example",
+    email: "user@postmade.app",
     identity: { provider: "password", emailVerified: true },
   }));
 });
@@ -78,7 +78,7 @@ describe("AccountPage", () => {
     const newEmail = screen.getByRole("textbox", { name: "Novo e-mail" });
     const sendCode = screen.getByRole("button", { name: "Enviar código de validação" });
 
-    await user.type(newEmail, "creator@postmade.app");
+    await user.type(newEmail, "user@postmade.app");
     await user.click(sendCode);
     expect(await screen.findByText("O novo e-mail deve ser diferente do atual.")).toBeInTheDocument();
 

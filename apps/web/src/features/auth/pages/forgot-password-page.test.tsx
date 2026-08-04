@@ -34,7 +34,7 @@ describe("ForgotPasswordPage", () => {
     expect(screen.getByText("Digite um endereço de e-mail válido.")).toBeInTheDocument();
 
     await user.clear(email);
-    await user.type(email, "creator@postmade.app");
+    await user.type(email, "user@postmade.app");
     await user.click(submitButton);
 
     expect(screen.getByRole("status")).toHaveTextContent("Solicitação recebida");

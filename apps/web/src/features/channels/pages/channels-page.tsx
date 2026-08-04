@@ -58,7 +58,7 @@ export function ChannelsPage() {
     : workspaceChannels;
   const member = workspace?.members.find((item) => item.id === user?.id);
   const canManage = member?.role === "owner" || member?.role === "admin";
-  const limit = workspace ? getWorkspaceChannelLimit(workspace.plan, workspace.subscriptionStatus) : 0;
+  const limit = workspace ? getWorkspaceChannelLimit(workspace.subscriptionConfiguration, workspace.subscriptionStatus) : 0;
   const limitReached = limit !== null && channels.length >= limit;
   const counts = channels.reduce<Record<SocialPlatform, number>>(
     (result, channel) => ({ ...result, [channel.platform]: result[channel.platform] + 1 }),

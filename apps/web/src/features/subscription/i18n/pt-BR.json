@@ -1,8 +1,8 @@
 {
   "menuLabel": "Assinatura",
-  "eyebrow": "Plano e cobrança",
+  "eyebrow": "Assinatura e cobrança",
   "pageTitle": "Assinatura",
-  "pageDescription": "Gerencie o plano e a cobrança deste workspace.",
+  "pageDescription": "Gerencie a assinatura e a cobrança deste workspace.",
   "statusTitle": "Status da assinatura",
   "subscriptionStatuses": {
     "trialing": "Avaliação gratuita",
@@ -11,21 +11,20 @@
     "canceled": "Cancelada",
     "expired": "Expirada"
   },
-  "activePlanTitle": "Seu workspace está no plano {{plan}}",
-  "activePlanDescription": "A assinatura e os limites são aplicados somente ao workspace selecionado.",
   "limitsTitle": "Uso e limites",
   "trialLimitsTitle": "Uso e limites da avaliação gratuita",
-  "limitsDescription": "Acompanhe o consumo dos recursos disponíveis neste workspace.",
+  "limitsDescription": "Acompanhe o consumo dos recursos contratados neste workspace.",
   "trialLimitsDescription": "Acompanhe o uso dos recursos disponíveis durante sua avaliação gratuita.",
-  "billingDetailsTitle": "Assinatura e cobrança",
+  "billingDetailsTitle": "Assinatura Postmade",
   "billingDetailsDescription": "Consulte os dados da assinatura atual.",
-  "billingPlanSummary": "Plano {{plan}} · {{cycle}}",
   "nextRenewalLabel": "Próxima renovação",
   "accessUntilLabel": "Acesso disponível até",
   "nextInvoiceAmount": "Próxima cobrança: {{amount}}",
   "paymentMethodLabel": "Forma de pagamento",
   "paymentMethodValue": "{{brand}} final {{last4}}",
   "billingUnavailable": "Não disponível",
+  "contractedChannels": "Canais contratados",
+  "contractedMembers": "Membros contratados",
   "manageSubscription": "Gerenciar assinatura",
   "openingBillingPortal": "Abrindo portal…",
   "stripePortalNote": "Você será direcionado ao portal seguro da Stripe em uma nova aba.",
@@ -35,46 +34,29 @@
   "cancellationScheduledNotice": "O cancelamento está agendado. Você continuará com acesso até {{date}}.",
   "progressLabel": "Tempo restante da avaliação",
   "daysUsage": "{{remaining}} de {{total}} dias restantes",
-  "selectedPlanLabel": "Plano atual",
   "trialEndLabel": "Término da avaliação",
   "postsLimitLabel": "Posts utilizados",
   "channelsLimitLabel": "Canais conectados",
   "membersLimitLabel": "Membros do workspace",
   "usageOfLimit": "{{used}} de {{limit}}",
   "usageUnlimited": "Ilimitado",
-  "viewUpgradeOptions": "Ver opções de upgrade",
-  "subscribeToPlan": "Assinar plano {{plan}}",
   "checkoutError": "Não foi possível abrir a página de pagamento. Tente novamente.",
   "crossPosting": "Múltiplas redes sociais conectadas",
   "scheduling": "Agendamento de publicações",
   "platformCustomization": "Personalização por plataforma",
   "calendar": "Calendário de conteúdo",
   "subscribeCardTitle": "Desbloqueie todo o potencial do Postmade",
-  "subscribeCardDescription": "Fique livre dos limites da avaliação gratuita e tenha acesso aos principais recursos da plataforma.",
-  "subscribeNow": "Selecionar plano",
+  "subscribeCardDescription": "Fique livre dos limites da avaliação gratuita, configure um plano conforme sua necessidade.",
+  "subscribeNow": "Configurar assinatura",
   "checkoutPending": "O checkout será habilitado após a integração segura com o backend e a Stripe.",
-  "plansEyebrow": "Planos",
-  "plansTitle": "Escolha o plano ideal para você",
-  "plansDescription": "Todos os planos pagos incluem publicações ilimitadas e acesso aos principais recursos do Postmade.",
   "billingCycleLabel": "Período de cobrança",
   "monthly": "Mensal",
   "annual": "Anual",
   "annualSavings": "2 meses grátis",
-  "perMonth": "/mês",
-  "billedMonthly": "Cobrado mensalmente",
-  "billedAnnually": "{{total}} cobrados por ano",
-  "mostPopular": "Mais popular",
-  "switchToPlan": "Mudar para {{plan}}",
-  "switchToMonthly": "Mudar para mensal",
-  "switchToAnnual": "Mudar para anual",
-  "currentPlan": "Plano atual",
-  "ownerOnly": "Somente o proprietário deste workspace pode alterar o plano e a cobrança.",
+  "perMonth": "/ mês",
+  "billedAnnually": "{{total}} cobrados anualmente",
+  "ownerOnly": "Somente o proprietário deste workspace pode alterar a assinatura e a cobrança.",
   "localizedPricingNote": "Os preços são exibidos na moeda definida pelo idioma da aplicação. Impostos podem ser aplicados no checkout.",
-  "accounts15": "15 contas sociais conectadas",
-  "accounts50": "50 contas sociais conectadas",
-  "accountsUnlimited": "Contas conectadas ilimitadas",
-  "workspaceMembers_one": "{{count}} membro por workspace",
-  "workspaceMembers_other": "{{count}} membros por workspace",
   "multipleAccounts": "Múltiplas contas por plataforma",
   "unlimitedPosts": "Publicações ilimitadas",
   "schedulePosts": "Agendamento de publicações",
@@ -82,19 +64,48 @@
   "bulkVideo": "Agendamento de vídeos em massa",
   "contentStudio": "Acesso ao estúdio de conteúdo",
   "humanSupport": "Suporte humano",
-  "prioritySupport": "Suporte humano prioritário",
-  "plans": {
-    "creator": {
-      "name": "Creator",
-      "description": "Ideal para criadores em crescimento"
-    },
-    "growth": {
-      "name": "Growth",
-      "description": "Ideal para equipes e agências em crescimento"
-    },
-    "pro": {
-      "name": "Pro",
-      "description": "Ideal para marcas em expansão"
+  "configurator": {
+    "eyebrow": "Plano único e flexível",
+    "title": "Configure sua assinatura",
+    "description": "Defina quantos canais e membros seu workspace precisa. Todos os recursos pagos estão incluídos.",
+    "channels": "Canais",
+    "members": "Membros",
+    "decrease": "Diminuir {{resource}}",
+    "increase": "Aumentar {{resource}}",
+    "summary": "Resumo da assinatura",
+    "monthlyEquivalent": "Valor mensal",
+    "subscribe": "Assinar Postmade",
+    "portalChanges": "As quantidades da assinatura ativa são alteradas com segurança pelo portal da Stripe. Reduções abaixo do uso atual não são permitidas."
+  },
+  "faq": {
+    "eyebrow": "Perguntas frequentes",
+    "title": "Dúvidas sobre a assinatura",
+    "description": "Entenda como funcionam os valores, limites e alterações da assinatura do Postmade.",
+    "items": {
+      "pricing": {
+        "question": "Como o valor da assinatura é calculado?",
+        "answer": "A assinatura inclui 3 canais e 1 membro por R$ 99 mensais. Cada canal adicional custa R$ 10 por mês e cada membro adicional custa R$ 40 por mês. O valor exibido no checkout prevalece sobre a estimativa da aplicação."
+      },
+      "trial": {
+        "question": "O que está incluído na avaliação gratuita?",
+        "answer": "A avaliação dura 15 dias e inclui 3 canais, 1 membro e até 3 publicações. O proprietário do workspace conta como o membro incluído."
+      },
+      "memberUsage": {
+        "question": "Quem conta no limite de membros?",
+        "answer": "O proprietário, os demais membros do workspace e os convites pendentes contam no limite contratado. Revogue convites que não serão usados para liberar vagas."
+      },
+      "changeSubscription": {
+        "question": "Posso alterar a quantidade de canais e membros depois?",
+        "answer": "Sim. Depois que a assinatura estiver ativa, as alterações são realizadas com segurança pelo portal da Stripe e passam a valer após a confirmação do pagamento."
+      },
+      "reduceQuantities": {
+        "question": "Por que não consigo reduzir uma quantidade?",
+        "answer": "A nova quantidade não pode ser menor que o uso atual. Desconecte canais, remova membros ou revogue convites pendentes antes de solicitar a redução."
+      },
+      "annualBilling": {
+        "question": "Como funciona a cobrança anual?",
+        "answer": "No ciclo anual, você paga o equivalente a 10 mensalidades por 12 meses de acesso. O valor total é cobrado anualmente."
+      }
     }
   }
 }
