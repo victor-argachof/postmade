@@ -32,6 +32,7 @@
   "role": "Role",
   "invite": "Invite",
   "invitationSent": "Invitation created. Copy the link to simulate email delivery.",
+  "limitReachedTitle": "Member limit reached",
   "limitReached": "The member limit has been reached. Pending invitations also occupy a spot.",
   "pendingInvitation": "Pending invitation",
   "copyInvite": "Copy invitation link",

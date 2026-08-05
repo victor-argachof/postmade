@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -52,7 +54,9 @@
   --ring: var(--brand-primary);
 }
 
-* { border-color: var(--border); }
+@layer base {
+  * { border-color: var(--border); }
+}
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--background); }
 button, input { font-family: inherit; }
 

@@ -32,6 +32,7 @@
   "role": "Função",
   "invite": "Convidar",
   "invitationSent": "Convite criado. Copie o link para simular o envio por e-mail.",
+  "limitReachedTitle": "Limite de membros atingido",
   "limitReached": "O limite de membros foi atingido. Convites pendentes também ocupam uma vaga.",
   "pendingInvitation": "Convite pendente",
   "copyInvite": "Copiar link do convite",

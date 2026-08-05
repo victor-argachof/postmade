@@ -1,10 +1,11 @@
-import { Building2, Copy, LockKeyhole, MailPlus, Settings2, Trash2, UserRoundCog, Users } from "lucide-react";
+import { Building2, Copy, LockKeyhole, MailPlus, Settings2, Trash2, TriangleAlert, UserRoundCog, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ROUTES } from "@/routes/route-paths";
 import { Button } from "@/shared/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { Input } from "@/shared/components/ui/input";
 import { SectionCard } from "@/shared/components/section-card";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
@@ -83,16 +84,14 @@ export function WorkspaceSettings() {
         action={<span className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold">{t("membersUsage", { used: occupiedMembers, limit: memberLimit })}</span>}
       >
         {inviteLocked ? (
-          <div className="mt-8 rounded-2xl border border-primary/25 bg-primary/5 p-5">
-            <div className="flex gap-3">
-              <LockKeyhole className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-              <div>
-                <p className="font-bold">{t("trialMembersTitle")}</p>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">{t("trialMembersDescription")}</p>
-                <Button className="mt-4" type="button" onClick={() => navigate(ROUTES.workspaceSubscriptionConfigurator)}>{t("viewPlans")}</Button>
-              </div>
-            </div>
-          </div>
+          <Alert className="mt-8 border-primary/25 bg-primary/5">
+            <LockKeyhole className="size-5 text-primary" aria-hidden="true" />
+            <AlertTitle>{t("trialMembersTitle")}</AlertTitle>
+            <AlertDescription className="text-muted-foreground">
+              <p>{t("trialMembersDescription")}</p>
+              <Button className="mt-4" type="button" onClick={() => navigate(ROUTES.workspaceSubscriptionConfigurator)}>{t("viewPlans")}</Button>
+            </AlertDescription>
+          </Alert>
         ) : canManage ? (
           <form className="mt-8 grid gap-3 sm:grid-cols-[minmax(0,1fr)_10rem_auto]" onSubmit={submitInvite}>
             <div>
@@ -105,7 +104,13 @@ export function WorkspaceSettings() {
             <Button type="submit" disabled={occupiedMembers >= memberLimit}><MailPlus className="size-4" aria-hidden="true" />{t("invite")}</Button>
           </form>
         ) : null}
-        {occupiedMembers >= memberLimit && !inviteLocked && <p className="mt-3 text-sm font-medium text-amber-700 dark:text-amber-400">{t("limitReached")}</p>}
+        {occupiedMembers >= memberLimit && !inviteLocked && (
+          <Alert className="mt-3" variant="warning">
+            <TriangleAlert aria-hidden="true" />
+            <AlertTitle>{t("limitReachedTitle")}</AlertTitle>
+            <AlertDescription>{t("limitReached")}</AlertDescription>
+          </Alert>
+        )}
 
         <div className="mt-8 divide-y divide-border border-y border-border">
           {workspace.members.map((member) => (
