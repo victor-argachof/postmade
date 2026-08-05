@@ -8,7 +8,7 @@ describe("SubscriptionFaq", () => {
     const user = userEvent.setup();
     render(<SubscriptionFaq />);
 
-    expect(screen.getAllByRole("button")).toHaveLength(6);
+    expect(screen.getAllByRole("button")).toHaveLength(5);
     const pricingQuestion = screen.getByRole("button", {
       name: /como o valor da assinatura é calculado|how is the subscription price calculated/i,
     });

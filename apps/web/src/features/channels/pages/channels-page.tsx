@@ -24,15 +24,6 @@ const emptyCounts: Record<SocialPlatform, number> = {
   youtube: 0,
 };
 
-// Temporary presentation-only channel for visual review. Do not persist it.
-const demoChannel: SocialChannel = {
-  id: "demo-instagram-channel",
-  platform: "instagram",
-  displayName: "Postmade",
-  username: "@postmade",
-  connected: true,
-};
-
 export function ChannelsPage() {
   const { t } = useTranslation("channels");
   const dispatch = useAppDispatch();
@@ -44,18 +35,13 @@ export function ChannelsPage() {
   const [getOAuthUrl] = useGetOAuthUrlMutation();
   const [connectingPlatforms, setConnectingPlatforms] = useState<Set<SocialPlatform>>(new Set());
   const [channelToDisconnect, setChannelToDisconnect] = useState<SocialChannel | null>(null);
-  const [showDemoChannel, setShowDemoChannel] = useState(true);
 
   useEffect(() => {
     setChannelToDisconnect(null);
     setConnectingPlatforms(new Set());
-    setShowDemoChannel(true);
   }, [workspace?.id]);
 
-  const workspaceChannels = workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
-  const channels = import.meta.env.MODE === "development" && workspaceChannels.length === 0 && showDemoChannel
-    ? [demoChannel]
-    : workspaceChannels;
+  const channels = workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
   const member = workspace?.members.find((item) => item.id === user?.id);
   const canManage = member?.role === "owner" || member?.role === "admin";
   const limit = workspace ? getWorkspaceChannelLimit(workspace.subscriptionConfiguration, workspace.subscriptionStatus) : 0;
@@ -84,15 +70,11 @@ export function ChannelsPage() {
 
   const confirmDisconnect = () => {
     if (!workspace || !user || !channelToDisconnect || !canManage) return;
-    if (channelToDisconnect.id === demoChannel.id) {
-      setShowDemoChannel(false);
-    } else {
-      dispatch(disconnectWorkspaceChannel({
-        workspaceId: workspace.id,
-        channelId: channelToDisconnect.id,
-        actorId: user.id,
-      }));
-    }
+    dispatch(disconnectWorkspaceChannel({
+      workspaceId: workspace.id,
+      channelId: channelToDisconnect.id,
+      actorId: user.id,
+    }));
     toast.success(t("feedback.disconnectSuccess", { name: channelToDisconnect.displayName }));
     setChannelToDisconnect(null);
   };

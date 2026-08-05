@@ -4,13 +4,14 @@ import { useLocation } from "react-router-dom";
 import { SubscriptionSummary } from "../components/subscription-summary";
 import { SubscriptionConfigurator } from "../components/subscription-configurator";
 import { useAppSelector } from "@/shared/hooks/store-hooks";
-import type { BillingCycle, WorkspaceSubscriptionConfiguration } from "@/features/workspaces/types";
+import type { WorkspaceSubscriptionConfiguration } from "@/features/workspaces/types";
 import { toast } from "sonner";
 import { PageHeader } from "@/shared/components/page-header";
 import { BillingDetailsCard } from "../components/billing-details-card";
 import {
   useCreateBillingPortalSessionMutation,
   useCreateCheckoutSessionMutation,
+  useUpdateSubscriptionMutation,
 } from "../services/billing-api";
 import { TrialDetailsCard } from "../components/trial-details-card";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
@@ -26,6 +27,7 @@ export function SubscriptionPage() {
   ));
   const [createBillingPortalSession, { isLoading: isOpeningPortal }] = useCreateBillingPortalSessionMutation();
   const [createCheckoutSession] = useCreateCheckoutSessionMutation();
+  const [updateSubscription, { isLoading: isUpdatingSubscription }] = useUpdateSubscriptionMutation();
 
   useEffect(() => {
     if (location.hash !== "#subscription-configurator") return;
@@ -68,13 +70,12 @@ export function SubscriptionPage() {
       toast.error(t("billingPortalError"));
     }
   };
-  const startCheckout = async (configuration: WorkspaceSubscriptionConfiguration, billingCycle: BillingCycle) => {
+  const startCheckout = async (configuration: WorkspaceSubscriptionConfiguration) => {
     if (!workspace || !canManageBilling) return;
 
     try {
       const { url } = await createCheckoutSession({
         workspaceId: workspace.id,
-        billingCycle,
         channelQuantity: configuration.channels,
         memberQuantity: configuration.members,
       }).unwrap();
@@ -83,14 +84,14 @@ export function SubscriptionPage() {
       toast.error(t("checkoutError"));
     }
   };
-  const subscribe = (configuration: WorkspaceSubscriptionConfiguration, billingCycle: BillingCycle) => {
+  const subscribe = (configuration: WorkspaceSubscriptionConfiguration) => {
     if (!workspace || !user || workspace.ownerId !== user.id) return;
     if (
       workspace.subscriptionStatus === "trialing"
       || workspace.subscriptionStatus === "canceled"
       || workspace.subscriptionStatus === "expired"
     ) {
-      void startCheckout(configuration, billingCycle);
+      void startCheckout(configuration);
     }
   };
 
@@ -103,6 +104,29 @@ export function SubscriptionPage() {
     channels: Math.max(workspace.subscriptionConfiguration.channels, minimumConfiguration.channels),
     members: Math.max(workspace.subscriptionConfiguration.members, minimumConfiguration.members),
   } : minimumConfiguration;
+  const requestSubscriptionUpdate = async (configuration: WorkspaceSubscriptionConfiguration) => {
+    if (!workspace || !canManageBilling || workspace.subscriptionStatus !== "active") return false;
+    if (
+      configuration.channels < minimumConfiguration.channels
+      || configuration.members < minimumConfiguration.members
+    ) {
+      toast.error(t("subscriptionUsageValidationError"));
+      return false;
+    }
+
+    try {
+      await updateSubscription({
+        workspaceId: workspace.id,
+        channelQuantity: configuration.channels,
+        memberQuantity: configuration.members,
+      }).unwrap();
+      toast.success(t("subscriptionUpdateRequested"));
+      return true;
+    } catch {
+      toast.error(t("subscriptionUpdateError"));
+      return false;
+    }
+  };
 
   return (
     <section className="mx-auto max-w-5xl">
@@ -118,8 +142,6 @@ export function SubscriptionPage() {
           cancelAtPeriodEnd={workspace.billing?.cancelAtPeriodEnd}
           currency={workspace.billing?.currency}
           nextInvoiceAmount={workspace.billing?.nextInvoiceAmount}
-          paymentMethodBrand={workspace.billing?.paymentMethodBrand}
-          paymentMethodLast4={workspace.billing?.paymentMethodLast4}
           canManage={canManageBilling}
           isOpeningPortal={isOpeningPortal}
           onManage={openBillingPortal}
@@ -137,17 +159,23 @@ export function SubscriptionPage() {
         status={workspace?.subscriptionStatus}
         postsUsed={workspace?.resources.posts.length}
         channelsConnected={connectedChannels}
-        membersUsed={workspace?.members.length}
+        membersUsed={occupiedMembers}
         onSubscribe={scrollToConfigurator}
       />
       {!canManageBilling && workspace && <p className="mt-8 rounded-2xl border border-border bg-muted p-4 text-sm text-muted-foreground">{t("ownerOnly")}</p>}
       <SubscriptionConfigurator
         configuration={configuredQuantities}
-        currentBillingCycle={workspace?.billing?.cycle}
         minimumConfiguration={minimumConfiguration}
         status={workspace?.subscriptionStatus}
         onManage={canManageBilling ? openBillingPortal : undefined}
         onSubscribe={!workspace || canManageBilling ? subscribe : undefined}
+        onUpdate={canManageBilling ? requestSubscriptionUpdate : undefined}
+        isUpdating={isUpdatingSubscription}
+        usage={{
+          connectedChannels,
+          members: workspace?.members.length ?? 1,
+          pendingInvitations: workspace?.invitations.filter((invitation) => invitation.status === "pending").length ?? 0,
+        }}
       />
       <SubscriptionFaq />
     </section>

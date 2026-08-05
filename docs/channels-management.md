@@ -108,12 +108,11 @@ O fluxo esperado é:
 3. O navegador é redirecionado para a URL retornada.
 4. Uma falha na solicitação produz feedback traduzido e não altera os canais.
 
-Enquanto não há back-end, não existe seed nem simulação persistida de conexão. No
-modo de desenvolvimento, uma conta temporária pode ser renderizada somente na
-camada de apresentação para revisão visual; ela não é gravada no Redux ou no
-`localStorage`. Os canais persistidos localmente continuam disponíveis para
-visualização e testes, e tentativas de conexão apresentam o erro normal da
-integração indisponível.
+Enquanto não há back-end, tentativas de conexão apresentam o erro normal da
+integração indisponível. No modo de desenvolvimento, uma conta temporária é
+adicionada ao `workspace.resources.channels` do workspace de avaliação para
+revisão visual. Dessa forma, `/channels`, `/subscription` e as validações de
+limite usam a mesma fonte de verdade. O mock não é criado no build de produção.
 
 Tokens de acesso, refresh tokens, client secrets e demais credenciais OAuth nunca
 devem ser incluídos no bundle, no Redux ou no `localStorage` do front-end.

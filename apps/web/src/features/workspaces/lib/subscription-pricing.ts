@@ -1,4 +1,4 @@
-import type { BillingCycle, WorkspaceSubscriptionConfiguration } from "../types";
+import type { WorkspaceSubscriptionConfiguration } from "../types";
 
 export type SubscriptionCurrency = "USD" | "BRL";
 
@@ -21,8 +21,6 @@ export const SUBSCRIPTION_MONTHLY_PRICES: Record<SubscriptionCurrency, {
   BRL: { base: 9_900, additionalChannel: 1_000, additionalMember: 4_000 },
 };
 
-export const SUBSCRIPTION_ANNUAL_BILLED_MONTHS = 10;
-
 export function normalizeSubscriptionQuantity(
   value: number,
   resource: keyof WorkspaceSubscriptionConfiguration,
@@ -35,7 +33,6 @@ export function normalizeSubscriptionQuantity(
 export function calculateSubscriptionPrice(
   configuration: WorkspaceSubscriptionConfiguration,
   currency: SubscriptionCurrency,
-  cycle: BillingCycle,
 ) {
   const prices = SUBSCRIPTION_MONTHLY_PRICES[currency];
   const channels = normalizeSubscriptionQuantity(configuration.channels, "channels");
@@ -50,7 +47,6 @@ export function calculateSubscriptionPrice(
     additionalChannels,
     additionalMembers,
     monthly,
-    billedTotal: cycle === "annual" ? monthly * SUBSCRIPTION_ANNUAL_BILLED_MONTHS : monthly,
   };
 }
 

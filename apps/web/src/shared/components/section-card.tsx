@@ -11,6 +11,7 @@ interface SectionCardProps {
   className?: string;
   contentClassName?: string;
   titleClassName?: string;
+  id?: string;
 }
 
 export function SectionCard({
@@ -22,11 +23,13 @@ export function SectionCard({
   className,
   contentClassName,
   titleClassName,
+  id,
 }: SectionCardProps) {
   const titleId = useId();
 
   return (
     <section
+      id={id}
       className={cn("rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8", className)}
       aria-labelledby={titleId}
     >

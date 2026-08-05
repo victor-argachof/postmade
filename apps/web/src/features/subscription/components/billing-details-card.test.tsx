@@ -4,7 +4,7 @@ import "@/shared/i18n";
 import { BillingDetailsCard } from "./billing-details-card";
 
 describe("BillingDetailsCard", () => {
-  it("shows renewal, amount, payment method, and the management action", async () => {
+  it("shows renewal, amount, contracted resources, and the management action", async () => {
     const user = userEvent.setup();
     const onManage = vi.fn();
 
@@ -15,8 +15,6 @@ describe("BillingDetailsCard", () => {
         currentPeriodEndsAt="2026-08-15T12:00:00.000Z"
         currency="BRL"
         nextInvoiceAmount={24900}
-        paymentMethodBrand="Visa"
-        paymentMethodLast4="4242"
         canManage
         onManage={onManage}
       />,
@@ -28,7 +26,7 @@ describe("BillingDetailsCard", () => {
     expect(screen.queryByText(/^mensal$|^monthly$/i)).not.toBeInTheDocument();
     expect(screen.getByText(/15 de agosto de 2026|august 15, 2026/i)).toBeInTheDocument();
     expect(screen.getByText(/R\$\s*249[.,]00|BRL\s*249[.,]00/i)).toBeInTheDocument();
-    expect(screen.getByText(/visa.*4242/i)).toBeInTheDocument();
+    expect(screen.queryByText(/forma de pagamento|payment method/i)).not.toBeInTheDocument();
 
     const manageButtons = screen.getAllByRole("button", {
       name: /gerenciar assinatura|manage subscription/i,

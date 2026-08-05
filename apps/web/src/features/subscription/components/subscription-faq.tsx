@@ -12,7 +12,6 @@ const questions = [
   "memberUsage",
   "changeSubscription",
   "reduceQuantities",
-  "annualBilling",
 ] as const;
 
 export function SubscriptionFaq() {

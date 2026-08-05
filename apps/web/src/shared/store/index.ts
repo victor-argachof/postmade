@@ -3,6 +3,7 @@ import authReducer from "@/features/auth/store/auth-slice";
 import calendarReducer from "@/features/calendar/store/calendar-slice";
 import postsReducer from "@/features/posts/store/posts-slice";
 import workspacesReducer from "@/features/workspaces/store/workspaces-slice";
+import { createActiveWorkspaceMock, createConnectedChannelMock } from "@/features/workspaces/store/workspaces-slice";
 import { SUBSCRIPTION_INCLUDED_QUANTITIES, SUBSCRIPTION_MAX_QUANTITIES } from "@/features/workspaces/lib/subscription-pricing";
 import { api } from "@/shared/api/api";
 
@@ -82,6 +83,16 @@ export const store = configureStore({
     workspaces: persistedWorkspaces ?? initialWorkspacesState,
   },
 });
+
+if (import.meta.env.MODE === "development" && store.getState().auth.user) {
+  const user = store.getState().auth.user!;
+  store.dispatch(createActiveWorkspaceMock({
+    userId: user.id,
+    userName: user.name,
+    userEmail: user.email,
+  }));
+  store.dispatch(createConnectedChannelMock({ userId: user.id }));
+}
 
 store.subscribe(() => {
   const state = store.getState();

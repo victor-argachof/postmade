@@ -5,15 +5,12 @@ export type SubscriptionStatus =
   | "canceled"
   | "expired";
 
-export type BillingCycle = "monthly" | "annual";
-
 export interface WorkspaceSubscriptionConfiguration {
   channels: number;
   members: number;
 }
 
 export interface WorkspaceBilling {
-  cycle: BillingCycle | null;
   currentPeriodEndsAt: string | null;
   cancelAtPeriodEnd: boolean;
   currency: string | null;

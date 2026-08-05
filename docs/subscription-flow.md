@@ -45,13 +45,11 @@ representam o total contratado, não apenas os adicionais.
 mensal = base
        + (canais - 3) × preço por canal
        + (membros - 1) × preço por membro
-
-anual = mensal × 10
 ```
 
-O ciclo anual equivale a dez mensalidades e concede dois meses grátis. Os preços
-do front-end são apenas uma previsão; valores, moeda, impostos e total retornados
-pelo back-end e pela Stripe prevalecem.
+A assinatura possui somente cobrança mensal. Os preços do front-end são apenas
+uma previsão; valores, moeda, impostos e total retornados pelo back-end e pela
+Stripe prevalecem.
 
 Constantes, normalização e cálculo ficam centralizados em
 `features/workspaces/lib/subscription-pricing.ts`. Componentes não devem duplicar
@@ -72,7 +70,12 @@ A avaliação dura 15 dias e permite 3 posts, 3 canais e somente o proprietário
 Os limites temporários prevalecem sobre a configuração enquanto o status for
 `trialing`.
 
-O usuário configura canais, membros e ciclo antes de iniciar o checkout. Essa
+No ambiente de desenvolvimento, a aplicação também disponibiliza de forma
+idempotente o workspace demonstrativo `Postmade Studio`, com assinatura ativa,
+8 canais e 3 membros contratados. Esse dado existe apenas para revisão visual e
+não é incluído no build de produção.
+
+O usuário configura canais e membros antes de iniciar o checkout. Essa
 escolha não ativa a assinatura nem altera as cotas persistidas localmente.
 
 ## Contratação e alterações
@@ -82,7 +85,6 @@ O checkout recebe:
 ```ts
 {
   workspaceId: string;
-  billingCycle: "monthly" | "annual";
   channelQuantity: number;
   memberQuantity: number;
 }
@@ -105,16 +107,34 @@ active + configuração contratada
 O retorno do navegador não ativa a assinatura. O back-end atualiza status,
 quantidades e dados de cobrança de forma atômica após um evento confiável.
 
-Assinaturas `active` ou `past_due` exibem as quantidades vigentes como somente
-leitura e direcionam mudanças ao portal Stripe. O portal aplica prorrata. Uma
-redução é bloqueada enquanto canais conectados, membros ou convites pendentes
-excederem a nova configuração; as cotas só mudam após webhook válido.
+Assinaturas `active` podem alterar canais e membros pelo configurador do Postmade.
+O front-end limita os campos pelo uso atual e apresenta uma confirmação, mas essa
+checagem é apenas uma conveniência de interface. Quando o usuário tenta diminuir
+uma quantidade que já está no mínimo permitido,
+o controle usa `aria-disabled` e abre uma explicação contextual sem alterar o
+valor. O modal diferencia o mínimo contratual do bloqueio por uso e, no segundo
+caso, direciona para o gerenciamento de canais ou membros.
+
+Ao receber a solicitação, o back-end deve, dentro de uma transação:
+
+1. carregar o workspace e confirmar que o ator é o proprietário;
+2. contar novamente canais com `connected: true`;
+3. contar proprietário, demais membros e convites pendentes;
+4. rejeitar quantidades abaixo do uso ou fora dos mínimos e máximos;
+5. calcular a prorrata e atualizar os itens correspondentes na Stripe;
+6. registrar a solicitação de forma idempotente.
+
+Se algum recurso for conectado, membro adicionado ou convite criado entre a
+abertura da tela e a confirmação, a leitura transacional prevalece e a redução é
+rejeitada. As cotas persistidas só mudam após webhook válido. Assinaturas
+`past_due` devem regularizar o pagamento no portal Stripe antes de solicitar
+alterações. O portal permanece responsável por pagamento, faturas e cancelamento.
 
 ## Perguntas frequentes
 
 A página de assinatura encerra com uma seção de perguntas frequentes em
 accordions. O conteúdo explica o cálculo do preço, a avaliação gratuita, o uso
-de membros, alterações e reduções de quantidade e a cobrança anual. Perguntas e
+de membros e alterações e reduções de quantidade. Perguntas e
 respostas pertencem ao namespace `subscription` e devem permanecer traduzidas em
 português e inglês.
 
@@ -142,9 +162,9 @@ avaliação quando não existir um workspace válido no formato atual.
 
 O back-end deverá:
 
-1. Persistir status, quantidades, ciclo, datas e dados de cobrança por workspace.
+1. Persistir status, quantidades, datas e dados de cobrança por workspace.
 2. Validar mínimos, máximos, limites do trial e uso atual no servidor.
-3. Restringir checkout e portal ao proprietário.
+3. Restringir checkout, atualizações e portal ao proprietário.
 4. Calcular e confirmar preços na moeda correta, sem confiar no preview do cliente.
 5. Criar checkout com as quantidades totais e associá-lo ao workspace correto.
 6. Configurar alterações com prorrata e impedir reduções abaixo do uso.
@@ -158,7 +178,6 @@ interface WorkspaceSubscription {
   workspaceId: string;
   configuration: WorkspaceSubscriptionConfiguration;
   status: SubscriptionStatus;
-  cycle: BillingCycle | null;
   trialStartedAt: string;
   trialEndsAt: string;
   currentPeriodStartedAt: string | null;

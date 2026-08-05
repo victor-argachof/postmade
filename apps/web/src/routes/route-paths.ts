@@ -10,6 +10,7 @@ export const ROUTES = {
   workspaceChannels: "/workspace/channels",
   calendar: "/calendar",
   workspaceSettings: "/workspace/settings",
+  workspaceMembers: "/workspace/settings#workspace-members",
   account: "/account",
   workspaceSubscription: "/workspace/subscription",
   workspaceSubscriptionConfigurator: "/workspace/subscription#subscription-configurator",

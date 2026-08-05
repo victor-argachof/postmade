@@ -1,5 +1,7 @@
 import reducer, {
   acceptInvitation,
+  createActiveWorkspaceMock,
+  createConnectedChannelMock,
   createInitialWorkspace,
   createWorkspace,
   disconnectWorkspaceChannel,
@@ -27,6 +29,36 @@ describe("workspacesSlice", () => {
     ]));
     expect(workspace.resources).toEqual({ channels: [], posts: [], selectedCalendarDate: null });
     expect(state.activeWorkspaceId).toBe(workspace.id);
+  });
+
+  it("creates an idempotent active workspace mock with contracted resources", () => {
+    let state = reducer(undefined, createInitialWorkspace(owner));
+    state = reducer(state, createActiveWorkspaceMock(owner));
+    state = reducer(state, createActiveWorkspaceMock(owner));
+
+    const activeWorkspace = state.items.find((workspace) => workspace.subscriptionStatus === "active");
+    expect(state.items).toHaveLength(2);
+    expect(activeWorkspace).toEqual(expect.objectContaining({
+      name: "Postmade Studio",
+      ownerId: owner.userId,
+      subscriptionConfiguration: { channels: 8, members: 3 },
+      billing: expect.objectContaining({
+        currency: "BRL",
+        nextInvoiceAmount: 22_900,
+        paymentMethodLast4: "4242",
+      }),
+    }));
+    expect(activeWorkspace?.members).toHaveLength(3);
+  });
+
+  it("stores the development channel mock in the trial workspace", () => {
+    let state = reducer(undefined, createInitialWorkspace(owner));
+    state = reducer(state, createConnectedChannelMock({ userId: owner.userId }));
+    state = reducer(state, createConnectedChannelMock({ userId: owner.userId }));
+
+    expect(state.items[0]!.resources.channels).toEqual([
+      expect.objectContaining({ platform: "instagram", connected: true }),
+    ]);
   });
 
   it("keeps each created workspace independent and only allows a member to select it", () => {

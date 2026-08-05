@@ -19,9 +19,6 @@
   "billingDetailsDescription": "View the current subscription details.",
   "nextRenewalLabel": "Next renewal",
   "accessUntilLabel": "Access available until",
-  "nextInvoiceAmount": "Next charge: {{amount}}",
-  "paymentMethodLabel": "Payment method",
-  "paymentMethodValue": "{{brand}} ending in {{last4}}",
   "billingUnavailable": "Not available",
   "contractedChannels": "Contracted channels",
   "contractedMembers": "Contracted members",
@@ -41,6 +38,9 @@
   "usageOfLimit": "{{used}} of {{limit}}",
   "usageUnlimited": "Unlimited",
   "checkoutError": "We couldn't open the checkout page. Please try again.",
+  "subscriptionUsageValidationError": "The new configuration cannot be lower than the resources currently in use.",
+  "subscriptionUpdateRequested": "Update requested. The new quantities will appear after payment confirmation.",
+  "subscriptionUpdateError": "We couldn't update the subscription. Check the quantities and try again.",
   "crossPosting": "Publishing across multiple social networks",
   "scheduling": "Post scheduling",
   "platformCustomization": "Per-platform customization",
@@ -49,12 +49,7 @@
   "subscribeCardDescription": "Go beyond the free trial limits and configure a plan that fits your needs.",
   "subscribeNow": "Configure subscription",
   "checkoutPending": "Checkout will be enabled after the secure backend and Stripe integration.",
-  "billingCycleLabel": "Billing cycle",
-  "monthly": "Monthly",
-  "annual": "Annual",
-  "annualSavings": "2 months free",
   "perMonth": "/ month",
-  "billedAnnually": "{{total}} billed annually",
   "ownerOnly": "Only this workspace's owner can change its subscription and billing.",
   "localizedPricingNote": "Prices are displayed in the currency set by the application language. Taxes may apply at checkout.",
   "multipleAccounts": "Multiple accounts per platform",
@@ -73,9 +68,25 @@
     "decrease": "Decrease {{resource}}",
     "increase": "Increase {{resource}}",
     "summary": "Subscription summary",
-    "monthlyEquivalent": "Monthly price",
+    "monthlyPrice": "Monthly price",
     "subscribe": "Subscribe to Postmade",
-    "portalChanges": "Active subscription quantities are changed securely in Stripe's portal. Reductions below current usage are not allowed."
+    "update": "Update subscription",
+    "updating": "Updating…",
+    "pastDueChanges": "Resolve the outstanding payment in Stripe's portal before changing quantities.",
+    "confirmUpdateTitle": "Confirm update",
+    "confirmUpdateDescription": "Review the new quantities before confirming your subscription update.",
+    "cancelUpdate": "Cancel",
+    "confirmUpdate": "Confirm change",
+    "closeUpdate": "Close confirmation",
+    "reductionBlockedTitle": "You can't reduce this quantity",
+    "channelsInUse": "There are {{count}} connected channels in this workspace. Disconnect at least one channel before reducing the contracted limit.",
+    "channelsMinimum": "The subscription requires at least {{count}} contracted channels.",
+    "membersInUse": "There are {{count}} occupied spots in this workspace, including members and pending invitations. Remove a member or revoke an invitation before reducing the quantity.",
+    "membersMinimum": "The subscription requires at least {{count}} contracted member.",
+    "manageChannels": "Manage channels",
+    "manageMembers": "Manage members",
+    "understood": "Got it",
+    "closeLimit": "Close explanation"
   },
   "faq": {
     "eyebrow": "Frequently asked questions",
@@ -96,15 +107,11 @@
       },
       "changeSubscription": {
         "question": "Can I change the number of channels and members later?",
-        "answer": "Yes. Once the subscription is active, changes are made securely through Stripe's portal and take effect after payment confirmation."
+        "answer": "Yes. Once the subscription is active, change the quantities in Postmade's configurator. The backend validates usage, updates Stripe, and the new quotas take effect after payment confirmation."
       },
       "reduceQuantities": {
         "question": "Why can't I reduce a quantity?",
         "answer": "The new quantity cannot be lower than current usage. Disconnect channels, remove members, or revoke pending invitations before requesting a reduction."
-      },
-      "annualBilling": {
-        "question": "How does annual billing work?",
-        "answer": "With annual billing, you pay the equivalent of 10 monthly payments for 12 months of access. The full amount is billed annually."
       }
     }
   }

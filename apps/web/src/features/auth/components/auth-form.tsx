@@ -8,7 +8,7 @@ import { ROUTES } from "@/routes/route-paths";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
-import { acceptInvitation, createInitialWorkspace } from "@/features/workspaces/store/workspaces-slice";
+import { acceptInvitation, createActiveWorkspaceMock, createConnectedChannelMock, createInitialWorkspace } from "@/features/workspaces/store/workspaces-slice";
 import {
   createAuthSchema,
   type AuthFormValues,
@@ -112,6 +112,10 @@ export function AuthForm({
         userName,
         userEmail: pendingCredentials.email,
       }));
+      if (import.meta.env.MODE === "development") {
+        dispatch(createActiveWorkspaceMock({ userId, userName, userEmail: pendingCredentials.email }));
+        dispatch(createConnectedChannelMock({ userId }));
+      }
     }
     navigate(ROUTES.dashboard);
   };
@@ -145,6 +149,10 @@ export function AuthForm({
       }));
     } else {
       dispatch(createInitialWorkspace({ userId, userName, userEmail }));
+      if (import.meta.env.MODE === "development") {
+        dispatch(createActiveWorkspaceMock({ userId, userName, userEmail }));
+        dispatch(createConnectedChannelMock({ userId }));
+      }
     }
     navigate(ROUTES.dashboard);
   };

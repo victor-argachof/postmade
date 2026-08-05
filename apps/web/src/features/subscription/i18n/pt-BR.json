@@ -19,9 +19,6 @@
   "billingDetailsDescription": "Consulte os dados da assinatura atual.",
   "nextRenewalLabel": "Próxima renovação",
   "accessUntilLabel": "Acesso disponível até",
-  "nextInvoiceAmount": "Próxima cobrança: {{amount}}",
-  "paymentMethodLabel": "Forma de pagamento",
-  "paymentMethodValue": "{{brand}} final {{last4}}",
   "billingUnavailable": "Não disponível",
   "contractedChannels": "Canais contratados",
   "contractedMembers": "Membros contratados",
@@ -41,6 +38,9 @@
   "usageOfLimit": "{{used}} de {{limit}}",
   "usageUnlimited": "Ilimitado",
   "checkoutError": "Não foi possível abrir a página de pagamento. Tente novamente.",
+  "subscriptionUsageValidationError": "A nova configuração não pode ser menor que os recursos em uso.",
+  "subscriptionUpdateRequested": "Atualização solicitada. As novas quantidades serão exibidas após a confirmação do pagamento.",
+  "subscriptionUpdateError": "Não foi possível atualizar a assinatura. Verifique as quantidades e tente novamente.",
   "crossPosting": "Múltiplas redes sociais conectadas",
   "scheduling": "Agendamento de publicações",
   "platformCustomization": "Personalização por plataforma",
@@ -49,12 +49,7 @@
   "subscribeCardDescription": "Fique livre dos limites da avaliação gratuita, configure um plano conforme sua necessidade.",
   "subscribeNow": "Configurar assinatura",
   "checkoutPending": "O checkout será habilitado após a integração segura com o backend e a Stripe.",
-  "billingCycleLabel": "Período de cobrança",
-  "monthly": "Mensal",
-  "annual": "Anual",
-  "annualSavings": "2 meses grátis",
   "perMonth": "/ mês",
-  "billedAnnually": "{{total}} cobrados anualmente",
   "ownerOnly": "Somente o proprietário deste workspace pode alterar a assinatura e a cobrança.",
   "localizedPricingNote": "Os preços são exibidos na moeda definida pelo idioma da aplicação. Impostos podem ser aplicados no checkout.",
   "multipleAccounts": "Múltiplas contas por plataforma",
@@ -73,9 +68,25 @@
     "decrease": "Diminuir {{resource}}",
     "increase": "Aumentar {{resource}}",
     "summary": "Resumo da assinatura",
-    "monthlyEquivalent": "Valor mensal",
+    "monthlyPrice": "Valor mensal",
     "subscribe": "Assinar Postmade",
-    "portalChanges": "As quantidades da assinatura ativa são alteradas com segurança pelo portal da Stripe. Reduções abaixo do uso atual não são permitidas."
+    "update": "Atualizar assinatura",
+    "updating": "Atualizando…",
+    "pastDueChanges": "Regularize o pagamento pelo portal da Stripe antes de alterar as quantidades.",
+    "confirmUpdateTitle": "Confirmar atualização",
+    "confirmUpdateDescription": "Revise as novas quantidades antes de confirmar a atualização da sua assinatura.",
+    "cancelUpdate": "Cancelar",
+    "confirmUpdate": "Confirmar alteração",
+    "closeUpdate": "Fechar confirmação",
+    "reductionBlockedTitle": "Você não pode reduzir esta quantidade",
+    "channelsInUse": "Existem {{count}} canais conectados neste workspace. Desconecte pelo menos um canal antes de reduzir o limite contratado.",
+    "channelsMinimum": "A assinatura exige no mínimo {{count}} canais contratados.",
+    "membersInUse": "Existem {{count}} vagas ocupadas neste workspace, considerando membros e convites pendentes. Remova um membro ou revogue um convite antes de reduzir.",
+    "membersMinimum": "A assinatura exige no mínimo {{count}} membro contratado.",
+    "manageChannels": "Gerenciar canais",
+    "manageMembers": "Gerenciar membros",
+    "understood": "Entendi",
+    "closeLimit": "Fechar explicação"
   },
   "faq": {
     "eyebrow": "Perguntas frequentes",
@@ -96,15 +107,11 @@
       },
       "changeSubscription": {
         "question": "Posso alterar a quantidade de canais e membros depois?",
-        "answer": "Sim. Depois que a assinatura estiver ativa, as alterações são realizadas com segurança pelo portal da Stripe e passam a valer após a confirmação do pagamento."
+        "answer": "Sim. Depois que a assinatura estiver ativa, altere as quantidades no configurador do Postmade. O backend valida o uso, atualiza a Stripe e as novas cotas passam a valer após a confirmação do pagamento."
       },
       "reduceQuantities": {
         "question": "Por que não consigo reduzir uma quantidade?",
         "answer": "A nova quantidade não pode ser menor que o uso atual. Desconecte canais, remova membros ou revogue convites pendentes antes de solicitar a redução."
-      },
-      "annualBilling": {
-        "question": "Como funciona a cobrança anual?",
-        "answer": "No ciclo anual, você paga o equivalente a 10 mensalidades por 12 meses de acesso. O valor total é cobrado anualmente."
       }
     }
   }

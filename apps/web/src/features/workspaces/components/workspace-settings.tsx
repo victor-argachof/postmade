@@ -62,6 +62,7 @@ export function WorkspaceSettings() {
   return (
     <>
       <SectionCard
+        id="workspace-members"
         className="mt-6"
         icon={Settings2}
         title={t("settingsTitle")}

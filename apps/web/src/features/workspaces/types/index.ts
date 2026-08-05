@@ -1,5 +1,4 @@
 export type {
-  BillingCycle,
   SubscriptionStatus,
   WorkspaceBilling,
   WorkspaceSubscriptionConfiguration,

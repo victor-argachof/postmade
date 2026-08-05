@@ -1,5 +1,4 @@
 import { api } from "@/shared/api/api";
-import type { BillingCycle } from "@/features/workspaces/types";
 
 export const billingApi = api.injectEndpoints({
   endpoints: (build) => ({
@@ -11,11 +10,21 @@ export const billingApi = api.injectEndpoints({
     }),
     createCheckoutSession: build.mutation<
       { url: string },
-      { workspaceId: string; billingCycle: BillingCycle; channelQuantity: number; memberQuantity: number }
+      { workspaceId: string; channelQuantity: number; memberQuantity: number }
     >({
       query: ({ workspaceId, ...body }) => ({
         url: `/workspaces/${workspaceId}/checkout`,
         method: "POST",
+        body,
+      }),
+    }),
+    updateSubscription: build.mutation<
+      void,
+      { workspaceId: string; channelQuantity: number; memberQuantity: number }
+    >({
+      query: ({ workspaceId, ...body }) => ({
+        url: `/workspaces/${workspaceId}/subscription`,
+        method: "PATCH",
         body,
       }),
     }),
@@ -25,4 +34,5 @@ export const billingApi = api.injectEndpoints({
 export const {
   useCreateBillingPortalSessionMutation,
   useCreateCheckoutSessionMutation,
+  useUpdateSubscriptionMutation,
 } = billingApi;

@@ -90,6 +90,65 @@ const workspacesSlice = createSlice({
         payload: prepareOwnedWorkspace(payload),
       }),
     },
+    createActiveWorkspaceMock: (state, action: PayloadAction<{
+      userId: string;
+      userName: string;
+      userEmail: string;
+    }>) => {
+      const workspaceId = `development-active-workspace:${action.payload.userId}`;
+      if (state.items.some((workspace) => workspace.id === workspaceId)) return;
+
+      const createdAt = new Date().toISOString();
+      const currentPeriodEndsAt = new Date();
+      currentPeriodEndsAt.setMonth(currentPeriodEndsAt.getMonth() + 1);
+      const workspace = createOwnedWorkspace({
+        ...action.payload,
+        id: workspaceId,
+        name: "Postmade Studio",
+        createdAt,
+      });
+      workspace.subscriptionConfiguration = { channels: 8, members: 3 };
+      workspace.subscriptionStatus = "active";
+      workspace.billing = {
+        currentPeriodEndsAt: currentPeriodEndsAt.toISOString(),
+        cancelAtPeriodEnd: false,
+        currency: "BRL",
+        nextInvoiceAmount: 22_900,
+        paymentMethodBrand: "Visa",
+        paymentMethodLast4: "4242",
+      };
+      workspace.members.push(
+        {
+          id: `${workspaceId}:admin`,
+          name: "Marina Costa",
+          email: "marina@postmade.app",
+          role: "admin",
+          joinedAt: createdAt,
+        },
+        {
+          id: `${workspaceId}:editor`,
+          name: "Lucas Lima",
+          email: "lucas@postmade.app",
+          role: "editor",
+          joinedAt: createdAt,
+        },
+      );
+      state.items.push(workspace);
+    },
+    createConnectedChannelMock: (state, action: PayloadAction<{ userId: string }>) => {
+      const workspace = state.items.find((item) =>
+        item.subscriptionStatus === "trialing"
+        && item.ownerId === action.payload.userId,
+      );
+      if (!workspace || workspace.resources.channels.length > 0) return;
+      workspace.resources.channels.push({
+        id: `development-instagram-channel:${workspace.id}`,
+        platform: "instagram",
+        displayName: "Postmade",
+        username: "@postmade",
+        connected: true,
+      });
+    },
     selectWorkspace: (state, action: PayloadAction<{ workspaceId: string; userId: string }>) => {
       const allowed = state.items.some((workspace) =>
         workspace.id === action.payload.workspaceId
@@ -237,6 +296,8 @@ export const {
   changeMemberRole,
   clearWorkspaceSession,
   createInitialWorkspace,
+  createActiveWorkspaceMock,
+  createConnectedChannelMock,
   createWorkspace,
   disconnectWorkspaceChannel,
   inviteMember,

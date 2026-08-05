@@ -22,8 +22,6 @@ interface BillingDetailsCardProps {
   cancelAtPeriodEnd?: boolean;
   currency?: string | null;
   nextInvoiceAmount?: number | null;
-  paymentMethodBrand?: string | null;
-  paymentMethodLast4?: string | null;
   canManage?: boolean;
   isOpeningPortal?: boolean;
   onManage?: () => void;
@@ -36,8 +34,6 @@ export function BillingDetailsCard({
   cancelAtPeriodEnd = false,
   currency,
   nextInvoiceAmount,
-  paymentMethodBrand,
-  paymentMethodLast4,
   canManage = false,
   isOpeningPortal = false,
   onManage,
@@ -51,9 +47,6 @@ export function BillingDetailsCard({
   const nextAmount = currency && nextInvoiceAmount !== null && nextInvoiceAmount !== undefined
     ? new Intl.NumberFormat(locale, { style: "currency", currency }).format(nextInvoiceAmount / 100)
     : null;
-  const paymentMethod = paymentMethodBrand && paymentMethodLast4
-    ? t("paymentMethodValue", { brand: paymentMethodBrand, last4: paymentMethodLast4 })
-    : t("billingUnavailable");
   const isPastDue = status === "past_due";
   const isCanceled = status === "canceled";
 
@@ -100,7 +93,7 @@ export function BillingDetailsCard({
         </p>
       )}
 
-      <dl className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 xl:grid-cols-5">
+      <dl className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl bg-muted p-4">
           <dt className="text-xs font-semibold text-muted-foreground">{t("statusTitle")}</dt>
           <dd className="mt-2">
@@ -121,12 +114,8 @@ export function BillingDetailsCard({
           <dt className="text-xs font-semibold text-muted-foreground">{renewalLabel}</dt>
           <dd className="mt-2 text-sm font-bold">{renewalValue}</dd>
           {nextAmount && !cancelAtPeriodEnd && !isCanceled && (
-            <p className="mt-1 text-xs text-muted-foreground">{t("nextInvoiceAmount", { amount: nextAmount })}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{nextAmount}</p>
           )}
-        </div>
-        <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("paymentMethodLabel")}</dt>
-          <dd className="mt-2 text-sm font-bold capitalize">{paymentMethod}</dd>
         </div>
       </dl>
       <div className="mt-6 sm:hidden">

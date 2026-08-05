@@ -7,21 +7,19 @@ import {
 
 describe("subscription pricing", () => {
   it("calculates the included monthly configuration in both currencies", () => {
-    expect(calculateSubscriptionPrice({ channels: 3, members: 1 }, "USD", "monthly")).toEqual({
+    expect(calculateSubscriptionPrice({ channels: 3, members: 1 }, "USD")).toEqual({
       additionalChannels: 0,
       additionalMembers: 0,
       monthly: 1_900,
-      billedTotal: 1_900,
     });
-    expect(calculateSubscriptionPrice({ channels: 3, members: 1 }, "BRL", "monthly").monthly).toBe(9_900);
+    expect(calculateSubscriptionPrice({ channels: 3, members: 1 }, "BRL").monthly).toBe(9_900);
   });
 
-  it("adds channels and members and charges ten months annually", () => {
-    expect(calculateSubscriptionPrice({ channels: 5, members: 3 }, "USD", "annual")).toEqual({
+  it("adds channels and members to the monthly price", () => {
+    expect(calculateSubscriptionPrice({ channels: 5, members: 3 }, "USD")).toEqual({
       additionalChannels: 2,
       additionalMembers: 2,
       monthly: 3_900,
-      billedTotal: 39_000,
     });
   });
 
