@@ -113,7 +113,6 @@ export function SubscriptionSummary({
       showSubscribeCard && "lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)]",
     )}>
       <SectionCard
-        className="border-primary/25"
         icon={BarChart3}
         title={t(trialing ? "trialLimitsTitle" : "limitsTitle")}
         description={t(trialing ? "trialLimitsDescription" : "limitsDescription")}

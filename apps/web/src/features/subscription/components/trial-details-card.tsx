@@ -24,7 +24,7 @@ export function TrialDetailsCard({
 
   return (
     <SectionCard
-      className="mt-10 border-primary/25"
+      className="mt-10"
       icon={ReceiptText}
       title={t("billingDetailsTitle")}
       description={t("billingDetailsDescription")}

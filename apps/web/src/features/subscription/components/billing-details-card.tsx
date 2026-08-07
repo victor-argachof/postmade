@@ -55,12 +55,9 @@ export function BillingDetailsCard({
 
   return (
     <SectionCard
-      className={`mt-10 rounded-3xl border bg-card p-6 shadow-sm sm:p-8 ${
-        isPastDue ? "border-amber-500/40" : "border-border"
-      }`}
+      className="mt-10"
       icon={isPastDue ? AlertTriangle : ReceiptText}
       title={t("billingDetailsTitle")}
-      titleClassName="text-xl font-black"
       description={t("billingDetailsDescription")}
       action={(
         <div className="hidden items-center gap-2 sm:flex">

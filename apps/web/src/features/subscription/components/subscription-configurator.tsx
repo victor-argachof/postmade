@@ -203,7 +203,7 @@ export function SubscriptionConfigurator({
           </ul>
         </div>
 
-        <aside className="rounded-3xl border border-primary/25 bg-card p-6 shadow-sm sm:p-8" aria-label={t("configurator.summary") }>
+        <aside className="rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8" aria-label={t("configurator.summary") }>
           <h3 className="text-xl font-black">{t("configurator.summary")}</h3>
           <dl className="mt-6 space-y-4 text-sm">
             <div className="flex justify-between gap-4"><dt>{t("configurator.channels")}</dt><dd className="font-bold">{quantities.channels}</dd></div>
