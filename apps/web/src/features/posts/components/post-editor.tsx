@@ -1,2 +1,4 @@
 // Boundary reserved for the platform-aware text editor.
-export function PostEditor() { return null; }
+export function PostEditor() {
+  return null;
+}

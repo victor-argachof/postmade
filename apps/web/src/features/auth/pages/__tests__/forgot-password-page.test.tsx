@@ -2,7 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterAll, beforeAll } from "vitest";
+
 import i18n from "@/shared/i18n";
+
 import { ForgotPasswordPage } from "../forgot-password-page";
 
 const initialLanguage = i18n.resolvedLanguage ?? "en";
@@ -21,23 +23,31 @@ describe("ForgotPasswordPage", () => {
     render(
       <MemoryRouter>
         <ForgotPasswordPage />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     const email = screen.getByLabelText("E-mail");
-    const submitButton = screen.getByRole("button", { name: /enviar link de redefinição/i });
+    const submitButton = screen.getByRole("button", {
+      name: /enviar link de redefinição/i,
+    });
 
     await user.click(submitButton);
     expect(screen.getByText("Informe seu e-mail.")).toBeInTheDocument();
 
     await user.type(email, "email-invalido");
-    expect(screen.getByText("Digite um endereço de e-mail válido.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Digite um endereço de e-mail válido.")
+    ).toBeInTheDocument();
 
     await user.clear(email);
     await user.type(email, "user@postmade.app");
     await user.click(submitButton);
 
-    expect(screen.getByRole("status")).toHaveTextContent("Solicitação recebida");
-    expect(screen.getByRole("link", { name: /voltar para o login/i })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Solicitação recebida"
+    );
+    expect(
+      screen.getByRole("link", { name: /voltar para o login/i })
+    ).toHaveAttribute("href", "/login");
   });
 });

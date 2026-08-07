@@ -7,6 +7,16 @@
   "selectLanguage": "Selecionar idioma",
   "useLightTheme": "Usar tema claro",
   "useDarkTheme": "Usar tema escuro",
+  "datePicker": {
+    "placeholder": "Selecione uma data",
+    "calendar": "Calendário",
+    "previousMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "clear": "Limpar data",
+    "date": "Data",
+    "hour": "Hora",
+    "minute": "Minuto"
+  },
   "footer": {
     "madeWith": "Feito com",
     "love": "amor",

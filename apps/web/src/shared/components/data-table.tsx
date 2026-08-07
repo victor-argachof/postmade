@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import { cn } from "@/shared/lib/utils";
 
 export interface DataTableColumn<T> {
@@ -24,7 +25,9 @@ export function DataTable<T>({
 }) {
   return (
     <>
-      {header && <div className="border-b border-border px-5 py-3">{header}</div>}
+      {header && (
+        <div className="border-b border-border px-5 py-3">{header}</div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full caption-bottom text-sm" aria-label={label}>
           <thead className="border-b border-border bg-muted/50">
@@ -32,7 +35,10 @@ export function DataTable<T>({
               {columns.map((column) => (
                 <th
                   key={column.id}
-                  className={cn("h-12 px-5 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground", column.headerClassName)}
+                  className={cn(
+                    "h-12 px-5 text-left align-middle text-xs font-bold tracking-wider text-muted-foreground uppercase",
+                    column.headerClassName
+                  )}
                   scope="col"
                 >
                   {column.header}
@@ -42,9 +48,15 @@ export function DataTable<T>({
           </thead>
           <tbody className="divide-y divide-border">
             {data.map((row) => (
-              <tr key={getRowId(row)} className="transition-colors hover:bg-muted/35">
+              <tr
+                key={getRowId(row)}
+                className="transition-colors hover:bg-muted/35"
+              >
                 {columns.map((column) => (
-                  <td key={column.id} className={cn("px-5 py-4 align-middle", column.className)}>
+                  <td
+                    key={column.id}
+                    className={cn("px-5 py-4 align-middle", column.className)}
+                  >
                     {column.cell(row)}
                   </td>
                 ))}

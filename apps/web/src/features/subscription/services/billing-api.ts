@@ -2,7 +2,10 @@ import { api } from "@/shared/api/api";
 
 export const billingApi = api.injectEndpoints({
   endpoints: (build) => ({
-    createBillingPortalSession: build.mutation<{ url: string }, { workspaceId: string }>({
+    createBillingPortalSession: build.mutation<
+      { url: string },
+      { workspaceId: string }
+    >({
       query: ({ workspaceId }) => ({
         url: `/workspaces/${workspaceId}/billing-portal`,
         method: "POST",

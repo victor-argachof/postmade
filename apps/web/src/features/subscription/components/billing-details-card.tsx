@@ -1,12 +1,13 @@
 import { AlertTriangle, ExternalLink, Info, ReceiptText } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/shared/components/ui/button";
-import { SectionCard } from "@/shared/components/section-card";
-import { Tooltip } from "@/shared/components/ui/tooltip";
+
 import type {
   SubscriptionStatus,
   WorkspaceSubscriptionConfiguration,
 } from "@/features/workspaces/types";
+import { SectionCard } from "@/shared/components/section-card";
+import { Button } from "@/shared/components/ui/button";
+import { Tooltip } from "@/shared/components/ui/tooltip";
 
 const statusStyles: Record<Exclude<SubscriptionStatus, "trialing">, string> = {
   active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
@@ -39,18 +40,29 @@ export function BillingDetailsCard({
   onManage,
 }: BillingDetailsCardProps) {
   const { t, i18n } = useTranslation("subscription");
-  const locale = i18n.resolvedLanguage?.toLowerCase().startsWith("pt-br") ? "pt-BR" : "en-US";
+  const locale = i18n.resolvedLanguage?.toLowerCase().startsWith("pt-br")
+    ? "pt-BR"
+    : "en-US";
   const periodEnd = currentPeriodEndsAt
-    ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" })
-      .format(new Date(currentPeriodEndsAt))
+    ? new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(new Date(currentPeriodEndsAt))
     : null;
-  const nextAmount = currency && nextInvoiceAmount !== null && nextInvoiceAmount !== undefined
-    ? new Intl.NumberFormat(locale, { style: "currency", currency }).format(nextInvoiceAmount / 100)
-    : null;
+  const nextAmount =
+    currency && nextInvoiceAmount !== null && nextInvoiceAmount !== undefined
+      ? new Intl.NumberFormat(locale, { style: "currency", currency }).format(
+          nextInvoiceAmount / 100
+        )
+      : null;
   const isPastDue = status === "past_due";
   const isCanceled = status === "canceled";
 
-  const renewalLabel = cancelAtPeriodEnd || isCanceled ? t("accessUntilLabel") : t("nextRenewalLabel");
+  const renewalLabel =
+    cancelAtPeriodEnd || isCanceled
+      ? t("accessUntilLabel")
+      : t("nextRenewalLabel");
   const renewalValue = periodEnd ?? t("billingUnavailable");
 
   return (
@@ -59,14 +71,16 @@ export function BillingDetailsCard({
       icon={isPastDue ? AlertTriangle : ReceiptText}
       title={t("billingDetailsTitle")}
       description={t("billingDetailsDescription")}
-      action={(
+      action={
         <div className="hidden items-center gap-2 sm:flex">
           <Button
             type="button"
             onClick={onManage}
             disabled={!canManage || !onManage || isOpeningPortal}
           >
-            {isOpeningPortal ? t("openingBillingPortal") : t("manageSubscription")}
+            {isOpeningPortal
+              ? t("openingBillingPortal")
+              : t("manageSubscription")}
             <ExternalLink className="size-4" aria-hidden="true" />
           </Button>
           <Tooltip
@@ -76,14 +90,16 @@ export function BillingDetailsCard({
             <Info className="size-4" aria-hidden="true" />
           </Tooltip>
         </div>
-      )}
+      }
     >
       {(isPastDue || cancelAtPeriodEnd) && (
-        <p className={`mt-5 max-w-2xl rounded-xl px-4 py-3 text-sm ${
-          isPastDue
-            ? "bg-amber-500/10 text-amber-800 dark:text-amber-300"
-            : "bg-muted text-muted-foreground"
-        }`}>
+        <p
+          className={`mt-5 max-w-2xl rounded-xl px-4 py-3 text-sm ${
+            isPastDue
+              ? "bg-amber-500/10 text-amber-800 dark:text-amber-300"
+              : "bg-muted text-muted-foreground"
+          }`}
+        >
           {isPastDue
             ? t("pastDueNotice")
             : t("cancellationScheduledNotice", { date: renewalValue })}
@@ -92,23 +108,33 @@ export function BillingDetailsCard({
 
       <dl className="mt-8 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("statusTitle")}</dt>
+          <dt className="text-xs font-semibold text-muted-foreground">
+            {t("statusTitle")}
+          </dt>
           <dd className="mt-2">
-            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${statusStyles[status]}`}>
+            <span
+              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ${statusStyles[status]}`}
+            >
               {t(`subscriptionStatuses.${status}`)}
             </span>
           </dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("contractedChannels")}</dt>
+          <dt className="text-xs font-semibold text-muted-foreground">
+            {t("contractedChannels")}
+          </dt>
           <dd className="mt-2 text-sm font-bold">{configuration.channels}</dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{t("contractedMembers")}</dt>
+          <dt className="text-xs font-semibold text-muted-foreground">
+            {t("contractedMembers")}
+          </dt>
           <dd className="mt-2 text-sm font-bold">{configuration.members}</dd>
         </div>
         <div className="rounded-2xl bg-muted p-4">
-          <dt className="text-xs font-semibold text-muted-foreground">{renewalLabel}</dt>
+          <dt className="text-xs font-semibold text-muted-foreground">
+            {renewalLabel}
+          </dt>
           <dd className="mt-2 text-sm font-bold">{renewalValue}</dd>
           {nextAmount && !cancelAtPeriodEnd && !isCanceled && (
             <p className="mt-1 text-xs text-muted-foreground">{nextAmount}</p>
@@ -122,7 +148,9 @@ export function BillingDetailsCard({
           onClick={onManage}
           disabled={!canManage || !onManage || isOpeningPortal}
         >
-          {isOpeningPortal ? t("openingBillingPortal") : t("manageSubscription")}
+          {isOpeningPortal
+            ? t("openingBillingPortal")
+            : t("manageSubscription")}
           <ExternalLink className="size-4" aria-hidden="true" />
         </Button>
         <p className="mt-2 text-center text-xs leading-5 text-muted-foreground">

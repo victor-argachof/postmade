@@ -4,17 +4,38 @@
   "usage": {
     "label": "Usage",
     "limited": "{{count}} of {{limit}} channels connected",
-    "unlimited": { "singular": "{{count}} channel connected — unlimited", "plural": "{{count}} channels connected — unlimited" }
+    "unlimited": {
+      "singular": "{{count}} channel connected — unlimited",
+      "plural": "{{count}} channels connected — unlimited"
+    }
   },
   "platforms": {
     "title": "Available platforms",
     "description": "Choose a platform to connect a new account to the workspace.",
-    "connectedCount": { "singular": "{{count}} connected account", "plural": "{{count}} connected accounts" },
-    "facebook": { "name": "Facebook", "description": "Publish content to Facebook pages and professional profiles." },
-    "linkedin": { "name": "LinkedIn", "description": "Share updates with your profile and professional pages." },
-    "instagram": { "name": "Instagram", "description": "Manage visual content for your professional accounts." },
-    "tiktok": { "name": "TikTok", "description": "Distribute videos to your TikTok audience." },
-    "youtube": { "name": "YouTube", "description": "Publish videos to your connected YouTube channels." }
+    "connectedCount": {
+      "singular": "{{count}} connected account",
+      "plural": "{{count}} connected accounts"
+    },
+    "facebook": {
+      "name": "Facebook",
+      "description": "Publish content to Facebook pages and professional profiles."
+    },
+    "linkedin": {
+      "name": "LinkedIn",
+      "description": "Share updates with your profile and professional pages."
+    },
+    "instagram": {
+      "name": "Instagram",
+      "description": "Manage visual content for your professional accounts."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "description": "Distribute videos to your TikTok audience."
+    },
+    "youtube": {
+      "name": "YouTube",
+      "description": "Publish videos to your connected YouTube channels."
+    }
   },
   "connected": {
     "title": "Connected channels",

@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
+
 import { ROUTES } from "@/routes/route-paths";
 import { Brand } from "@/shared/components/brand";
+
 import { MobilePreferences } from "./mobile-preferences";
 import {
   SidebarNavigation,
@@ -68,7 +70,7 @@ export function MobileSidebar({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="flex size-10 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex size-10 cursor-pointer items-center justify-center rounded-xl text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             aria-label={closeLabel}
           >
             <X className="size-5" aria-hidden="true" />

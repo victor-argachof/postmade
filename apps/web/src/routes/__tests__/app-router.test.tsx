@@ -1,8 +1,11 @@
-import { Provider } from "react-redux";
 import { render, screen } from "@testing-library/react";
+import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
+
 import { store } from "@/shared/store";
+
 import "@/shared/i18n";
+
 import { AppRouter } from "../app-router";
 import { ROUTES } from "../route-paths";
 
@@ -13,11 +16,17 @@ describe("AppRouter", () => {
         <MemoryRouter initialEntries={[ROUTES.home]}>
           <AppRouter />
         </MemoryRouter>
-      </Provider>,
+      </Provider>
     );
 
-    expect(await screen.findByRole("heading", { name: /crie uma vez|create once/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /configurações|settings/i })).toHaveAttribute("href", ROUTES.workspaceSettings);
-    expect(screen.getByRole("link", { name: /assinatura|subscription/i })).toHaveAttribute("href", ROUTES.workspaceSubscription);
+    expect(
+      await screen.findByRole("heading", { name: /crie uma vez|create once/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /configurações|settings/i })
+    ).toHaveAttribute("href", ROUTES.workspaceSettings);
+    expect(
+      screen.getByRole("link", { name: /assinatura|subscription/i })
+    ).toHaveAttribute("href", ROUTES.workspaceSubscription);
   });
 });

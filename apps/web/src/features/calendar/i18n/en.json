@@ -1,3 +1,41 @@
 {
-  "comingSoonDescription": "Schedule viewing and editing will be implemented in the next module."
+  "comingSoonDescription": "Schedule viewing and editing are available.",
+  "pageTitle": "Calendar",
+  "pageDescription": "Plan your schedule and track every publication.",
+  "newPost": "New publication",
+  "today": "Today",
+  "previous": "Previous month",
+  "next": "Next month",
+  "selectDate": "Select date",
+  "scheduleForDate": "Schedule publication for {{date}}",
+  "more": "+{{count}} more",
+  "mediaOnly": "Media publication",
+  "channels": "channels",
+  "close": "Close",
+  "platforms": {
+    "facebook": "Facebook",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "tiktok": "TikTok",
+    "youtube": "YouTube"
+  },
+  "statuses": {
+    "scheduled": "Scheduled",
+    "published": "Published",
+    "failed": "Failed"
+  },
+  "filters": {
+    "platform": "Platform",
+    "status": "Status",
+    "channel": "Channel",
+    "allPlatforms": "All platforms",
+    "allStatuses": "All statuses",
+    "allChannels": "All channels"
+  },
+  "agenda": {
+    "title": "Daily agenda",
+    "add": "Add",
+    "empty": "No publications for this day."
+  },
+  "details": { "title": "Publication details", "edit": "Edit publication" }
 }

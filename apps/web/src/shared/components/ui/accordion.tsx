@@ -1,6 +1,7 @@
-import * as React from "react";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronDown } from "lucide-react";
+import * as React from "react";
+
 import { cn } from "@/shared/lib/utils";
 
 export const Accordion = AccordionPrimitive.Root;
@@ -25,8 +26,8 @@ export const AccordionTrigger = React.forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "group flex flex-1 cursor-pointer items-center justify-between gap-4 py-5 text-left text-sm font-semibold transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        className,
+        "group flex flex-1 cursor-pointer items-center justify-between gap-4 py-5 text-left text-sm font-semibold transition-colors hover:text-primary focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        className
       )}
       {...props}
     >
@@ -49,7 +50,9 @@ export const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm data-[state=closed]:animate-[accordion-up_200ms_ease-out] data-[state=open]:animate-[accordion-down_200ms_ease-out]"
     {...props}
   >
-    <div className={cn("pb-5 leading-6 text-muted-foreground", className)}>{children}</div>
+    <div className={cn("pb-5 leading-6 text-muted-foreground", className)}>
+      {children}
+    </div>
   </AccordionPrimitive.Content>
 ));
 AccordionContent.displayName = "AccordionContent";

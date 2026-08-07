@@ -22,12 +22,21 @@ describe("workspacesSlice", () => {
     const workspace = state.items[0]!;
 
     expect(workspace.name).toBe("Workspace de Ada Lovelace");
-    expect(workspace.subscriptionConfiguration).toEqual({ channels: 3, members: 1 });
+    expect(workspace.subscriptionConfiguration).toEqual({
+      channels: 3,
+      members: 1,
+    });
     expect(workspace.subscriptionStatus).toBe("trialing");
-    expect(workspace.members).toEqual(expect.arrayContaining([
-      expect.objectContaining({ id: owner.userId, role: "owner" }),
-    ]));
-    expect(workspace.resources).toEqual({ channels: [], posts: [], selectedCalendarDate: null });
+    expect(workspace.members).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: owner.userId, role: "owner" }),
+      ])
+    );
+    expect(workspace.resources).toEqual({
+      channels: [],
+      posts: [],
+      selectedCalendarDate: null,
+    });
     expect(state.activeWorkspaceId).toBe(workspace.id);
   });
 
@@ -36,25 +45,35 @@ describe("workspacesSlice", () => {
     state = reducer(state, createActiveWorkspaceMock(owner));
     state = reducer(state, createActiveWorkspaceMock(owner));
 
-    const activeWorkspace = state.items.find((workspace) => workspace.subscriptionStatus === "active");
+    const activeWorkspace = state.items.find(
+      (workspace) => workspace.subscriptionStatus === "active"
+    );
     expect(state.items).toHaveLength(2);
-    expect(activeWorkspace).toEqual(expect.objectContaining({
-      name: "Postmade Studio",
-      ownerId: owner.userId,
-      subscriptionConfiguration: { channels: 8, members: 3 },
-      billing: expect.objectContaining({
-        currency: "BRL",
-        nextInvoiceAmount: 22_900,
-        paymentMethodLast4: "4242",
-      }),
-    }));
+    expect(activeWorkspace).toEqual(
+      expect.objectContaining({
+        name: "Postmade Studio",
+        ownerId: owner.userId,
+        subscriptionConfiguration: { channels: 8, members: 3 },
+        billing: expect.objectContaining({
+          currency: "BRL",
+          nextInvoiceAmount: 22_900,
+          paymentMethodLast4: "4242",
+        }),
+      })
+    );
     expect(activeWorkspace?.members).toHaveLength(3);
   });
 
   it("stores the development channel mock in the trial workspace", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
-    state = reducer(state, createConnectedChannelMock({ userId: owner.userId }));
-    state = reducer(state, createConnectedChannelMock({ userId: owner.userId }));
+    state = reducer(
+      state,
+      createConnectedChannelMock({ userId: owner.userId })
+    );
+    state = reducer(
+      state,
+      createConnectedChannelMock({ userId: owner.userId })
+    );
 
     expect(state.items[0]!.resources.channels).toEqual([
       expect.objectContaining({ platform: "instagram", connected: true }),
@@ -69,9 +88,15 @@ describe("workspacesSlice", () => {
 
     expect(secondId).not.toBe(firstId);
     expect(state.items).toHaveLength(2);
-    state = reducer(state, selectWorkspace({ workspaceId: firstId, userId: "stranger" }));
+    state = reducer(
+      state,
+      selectWorkspace({ workspaceId: firstId, userId: "stranger" })
+    );
     expect(state.activeWorkspaceId).toBe(secondId);
-    state = reducer(state, selectWorkspace({ workspaceId: firstId, userId: owner.userId }));
+    state = reducer(
+      state,
+      selectWorkspace({ workspaceId: firstId, userId: owner.userId })
+    );
     expect(state.activeWorkspaceId).toBe(firstId);
   });
 
@@ -90,43 +115,67 @@ describe("workspacesSlice", () => {
 
     state = {
       ...state,
-      items: state.items.map((workspace) => workspace.id === workspaceId
-        ? { ...workspace, subscriptionConfiguration: { channels: 3, members: 5 }, subscriptionStatus: "active" as const }
-        : workspace),
+      items: state.items.map((workspace) =>
+        workspace.id === workspaceId
+          ? {
+              ...workspace,
+              subscriptionConfiguration: { channels: 3, members: 5 },
+              subscriptionStatus: "active" as const,
+            }
+          : workspace
+      ),
     };
     state = reducer(state, inviteMember(invitationInput));
     const invitation = state.items[0]!.invitations[0]!;
     expect(invitation.status).toBe("pending");
 
-    state = reducer(state, acceptInvitation({
-      token: invitation.token,
-      userId: "user:grace@postmade.app",
-      userName: "Grace Hopper",
-      userEmail: "different@postmade.app",
-      acceptedAt: new Date().toISOString(),
-    }));
+    state = reducer(
+      state,
+      acceptInvitation({
+        token: invitation.token,
+        userId: "user:grace@postmade.app",
+        userName: "Grace Hopper",
+        userEmail: "different@postmade.app",
+        acceptedAt: new Date().toISOString(),
+      })
+    );
     expect(state.items[0]!.members).toHaveLength(1);
 
-    state = reducer(state, acceptInvitation({
-      token: invitation.token,
-      userId: "user:grace@postmade.app",
-      userName: "Grace Hopper",
-      userEmail: "grace@postmade.app",
-      acceptedAt: new Date().toISOString(),
-    }));
-    expect(state.items[0]!.members[1]).toEqual(expect.objectContaining({
-      email: "grace@postmade.app",
-      role: "editor",
-    }));
+    state = reducer(
+      state,
+      acceptInvitation({
+        token: invitation.token,
+        userId: "user:grace@postmade.app",
+        userName: "Grace Hopper",
+        userEmail: "grace@postmade.app",
+        acceptedAt: new Date().toISOString(),
+      })
+    );
+    expect(state.items[0]!.members[1]).toEqual(
+      expect.objectContaining({
+        email: "grace@postmade.app",
+        role: "editor",
+      })
+    );
     expect(state.activeWorkspaceId).toBe(workspaceId);
   });
 
   it("limits renaming to workspace managers", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
     const workspaceId = state.activeWorkspaceId!;
-    state = reducer(state, renameWorkspace({ workspaceId, name: "Blocked", actorId: "stranger" }));
+    state = reducer(
+      state,
+      renameWorkspace({ workspaceId, name: "Blocked", actorId: "stranger" })
+    );
     expect(state.items[0]!.name).toBe("Workspace de Ada Lovelace");
-    state = reducer(state, renameWorkspace({ workspaceId, name: "Minha marca", actorId: owner.userId }));
+    state = reducer(
+      state,
+      renameWorkspace({
+        workspaceId,
+        name: "Minha marca",
+        actorId: owner.userId,
+      })
+    );
     expect(state.items[0]!.name).toBe("Minha marca");
   });
 
@@ -142,10 +191,30 @@ describe("workspacesSlice", () => {
       })),
     };
 
-    state = reducer(state, inviteMember({ workspaceId, actorId: owner.userId, email: "first@postmade.app", role: "editor" }));
-    state = reducer(state, inviteMember({ workspaceId, actorId: owner.userId, email: "second@postmade.app", role: "viewer" }));
+    state = reducer(
+      state,
+      inviteMember({
+        workspaceId,
+        actorId: owner.userId,
+        email: "first@postmade.app",
+        role: "editor",
+      })
+    );
+    state = reducer(
+      state,
+      inviteMember({
+        workspaceId,
+        actorId: owner.userId,
+        email: "second@postmade.app",
+        role: "viewer",
+      })
+    );
 
-    expect(state.items[0]!.invitations.filter((invitation) => invitation.status === "pending")).toHaveLength(1);
+    expect(
+      state.items[0]!.invitations.filter(
+        (invitation) => invitation.status === "pending"
+      )
+    ).toHaveLength(1);
   });
 
   it("disconnects a Facebook channel only for a manager of its workspace", () => {
@@ -153,34 +222,55 @@ describe("workspacesSlice", () => {
     const workspaceId = state.activeWorkspaceId!;
     state = {
       ...state,
-      items: state.items.map((workspace) => workspace.id === workspaceId ? {
-        ...workspace,
-        resources: {
-          ...workspace.resources,
-          channels: [{ id: "facebook-1", platform: "facebook", displayName: "Postmade", username: "postmade", connected: true }],
-        },
-        members: [...workspace.members, {
-          id: "editor-1",
-          name: "Editor",
-          email: "editor@postmade.app",
-          role: "editor" as const,
-          joinedAt: new Date().toISOString(),
-        }],
-      } : workspace),
+      items: state.items.map((workspace) =>
+        workspace.id === workspaceId
+          ? {
+              ...workspace,
+              resources: {
+                ...workspace.resources,
+                channels: [
+                  {
+                    id: "facebook-1",
+                    platform: "facebook",
+                    displayName: "Postmade",
+                    username: "postmade",
+                    connected: true,
+                  },
+                ],
+              },
+              members: [
+                ...workspace.members,
+                {
+                  id: "editor-1",
+                  name: "Editor",
+                  email: "editor@postmade.app",
+                  role: "editor" as const,
+                  joinedAt: new Date().toISOString(),
+                },
+              ],
+            }
+          : workspace
+      ),
     };
 
-    state = reducer(state, disconnectWorkspaceChannel({
-      workspaceId,
-      channelId: "facebook-1",
-      actorId: "editor-1",
-    }));
+    state = reducer(
+      state,
+      disconnectWorkspaceChannel({
+        workspaceId,
+        channelId: "facebook-1",
+        actorId: "editor-1",
+      })
+    );
     expect(state.items[0]!.resources.channels).toHaveLength(1);
 
-    state = reducer(state, disconnectWorkspaceChannel({
-      workspaceId,
-      channelId: "facebook-1",
-      actorId: owner.userId,
-    }));
+    state = reducer(
+      state,
+      disconnectWorkspaceChannel({
+        workspaceId,
+        channelId: "facebook-1",
+        actorId: owner.userId,
+      })
+    );
     expect(state.items[0]!.resources.channels).toHaveLength(0);
   });
 
@@ -189,22 +279,43 @@ describe("workspacesSlice", () => {
     const firstWorkspaceId = state.activeWorkspaceId!;
     state = {
       ...state,
-      items: state.items.map((workspace) => workspace.id === firstWorkspaceId ? {
-        ...workspace,
-        resources: {
-          ...workspace.resources,
-          channels: [{ id: "youtube-1", platform: "youtube", displayName: "Postmade TV", username: "@postmade", connected: true }],
-        },
-      } : workspace),
+      items: state.items.map((workspace) =>
+        workspace.id === firstWorkspaceId
+          ? {
+              ...workspace,
+              resources: {
+                ...workspace.resources,
+                channels: [
+                  {
+                    id: "youtube-1",
+                    platform: "youtube",
+                    displayName: "Postmade TV",
+                    username: "@postmade",
+                    connected: true,
+                  },
+                ],
+              },
+            }
+          : workspace
+      ),
     };
-    state = reducer(state, createWorkspace({ ...owner, name: "Second workspace" }));
+    state = reducer(
+      state,
+      createWorkspace({ ...owner, name: "Second workspace" })
+    );
 
-    state = reducer(state, disconnectWorkspaceChannel({
-      workspaceId: state.activeWorkspaceId!,
-      channelId: "youtube-1",
-      actorId: owner.userId,
-    }));
+    state = reducer(
+      state,
+      disconnectWorkspaceChannel({
+        workspaceId: state.activeWorkspaceId!,
+        channelId: "youtube-1",
+        actorId: owner.userId,
+      })
+    );
 
-    expect(state.items.find((item) => item.id === firstWorkspaceId)?.resources.channels).toHaveLength(1);
+    expect(
+      state.items.find((item) => item.id === firstWorkspaceId)?.resources
+        .channels
+    ).toHaveLength(1);
   });
 });

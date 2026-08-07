@@ -76,7 +76,7 @@ O mesmo botão inicia o fluxo OIDC nos dois contextos:
 2. O backend valida o ID token, incluindo assinatura, `iss`, `aud`, expiração e
    nonce.
 3. O backend procura a identidade usando `(provider = google,
-   providerSubject = sub)`.
+providerSubject = sub)`.
 4. Se ela existir, cria uma sessão para o `user.id` correspondente.
 5. Se não existir, verifica se o e-mail verificado informado pelo Google já
    pertence a uma conta nativa.
@@ -111,12 +111,12 @@ cópia exibida pelo Postmade, mas nunca alteram o `user.id` ou o
 
 ## Conflitos de e-mail
 
-| Conta existente | Tentativa | Resultado |
-| --- | --- | --- |
-| Nativa | Cadastro nativo com o mesmo e-mail | Bloquear e orientar login |
-| Nativa | Google com o mesmo e-mail | Bloquear e orientar e-mail e senha |
-| Google | Cadastro/login nativo com o mesmo e-mail | Bloquear e orientar Google |
-| Google | Google com o mesmo `sub` | Entrar na conta existente |
+| Conta existente | Tentativa                                | Resultado                          |
+| --------------- | ---------------------------------------- | ---------------------------------- |
+| Nativa          | Cadastro nativo com o mesmo e-mail       | Bloquear e orientar login          |
+| Nativa          | Google com o mesmo e-mail                | Bloquear e orientar e-mail e senha |
+| Google          | Cadastro/login nativo com o mesmo e-mail | Bloquear e orientar Google         |
+| Google          | Google com o mesmo `sub`                 | Entrar na conta existente          |
 
 Coincidência de e-mail nunca autoriza mesclagem ou vinculação de contas.
 

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+
 import { PageHeader } from "@/shared/components/page-header";
 
 interface FeaturePlaceholderProps {
@@ -7,7 +8,11 @@ interface FeaturePlaceholderProps {
   icon: LucideIcon;
 }
 
-export function FeaturePlaceholder({ title, description, icon: Icon }: FeaturePlaceholderProps) {
+export function FeaturePlaceholder({
+  title,
+  description,
+  icon: Icon,
+}: FeaturePlaceholderProps) {
   return (
     <section className="mx-auto max-w-5xl">
       <PageHeader title={title} />

@@ -15,11 +15,7 @@ interface WorkspaceSubscriptionConfiguration {
 }
 
 type SubscriptionStatus =
-  | "trialing"
-  | "active"
-  | "past_due"
-  | "canceled"
-  | "expired";
+  "trialing" | "active" | "past_due" | "canceled" | "expired";
 ```
 
 - A assinatura, sua configuração e cobrança pertencem ao workspace.
@@ -32,11 +28,11 @@ type SubscriptionStatus =
 
 A mensalidade-base inclui 3 canais e 1 membro:
 
-| Item mensal | USD | BRL |
-| --- | ---: | ---: |
-| Base | US$ 19 | R$ 99 |
-| Canal adicional | US$ 2 | R$ 10 |
-| Membro adicional | US$ 8 | R$ 40 |
+| Item mensal      |    USD |   BRL |
+| ---------------- | -----: | ----: |
+| Base             | US$ 19 | R$ 99 |
+| Canal adicional  |  US$ 2 | R$ 10 |
+| Membro adicional |  US$ 8 | R$ 40 |
 
 O configurador aceita entre 3 e 500 canais e entre 1 e 100 membros. Os valores
 representam o total contratado, não apenas os adicionais.
@@ -140,13 +136,13 @@ português e inglês.
 
 ## Status
 
-| Status | Significado |
-| --- | --- |
-| `trialing` | Avaliação gratuita em andamento. |
-| `active` | Assinatura contratada e válida. |
-| `past_due` | Existe uma cobrança vencida ou com falha. |
-| `canceled` | Assinatura encerrada; a última configuração é preservada para exibição. |
-| `expired` | Avaliação terminada sem contratação; a configuração pode ser redefinida no checkout. |
+| Status     | Significado                                                                          |
+| ---------- | ------------------------------------------------------------------------------------ |
+| `trialing` | Avaliação gratuita em andamento.                                                     |
+| `active`   | Assinatura contratada e válida.                                                      |
+| `past_due` | Existe uma cobrança vencida ou com falha.                                            |
+| `canceled` | Assinatura encerrada; a última configuração é preservada para exibição.              |
+| `expired`  | Avaliação terminada sem contratação; a configuração pode ser redefinida no checkout. |
 
 O comportamento geral de acesso em `past_due`, `canceled` e `expired` permanece
 separado do cálculo das quantidades e deverá ser aplicado pelo back-end.

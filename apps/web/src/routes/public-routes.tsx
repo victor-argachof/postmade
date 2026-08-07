@@ -1,5 +1,7 @@
 import type { RouteObject } from "react-router-dom";
+
 import { ForgotPasswordPage, LoginPage, RegisterPage } from "@/features/auth";
+
 import { ROUTES } from "./route-paths";
 
 export const publicRoutes: RouteObject[] = [

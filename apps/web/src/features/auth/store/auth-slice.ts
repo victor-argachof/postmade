@@ -17,7 +17,9 @@ export type AuthUser = {
 
 type SessionInput = Omit<AuthUser, "id" | "identity"> & {
   id?: string;
-  identity: Omit<AuthIdentity, "providerSubject"> & { providerSubject?: string };
+  identity: Omit<AuthIdentity, "providerSubject"> & {
+    providerSubject?: string;
+  };
 };
 
 interface AuthState {
@@ -34,7 +36,9 @@ const authSlice = createSlice({
     setSession: {
       reducer: (state, action: PayloadAction<AuthUser>) => {
         state.user = action.payload;
-        const accountIndex = state.accounts.findIndex((account) => account.id === action.payload.id);
+        const accountIndex = state.accounts.findIndex(
+          (account) => account.id === action.payload.id
+        );
         if (accountIndex >= 0) state.accounts[accountIndex] = action.payload;
         else state.accounts.push(action.payload);
       },
@@ -45,15 +49,21 @@ const authSlice = createSlice({
           email: input.email.trim().toLowerCase(),
           identity: {
             ...input.identity,
-            providerSubject: input.identity.providerSubject ?? `${input.identity.provider}:${nanoid()}`,
+            providerSubject:
+              input.identity.providerSubject ??
+              `${input.identity.provider}:${nanoid()}`,
           },
         } satisfies AuthUser,
       }),
     },
-    updateProfile: (state, action: PayloadAction<{ name?: string; email?: string }>) => {
+    updateProfile: (
+      state,
+      action: PayloadAction<{ name?: string; email?: string }>
+    ) => {
       if (!state.user) return;
       if (action.payload.name) state.user.name = action.payload.name;
-      if (action.payload.email) state.user.email = action.payload.email.trim().toLowerCase();
+      if (action.payload.email)
+        state.user.email = action.payload.email.trim().toLowerCase();
       const account = state.accounts.find((item) => item.id === state.user?.id);
       if (account) Object.assign(account, state.user);
     },
@@ -67,5 +77,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setSession, updateProfile, clearSession, clearKnownAccounts } = authSlice.actions;
+export const { setSession, updateProfile, clearSession, clearKnownAccounts } =
+  authSlice.actions;
 export default authSlice.reducer;

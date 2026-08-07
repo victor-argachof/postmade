@@ -1,10 +1,12 @@
 import { Mail, ShieldCheck, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+import { PageHeader } from "@/shared/components/page-header";
+import { SectionCard } from "@/shared/components/section-card";
+
 import { ChangeEmailForm } from "../components/change-email-form";
 import { ChangePasswordForm } from "../components/change-password-form";
 import { ProfileForm } from "../components/profile-form";
-import { PageHeader } from "@/shared/components/page-header";
-import { SectionCard } from "@/shared/components/section-card";
 
 export function AccountPage() {
   const { t } = useTranslation("account");

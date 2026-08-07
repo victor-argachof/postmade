@@ -1,4 +1,7 @@
-import type { SubscriptionStatus, WorkspaceSubscriptionConfiguration } from "../types";
+import type {
+  SubscriptionStatus,
+  WorkspaceSubscriptionConfiguration,
+} from "../types";
 
 export const WORKSPACE_TRIAL_LIMITS = {
   days: 15,
@@ -9,14 +12,18 @@ export const WORKSPACE_TRIAL_LIMITS = {
 
 export function getWorkspaceMemberLimit(
   configuration: WorkspaceSubscriptionConfiguration,
-  status: SubscriptionStatus,
+  status: SubscriptionStatus
 ) {
-  return status === "trialing" ? WORKSPACE_TRIAL_LIMITS.members : configuration.members;
+  return status === "trialing"
+    ? WORKSPACE_TRIAL_LIMITS.members
+    : configuration.members;
 }
 
 export function getWorkspaceChannelLimit(
   configuration: WorkspaceSubscriptionConfiguration,
-  status: SubscriptionStatus,
+  status: SubscriptionStatus
 ) {
-  return status === "trialing" ? WORKSPACE_TRIAL_LIMITS.channels : configuration.channels;
+  return status === "trialing"
+    ? WORKSPACE_TRIAL_LIMITS.channels
+    : configuration.channels;
 }

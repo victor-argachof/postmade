@@ -1,8 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
+
 import { ROUTES } from "@/routes/route-paths";
+
 import "@/shared/i18n";
+
 import { SubscriptionConfigurator } from "../subscription-configurator";
 
 describe("SubscriptionConfigurator", () => {
@@ -14,12 +17,24 @@ describe("SubscriptionConfigurator", () => {
         configuration={{ channels: 3, members: 1 }}
         onSubscribe={onSubscribe}
         status="trialing"
-      />,
+      />
     );
 
-    await user.click(screen.getByRole("button", { name: /aumentar canais|increase channels/i }));
-    await user.click(screen.getByRole("button", { name: /aumentar membros|increase members/i }));
-    await user.click(screen.getByRole("button", { name: /assinar postmade|subscribe to postmade/i }));
+    await user.click(
+      screen.getByRole("button", {
+        name: /aumentar canais|increase channels/i,
+      })
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: /aumentar membros|increase members/i,
+      })
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: /assinar postmade|subscribe to postmade/i,
+      })
+    );
 
     expect(onSubscribe).toHaveBeenCalledWith({ channels: 4, members: 2 });
   });
@@ -32,10 +47,12 @@ describe("SubscriptionConfigurator", () => {
         configuration={{ channels: 3, members: 1 }}
         onSubscribe={onSubscribe}
         status="trialing"
-      />,
+      />
     );
 
-    const channels = screen.getByRole("spinbutton", { name: /canais|channels/i });
+    const channels = screen.getByRole("spinbutton", {
+      name: /canais|channels/i,
+    });
     await user.clear(channels);
     await user.type(channels, "999");
     await user.tab();
@@ -49,11 +66,15 @@ describe("SubscriptionConfigurator", () => {
         configuration={{ channels: 3, members: 1 }}
         onSubscribe={vi.fn()}
         status="trialing"
-      />,
+      />
     );
 
-    const channels = screen.getByRole("spinbutton", { name: /canais|channels/i });
-    const members = screen.getByRole("spinbutton", { name: /membros|members/i });
+    const channels = screen.getByRole("spinbutton", {
+      name: /canais|channels/i,
+    });
+    const members = screen.getByRole("spinbutton", {
+      name: /membros|members/i,
+    });
     await user.clear(channels);
     await user.type(channels, "1");
     await user.tab();
@@ -74,16 +95,30 @@ describe("SubscriptionConfigurator", () => {
         minimumConfiguration={{ channels: 6, members: 3 }}
         onUpdate={onUpdate}
         status="active"
-      />,
+      />
     );
 
-    const channels = screen.getByRole("spinbutton", { name: /canais|channels/i });
+    const channels = screen.getByRole("spinbutton", {
+      name: /canais|channels/i,
+    });
     expect(channels).toBeEnabled();
-    await user.click(screen.getByRole("button", { name: /aumentar canais|increase channels/i }));
-    await user.click(screen.getByRole("button", { name: /atualizar assinatura|update subscription/i }));
+    await user.click(
+      screen.getByRole("button", {
+        name: /aumentar canais|increase channels/i,
+      })
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name: /atualizar assinatura|update subscription/i,
+      })
+    );
     expect(onUpdate).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: /confirmar alteração|confirm change/i }));
+    await user.click(
+      screen.getByRole("button", {
+        name: /confirmar alteração|confirm change/i,
+      })
+    );
     expect(onUpdate).toHaveBeenCalledWith({ channels: 26, members: 4 });
   });
 
@@ -98,11 +133,15 @@ describe("SubscriptionConfigurator", () => {
           status="active"
           usage={{ connectedChannels: 6, members: 2, pendingInvitations: 1 }}
         />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
-    const channels = screen.getByRole("spinbutton", { name: /canais|channels/i });
-    const decreaseMembers = screen.getByRole("button", { name: /diminuir membros|decrease members/i });
+    const channels = screen.getByRole("spinbutton", {
+      name: /canais|channels/i,
+    });
+    const decreaseMembers = screen.getByRole("button", {
+      name: /diminuir membros|decrease members/i,
+    });
     await user.clear(channels);
     await user.type(channels, "2");
     await user.tab();
@@ -110,11 +149,14 @@ describe("SubscriptionConfigurator", () => {
     expect(channels).toHaveValue(6);
     expect(decreaseMembers).toHaveAttribute("aria-disabled", "true");
     await user.click(decreaseMembers);
-    expect(screen.getByRole("dialog", { name: /não pode reduzir|can't reduce/i })).toBeInTheDocument();
-    expect(screen.getByText(/3 vagas ocupadas|3 occupied spots/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /gerenciar membros|manage members/i })).toHaveAttribute(
-      "href",
-      ROUTES.workspaceMembers,
-    );
+    expect(
+      screen.getByRole("dialog", { name: /não pode reduzir|can't reduce/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/3 vagas ocupadas|3 occupied spots/i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /gerenciar membros|manage members/i })
+    ).toHaveAttribute("href", ROUTES.workspaceMembers);
   });
 });

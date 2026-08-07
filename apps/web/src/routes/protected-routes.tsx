@@ -1,12 +1,14 @@
 import type { RouteObject } from "react-router-dom";
+
 import { AccountPage } from "@/features/account";
 import { CalendarPage } from "@/features/calendar";
 import { ChannelsPage } from "@/features/channels";
-import { PostsPage } from "@/features/posts";
+import { PostComposerPage, PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
-import { DashboardHome } from "@/shared/components/dashboard-home";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
+import { DashboardHome } from "@/shared/components/dashboard-home";
 import { AppShell } from "@/shared/layouts/app-shell";
+
 import { ROUTES } from "./route-paths";
 
 // This route group defines the authenticated application surface. A real
@@ -16,6 +18,8 @@ export const protectedRoutes: RouteObject = {
   children: [
     { path: ROUTES.dashboard, element: <DashboardHome /> },
     { path: ROUTES.posts, element: <PostsPage /> },
+    { path: ROUTES.newPost, element: <PostComposerPage /> },
+    { path: "/posts/:publicationId/edit", element: <PostComposerPage /> },
     { path: ROUTES.workspaceChannels, element: <ChannelsPage /> },
     { path: ROUTES.calendar, element: <CalendarPage /> },
     { path: ROUTES.workspaceSettings, element: <WorkspaceSettingsPage /> },

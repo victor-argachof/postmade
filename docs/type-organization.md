@@ -1,6 +1,6 @@
 # Organização de tipos no front-end
 
-O front-end segue uma arquitetura *feature-first*. Cada feature possui uma pasta
+O front-end segue uma arquitetura _feature-first_. Cada feature possui uma pasta
 `types/` com um `index.ts`, mesmo quando ainda não existem tipos compartilhados na
 feature. O arquivo `index.ts` funciona como ponto de exportação quando a feature
 passa a ter tipos públicos.
@@ -38,13 +38,13 @@ tipo desde o início.
 
 ## Localização recomendada
 
-| Tipo | Local recomendado |
-| --- | --- |
-| Props usadas por um componente | No próprio componente |
-| Estado interno de um slice | No próprio slice |
-| Valores inferidos de um schema Zod | Junto ao schema |
-| Tipos usados em vários módulos da feature | `feature/types/` |
-| Tipos consumidos por outras features | API pública da feature ou pacote compartilhado |
+| Tipo                                      | Local recomendado                                             |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| Props usadas por um componente            | No próprio componente                                         |
+| Estado interno de um slice                | No próprio slice                                              |
+| Valores inferidos de um schema Zod        | Junto ao schema                                               |
+| Tipos usados em vários módulos da feature | `feature/types/`                                              |
+| Tipos consumidos por outras features      | API pública da feature ou pacote compartilhado                |
 | DTOs/contratos entre front-end e back-end | `packages/types` (que pode evoluir para `packages/contracts`) |
 
 `SocialPlatform` e `SocialChannel` são exemplos de contratos em `packages/types`:

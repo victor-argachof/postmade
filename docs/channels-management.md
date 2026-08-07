@@ -46,10 +46,10 @@ uma fronteira de segurança.
 Os limites são calculados por `getWorkspaceChannelLimit`, em
 `features/workspaces/lib/workspace-limits.ts`:
 
-| Situação | Limite de canais |
-| --- | ---: |
-| Avaliação gratuita | 3 |
-| Assinatura ativa | Quantidade contratada (3–500) |
+| Situação           |              Limite de canais |
+| ------------------ | ----------------------------: |
+| Avaliação gratuita |                             3 |
+| Assinatura ativa   | Quantidade contratada (3–500) |
 
 Componentes não devem duplicar esses números. O limite pago vem de
 `workspace.subscriptionConfiguration.channels`. A quantidade utilizada considera
@@ -129,9 +129,7 @@ se contradizer. Uma direção inicial possível é:
 
 ```ts
 type ChannelConnectionStatus =
-  | "connected"
-  | "requires_reauthentication"
-  | "unavailable";
+  "connected" | "requires_reauthentication" | "unavailable";
 
 interface SocialChannel {
   id: string;
@@ -149,11 +147,11 @@ processos reais do back-end.
 
 A interface poderá representar os estados da seguinte forma:
 
-| Estado | Significado | Tratamento esperado |
-| --- | --- | --- |
-| `connected` | Credenciais válidas e conta disponível | Status positivo. |
-| `requires_reauthentication` | Credenciais expiradas ou autorização revogada | Aviso e ação para reconectar. |
-| `unavailable` | Não foi possível validar ou usar a conexão | Erro temporário e nova tentativa. |
+| Estado                      | Significado                                   | Tratamento esperado               |
+| --------------------------- | --------------------------------------------- | --------------------------------- |
+| `connected`                 | Credenciais válidas e conta disponível        | Status positivo.                  |
+| `requires_reauthentication` | Credenciais expiradas ou autorização revogada | Aviso e ação para reconectar.     |
+| `unavailable`               | Não foi possível validar ou usar a conexão    | Erro temporário e nova tentativa. |
 
 Problemas individuais de autenticação não devem ser confundidos com a
 indisponibilidade global de uma plataforma. Uma falha geral do Instagram ou do

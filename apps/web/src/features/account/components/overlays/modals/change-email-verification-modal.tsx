@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+
 import { EmailVerificationForm } from "@/features/auth/components/email-verification-form";
 import { Modal } from "@/shared/components/ui/modal";
 

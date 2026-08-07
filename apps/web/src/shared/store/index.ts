@@ -1,14 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import authReducer from "@/features/auth/store/auth-slice";
 import calendarReducer from "@/features/calendar/store/calendar-slice";
 import postsReducer from "@/features/posts/store/posts-slice";
-import workspacesReducer from "@/features/workspaces/store/workspaces-slice";
-import { createActiveWorkspaceMock, createConnectedChannelMock } from "@/features/workspaces/store/workspaces-slice";
-import { SUBSCRIPTION_INCLUDED_QUANTITIES, SUBSCRIPTION_MAX_QUANTITIES } from "@/features/workspaces/lib/subscription-pricing";
+import {
+  SUBSCRIPTION_INCLUDED_QUANTITIES,
+  SUBSCRIPTION_MAX_QUANTITIES,
+} from "@/features/workspaces/lib/subscription-pricing";
+import workspacesReducer, {
+  createActiveWorkspaceMock,
+  createConnectedChannelMock,
+} from "@/features/workspaces/store/workspaces-slice";
 import { api } from "@/shared/api/api";
 
 const LEGACY_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v1";
-const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
+const PREVIOUS_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
+const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v3";
 const AUTH_STORAGE_KEY = "postmade.auth-session.v1";
 
 function loadPersistedAuth() {
@@ -17,19 +24,20 @@ function loadPersistedAuth() {
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as ReturnType<typeof authReducer>;
     const user = parsed?.user;
-    const isValidUser = (value: typeof user) => Boolean(
-      value
-      && typeof value.id === "string"
-      && typeof value.name === "string"
-      && typeof value.email === "string"
-      && value.identity
-      && typeof value.identity.providerSubject === "string",
-    );
+    const isValidUser = (value: typeof user) =>
+      Boolean(
+        value &&
+        typeof value.id === "string" &&
+        typeof value.name === "string" &&
+        typeof value.email === "string" &&
+        value.identity &&
+        typeof value.identity.providerSubject === "string"
+      );
     if (
-      !parsed
-      || !Array.isArray(parsed.accounts)
-      || parsed.accounts.some((account) => !isValidUser(account))
-      || (user !== null && !isValidUser(user))
+      !parsed ||
+      !Array.isArray(parsed.accounts) ||
+      parsed.accounts.some((account) => !isValidUser(account)) ||
+      (user !== null && !isValidUser(user))
     ) {
       return undefined;
     }
@@ -44,17 +52,27 @@ function loadPersistedWorkspaces() {
     const raw = window.localStorage.getItem(WORKSPACES_STORAGE_KEY);
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object" || !("items" in parsed) || !Array.isArray(parsed.items)) return undefined;
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      !("items" in parsed) ||
+      !Array.isArray(parsed.items)
+    )
+      return undefined;
     const persisted = parsed as ReturnType<typeof workspacesReducer>;
     const isValid = persisted.items.every((workspace) => {
       const configuration = workspace.subscriptionConfiguration;
-      return configuration
-        && Number.isInteger(configuration.channels)
-        && configuration.channels >= SUBSCRIPTION_INCLUDED_QUANTITIES.channels
-        && configuration.channels <= SUBSCRIPTION_MAX_QUANTITIES.channels
-        && Number.isInteger(configuration.members)
-        && configuration.members >= SUBSCRIPTION_INCLUDED_QUANTITIES.members
-        && configuration.members <= SUBSCRIPTION_MAX_QUANTITIES.members;
+      return (
+        configuration &&
+        typeof workspace.timezone === "string" &&
+        Array.isArray(workspace.resources?.posts) &&
+        Number.isInteger(configuration.channels) &&
+        configuration.channels >= SUBSCRIPTION_INCLUDED_QUANTITIES.channels &&
+        configuration.channels <= SUBSCRIPTION_MAX_QUANTITIES.channels &&
+        Number.isInteger(configuration.members) &&
+        configuration.members >= SUBSCRIPTION_INCLUDED_QUANTITIES.members &&
+        configuration.members <= SUBSCRIPTION_MAX_QUANTITIES.members
+      );
     });
     return isValid ? persisted : undefined;
   } catch {
@@ -64,6 +82,7 @@ function loadPersistedWorkspaces() {
 
 const persistedWorkspaces = loadPersistedWorkspaces();
 window.localStorage.removeItem(LEGACY_WORKSPACES_STORAGE_KEY);
+window.localStorage.removeItem(PREVIOUS_WORKSPACES_STORAGE_KEY);
 const persistedAuth = loadPersistedAuth();
 const initialAuthState = authReducer(undefined, { type: "@@INIT" });
 const initialWorkspacesState = workspacesReducer(undefined, { type: "@@INIT" });
@@ -86,17 +105,22 @@ export const store = configureStore({
 
 if (import.meta.env.MODE === "development" && store.getState().auth.user) {
   const user = store.getState().auth.user!;
-  store.dispatch(createActiveWorkspaceMock({
-    userId: user.id,
-    userName: user.name,
-    userEmail: user.email,
-  }));
+  store.dispatch(
+    createActiveWorkspaceMock({
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+    })
+  );
   store.dispatch(createConnectedChannelMock({ userId: user.id }));
 }
 
 store.subscribe(() => {
   const state = store.getState();
-  window.localStorage.setItem(WORKSPACES_STORAGE_KEY, JSON.stringify(state.workspaces));
+  window.localStorage.setItem(
+    WORKSPACES_STORAGE_KEY,
+    JSON.stringify(state.workspaces)
+  );
   if (state.auth.user || state.auth.accounts.length > 0) {
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state.auth));
   } else {

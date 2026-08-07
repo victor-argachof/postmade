@@ -1,5 +1,6 @@
 import { Heart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
 import { ROUTES } from "@/routes/route-paths";
 
 const footerLinks = [
@@ -16,8 +17,13 @@ export function AppFooter() {
     <footer className="border-t border-border px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center text-xs text-muted-foreground sm:flex-row sm:text-left">
         <p className="flex flex-wrap items-center justify-center gap-1 sm:justify-start">
-          <span>© {currentYear} - {t("footer.madeWith")}</span>
-          <Heart className="size-3.5 fill-primary text-primary" aria-label={t("footer.love")} />
+          <span>
+            © {currentYear} - {t("footer.madeWith")}
+          </span>
+          <Heart
+            className="size-3.5 fill-primary text-primary"
+            aria-label={t("footer.love")}
+          />
           <span>{t("footer.byTeam")}</span>
         </p>
         <nav aria-label={t("footer.navigationLabel")}>

@@ -15,22 +15,23 @@ export type VerificationCodeFormValues = {
   code: string;
 };
 
-const emailSchema = (t: TFunction<"auth">) => z
-  .string()
-  .trim()
-  .min(1, t("validation.emailRequired"))
-  .email(t("validation.emailInvalid"));
+const emailSchema = (t: TFunction<"auth">) =>
+  z
+    .string()
+    .trim()
+    .min(1, t("validation.emailRequired"))
+    .email(t("validation.emailInvalid"));
 
 export function createAuthSchema(t: TFunction<"auth">, isRegister: boolean) {
   const passwordSchema = isRegister
     ? z
-      .string()
-      .min(1, t("validation.passwordRequired"))
-      .min(8, t("validation.passwordMinLength"))
-      .regex(/[A-Z]/, t("validation.passwordUppercase"))
-      .regex(/[a-z]/, t("validation.passwordLowercase"))
-      .regex(/\d/, t("validation.passwordNumber"))
-      .regex(/[^A-Za-z0-9]/, t("validation.passwordSpecialCharacter"))
+        .string()
+        .min(1, t("validation.passwordRequired"))
+        .min(8, t("validation.passwordMinLength"))
+        .regex(/[A-Z]/, t("validation.passwordUppercase"))
+        .regex(/[a-z]/, t("validation.passwordLowercase"))
+        .regex(/\d/, t("validation.passwordNumber"))
+        .regex(/[^A-Za-z0-9]/, t("validation.passwordSpecialCharacter"))
     : z.string().min(1, t("validation.passwordRequired"));
 
   return z

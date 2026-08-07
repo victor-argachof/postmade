@@ -1,3 +1,145 @@
 {
-  "comingSoonDescription": "The editor, media upload and previews will be implemented in the next module."
+  "pageTitle": "Publications",
+  "pageDescription": "Create, schedule, and track content across all your channels.",
+  "newPost": "New publication",
+  "channels": "channels",
+  "mediaOnly": "Media publication",
+  "confirmDelete": "Delete this publication?",
+  "statuses": {
+    "all": "All",
+    "draft": "Drafts",
+    "scheduled": "Scheduled",
+    "publishing": "Publishing",
+    "published": "Published",
+    "failed": "Failed"
+  },
+  "platforms": {
+    "facebook": "Facebook",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "tiktok": "TikTok",
+    "youtube": "YouTube"
+  },
+  "filters": {
+    "search": "Search content",
+    "clearSearch": "Clear search",
+    "platform": "Platform",
+    "channel": "Channel",
+    "from": "From",
+    "to": "To",
+    "allPlatforms": "All platforms",
+    "allChannels": "All channels"
+  },
+  "pagination": {
+    "results": "{{count}} results",
+    "pageSize": "Items per page",
+    "navigation": "Publication pagination",
+    "page": "Go to page {{number}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "empty": {
+    "title": "No publications yet",
+    "filtered": "No results found",
+    "description": "Create a publication or adjust the filters."
+  },
+  "actions": {
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "cancel": "Cancel schedule",
+    "retry": "Retry",
+    "delete": "Delete"
+  },
+  "table": {
+    "label": "Publications list",
+    "publication": "Publication",
+    "channels": "Channels",
+    "date": "Date",
+    "actions": "Actions"
+  },
+  "feedback": {
+    "delete": "Publication deleted.",
+    "cancel": "Schedule canceled.",
+    "duplicate": "Draft duplicated.",
+    "retry": "Retry started."
+  },
+  "composer": {
+    "title": "New publication",
+    "editTitle": "Edit publication",
+    "back": "Back to Publications",
+    "timezone": "Times in {{timezone}}",
+    "trialUsage": "Trial: {{used}} of {{limit}} publications used",
+    "channels": "1. Select channels",
+    "noChannels": "Connect a channel before publishing.",
+    "content": "2. Create content",
+    "placeholder": "What would you like to share?",
+    "addMedia": "Add images or video",
+    "customize": "3. Customize by channel",
+    "inherit": "Leave empty to use the main content",
+    "schedule": "4. Publication",
+    "timing": {
+      "question": "When should it be published?",
+      "toggleLabel": "Schedule publication",
+      "immediate": {
+        "label": "Publish now",
+        "description": "Send for publication immediately."
+      },
+      "scheduled": {
+        "label": "Schedule",
+        "description": "Choose a future date and time."
+      }
+    },
+    "recurrence": {
+      "label": "Repeat publication every",
+      "interval": "Repeat interval",
+      "options": {
+        "day": "Day",
+        "twoDays": "Two days",
+        "threeDays": "Three days",
+        "fourDays": "Four days",
+        "fiveDays": "Five days",
+        "sixDays": "Six days",
+        "week": "Week",
+        "twoWeeks": "Two weeks",
+        "month": "Month"
+      }
+    },
+    "confirmation": {
+      "publishTitle": "Confirm publication",
+      "scheduleTitle": "Confirm schedule",
+      "publishDescription": "Review the information before publishing now.",
+      "scheduleDescription": "Review the information before confirming the schedule.",
+      "destinations": "Destinations",
+      "content": "Content",
+      "schedule": "Date and time",
+      "recurrence": "Recurrence",
+      "cancel": "Cancel",
+      "close": "Close",
+      "confirmPublish": "Publish now",
+      "confirmSchedule": "Confirm schedule"
+    },
+    "preview": "Preview",
+    "previewEmpty": "Your content will appear here.",
+    "previewNoChannel": "Select a channel to preview.",
+    "saveDraft": "Save draft",
+    "scheduleAction": "Schedule",
+    "publishNow": "Publish now",
+    "validation": {
+      "fix": "Review the channels and fix the errors.",
+      "future": "Choose a future date.",
+      "trial": "The 3-publication trial limit has been reached.",
+      "empty": "Add text or media.",
+      "characters": "The text exceeds the limit.",
+      "mediaRequired": "This platform requires media.",
+      "mediaCount": "Too much media for this platform.",
+      "mediaType": "Incompatible media format."
+    },
+    "feedback": {
+      "draft": "Draft saved.",
+      "scheduled": "Publication scheduled.",
+      "published": "Publication recorded as published.",
+      "publishing": "Publication sent.",
+      "failed": "Publication saved."
+    }
+  }
 }

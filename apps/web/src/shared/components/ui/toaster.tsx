@@ -10,9 +10,14 @@ export function AppToaster() {
 
   useEffect(() => {
     const observer = new MutationObserver(() => setTheme(getCurrentTheme()));
-    observer.observe(document.documentElement, { attributeFilter: ["class"], attributes: true });
+    observer.observe(document.documentElement, {
+      attributeFilter: ["class"],
+      attributes: true,
+    });
     return () => observer.disconnect();
   }, []);
 
-  return <Toaster closeButton position="bottom-right" richColors theme={theme} />;
+  return (
+    <Toaster closeButton position="bottom-right" richColors theme={theme} />
+  );
 }

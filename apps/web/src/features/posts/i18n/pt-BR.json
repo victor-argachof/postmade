@@ -1,3 +1,145 @@
 {
-  "comingSoonDescription": "O editor, upload de mídia e previews serão implementados no próximo módulo."
+  "pageTitle": "Publicações",
+  "pageDescription": "Crie, agende e acompanhe o conteúdo de todos os seus canais.",
+  "newPost": "Nova publicação",
+  "channels": "canais",
+  "mediaOnly": "Publicação com mídia",
+  "confirmDelete": "Excluir esta publicação?",
+  "statuses": {
+    "all": "Todas",
+    "draft": "Rascunhos",
+    "scheduled": "Agendadas",
+    "publishing": "Publicando",
+    "published": "Publicadas",
+    "failed": "Com falha"
+  },
+  "platforms": {
+    "facebook": "Facebook",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "tiktok": "TikTok",
+    "youtube": "YouTube"
+  },
+  "filters": {
+    "search": "Buscar conteúdo",
+    "clearSearch": "Limpar busca",
+    "platform": "Plataforma",
+    "channel": "Canal",
+    "from": "A partir de",
+    "to": "Até",
+    "allPlatforms": "Todas as plataformas",
+    "allChannels": "Todos os canais"
+  },
+  "pagination": {
+    "results": "{{count}} resultados",
+    "pageSize": "Itens por página",
+    "navigation": "Paginação de publicações",
+    "page": "Ir para a página {{number}}",
+    "previous": "Anterior",
+    "next": "Próxima"
+  },
+  "empty": {
+    "title": "Nenhuma publicação ainda",
+    "filtered": "Nenhum resultado encontrado",
+    "description": "Crie uma publicação ou ajuste os filtros."
+  },
+  "actions": {
+    "edit": "Editar",
+    "duplicate": "Duplicar",
+    "cancel": "Cancelar agendamento",
+    "retry": "Tentar novamente",
+    "delete": "Excluir"
+  },
+  "table": {
+    "label": "Lista de publicações",
+    "publication": "Publicação",
+    "channels": "Canais",
+    "date": "Data",
+    "actions": "Ações"
+  },
+  "feedback": {
+    "delete": "Publicação excluída.",
+    "cancel": "Agendamento cancelado.",
+    "duplicate": "Rascunho duplicado.",
+    "retry": "Nova tentativa iniciada."
+  },
+  "composer": {
+    "title": "Nova publicação",
+    "editTitle": "Editar publicação",
+    "back": "Voltar para Publicações",
+    "timezone": "Horários em {{timezone}}",
+    "trialUsage": "Trial: {{used}} de {{limit}} publicações usadas",
+    "channels": "1. Selecione os canais",
+    "noChannels": "Conecte um canal antes de publicar.",
+    "content": "2. Crie o conteúdo",
+    "placeholder": "O que você quer compartilhar?",
+    "addMedia": "Adicionar imagens ou vídeo",
+    "customize": "3. Personalize por canal",
+    "inherit": "Deixe vazio para usar o conteúdo principal",
+    "schedule": "4. Publicação",
+    "timing": {
+      "question": "Quando publicar?",
+      "toggleLabel": "Agendar publicação",
+      "immediate": {
+        "label": "Publicar agora",
+        "description": "Enviar para publicação imediatamente."
+      },
+      "scheduled": {
+        "label": "Agendar",
+        "description": "Escolher uma data e um horário futuros."
+      }
+    },
+    "recurrence": {
+      "label": "Repetir publicação a cada",
+      "interval": "Intervalo de repetição",
+      "options": {
+        "day": "Dia",
+        "twoDays": "Dois dias",
+        "threeDays": "Três dias",
+        "fourDays": "Quatro dias",
+        "fiveDays": "Cinco dias",
+        "sixDays": "Seis dias",
+        "week": "Semana",
+        "twoWeeks": "Duas semanas",
+        "month": "Mês"
+      }
+    },
+    "confirmation": {
+      "publishTitle": "Confirmar publicação",
+      "scheduleTitle": "Confirmar agendamento",
+      "publishDescription": "Revise as informações antes de publicar agora.",
+      "scheduleDescription": "Revise as informações antes de confirmar o agendamento.",
+      "destinations": "Destinos",
+      "content": "Conteúdo",
+      "schedule": "Data e horário",
+      "recurrence": "Repetição",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "confirmPublish": "Publicar agora",
+      "confirmSchedule": "Confirmar agendamento"
+    },
+    "preview": "Preview",
+    "previewEmpty": "Seu conteúdo aparecerá aqui.",
+    "previewNoChannel": "Selecione um canal para visualizar.",
+    "saveDraft": "Salvar rascunho",
+    "scheduleAction": "Agendar",
+    "publishNow": "Publicar agora",
+    "validation": {
+      "fix": "Revise os canais e corrija os erros.",
+      "future": "Escolha uma data futura.",
+      "trial": "O limite de 3 publicações do trial foi atingido.",
+      "empty": "Adicione texto ou mídia.",
+      "characters": "O texto excede o limite.",
+      "mediaRequired": "Esta plataforma exige mídia.",
+      "mediaCount": "Mídia demais para esta plataforma.",
+      "mediaType": "Formato de mídia incompatível."
+    },
+    "feedback": {
+      "draft": "Rascunho salvo.",
+      "scheduled": "Publicação agendada.",
+      "published": "Publicação registrada como publicada.",
+      "publishing": "Publicação enviada.",
+      "failed": "Publicação salva."
+    }
+  }
 }

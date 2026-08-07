@@ -1,4 +1,5 @@
 import { Navigate, useRoutes, type RouteObject } from "react-router-dom";
+
 import { protectedRoutes } from "./protected-routes";
 import { publicRoutes } from "./public-routes";
 import { ROUTES } from "./route-paths";

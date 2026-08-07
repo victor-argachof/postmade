@@ -19,7 +19,7 @@ export function Brand({ compact = false, className }: BrandProps) {
         height="27"
       />
       {!compact && (
-        <span className="whitespace-nowrap text-xl font-bold">
+        <span className="text-xl font-bold whitespace-nowrap">
           Post<span className="text-primary">made</span>
         </span>
       )}

@@ -6,8 +6,14 @@
   "selectWorkspace": "Selecione um workspace",
   "yourWorkspaces": "Seus workspaces",
   "subscriptionQuantities": "{{channels}} · {{members}}",
-  "channelCount": { "singular": "{{count}} canal", "plural": "{{count}} canais" },
-  "memberCount": { "singular": "{{count}} membro", "plural": "{{count}} membros" },
+  "channelCount": {
+    "singular": "{{count}} canal",
+    "plural": "{{count}} canais"
+  },
+  "memberCount": {
+    "singular": "{{count}} membro",
+    "plural": "{{count}} membros"
+  },
   "freeTrialBadge": "Avaliação gratuita",
   "switchingTitle": "Alternando workspace",
   "switchingWorkspace": "Alternando para o workspace {{name}}",
@@ -22,6 +28,20 @@
   "settingsDescription": "Insira um nome personalizado para que você e outros membros possam identificar com facilidade",
   "save": "Salvar nome",
   "nameSaved": "Nome do workspace atualizado.",
+  "timezone": {
+    "title": "Fuso horário",
+    "description": "Defina como todos os membros visualizam e criam agendamentos neste workspace.",
+    "label": "Fuso horário do workspace",
+    "help": "Selecione um identificador IANA. Os instantes são armazenados em UTC.",
+    "currentTime": "Horário atual: {{time}}",
+    "invalid": "Informe um fuso horário IANA válido.",
+    "save": "Salvar fuso horário",
+    "saved": "Fuso horário do workspace atualizado.",
+    "confirmTitle": "Alterar fuso horário?",
+    "confirmDescription": "O fuso {{timezone}} será usado para exibir datas e criar novos agendamentos. Publicações existentes manterão o mesmo instante de envio.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar alteração"
+  },
   "teamTitle": "Membros do workspace",
   "teamDescription": "Gerencie os membros deste espaço e suas permissões.",
   "membersUsage": "{{used}} de {{limit}} membros",
@@ -41,5 +61,10 @@
   "removeMember": "Remover {{name}}",
   "memberRole": "Função de {{name}}",
   "workspaceScopedNote": "Membros, convites e assinatura são exclusivos deste workspace.",
-  "roles": { "owner": "Proprietário", "admin": "Administrador", "editor": "Editor", "viewer": "Leitor" }
+  "roles": {
+    "owner": "Proprietário",
+    "admin": "Administrador",
+    "editor": "Editor",
+    "viewer": "Leitor"
+  }
 }

@@ -4,17 +4,38 @@
   "usage": {
     "label": "Utilização",
     "limited": "{{count}} de {{limit}} canais conectados",
-    "unlimited": { "singular": "{{count}} canal conectado — ilimitado", "plural": "{{count}} canais conectados — ilimitado" }
+    "unlimited": {
+      "singular": "{{count}} canal conectado — ilimitado",
+      "plural": "{{count}} canais conectados — ilimitado"
+    }
   },
   "platforms": {
     "title": "Plataformas disponíveis",
     "description": "Escolha uma plataforma para conectar uma nova conta ao workspace.",
-    "connectedCount": { "singular": "{{count}} conta conectada", "plural": "{{count}} contas conectadas" },
-    "facebook": { "name": "Facebook", "description": "Publique conteúdo em páginas e perfis profissionais do Facebook." },
-    "linkedin": { "name": "LinkedIn", "description": "Compartilhe atualizações com seu perfil e páginas profissionais." },
-    "instagram": { "name": "Instagram", "description": "Gerencie conteúdo visual para suas contas profissionais." },
-    "tiktok": { "name": "TikTok", "description": "Distribua vídeos para sua audiência no TikTok." },
-    "youtube": { "name": "YouTube", "description": "Publique vídeos nos canais conectados do YouTube." }
+    "connectedCount": {
+      "singular": "{{count}} conta conectada",
+      "plural": "{{count}} contas conectadas"
+    },
+    "facebook": {
+      "name": "Facebook",
+      "description": "Publique conteúdo em páginas e perfis profissionais do Facebook."
+    },
+    "linkedin": {
+      "name": "LinkedIn",
+      "description": "Compartilhe atualizações com seu perfil e páginas profissionais."
+    },
+    "instagram": {
+      "name": "Instagram",
+      "description": "Gerencie conteúdo visual para suas contas profissionais."
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "description": "Distribua vídeos para sua audiência no TikTok."
+    },
+    "youtube": {
+      "name": "YouTube",
+      "description": "Publique vídeos nos canais conectados do YouTube."
+    }
   },
   "connected": {
     "title": "Canais conectados",
@@ -26,7 +47,10 @@
     "account": "Conta",
     "status": "Status",
     "actions": "Ações",
-    "results": { "singular": "{{count}} resultado", "plural": "{{count}} resultados" }
+    "results": {
+      "singular": "{{count}} resultado",
+      "plural": "{{count}} resultados"
+    }
   },
   "pagination": {
     "perPage": "Resultados por página",

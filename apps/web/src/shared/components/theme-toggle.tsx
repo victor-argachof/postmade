@@ -1,7 +1,8 @@
 import { Moon, Sun } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@/shared/hooks/use-theme";
+
 import { Button } from "@/shared/components/ui/button";
+import { useTheme } from "@/shared/hooks/use-theme";
 
 export function ThemeToggle() {
   const { t } = useTranslation("common");
@@ -16,7 +17,11 @@ export function ThemeToggle() {
       aria-label={t(isDark ? "useLightTheme" : "useDarkTheme")}
       title={t(isDark ? "useLightTheme" : "useDarkTheme")}
     >
-      {isDark ? <Sun className="size-4" aria-hidden="true" /> : <Moon className="size-4" aria-hidden="true" />}
+      {isDark ? (
+        <Sun className="size-4" aria-hidden="true" />
+      ) : (
+        <Moon className="size-4" aria-hidden="true" />
+      )}
     </Button>
   );
 }

@@ -10,21 +10,29 @@ export type ChangePasswordFormValues = {
   newPassword: string;
 };
 
-export function createChangeEmailSchema(t: TFunction<"account">, currentEmail: string) {
+export function createChangeEmailSchema(
+  t: TFunction<"account">,
+  currentEmail: string
+) {
   return z.object({
     newEmail: z
       .string()
       .trim()
       .min(1, t("validation.newEmailRequired"))
       .email(t("validation.emailInvalid"))
-      .refine((email) => email.toLowerCase() !== currentEmail.toLowerCase(), t("validation.emailMustChange")),
+      .refine(
+        (email) => email.toLowerCase() !== currentEmail.toLowerCase(),
+        t("validation.emailMustChange")
+      ),
   });
 }
 
 export function createChangePasswordSchema(t: TFunction<"account">) {
   return z
     .object({
-      currentPassword: z.string().min(1, t("validation.currentPasswordRequired")),
+      currentPassword: z
+        .string()
+        .min(1, t("validation.currentPasswordRequired")),
       newPassword: z
         .string()
         .min(1, t("validation.newPasswordRequired"))

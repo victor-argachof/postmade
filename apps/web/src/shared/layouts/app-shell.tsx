@@ -1,21 +1,31 @@
+import {
+  CalendarDays,
+  CreditCard,
+  LayoutDashboard,
+  Radio,
+  Send,
+  Settings2,
+} from "lucide-react";
 import { useCallback, useState } from "react";
-import { CalendarDays, CreditCard, LayoutDashboard, Radio, Send, Settings2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
+
 import { ROUTES } from "@/routes/route-paths";
+import { AppFooter } from "@/shared/layouts/app-footer";
 import { DesktopSidebar, MobileSidebar } from "@/shared/layouts/sidebar";
 import { TopBar } from "@/shared/layouts/top-bar";
-import { AppFooter } from "@/shared/layouts/app-footer";
 
 export function AppShell() {
   const { t } = useTranslation("navigation");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
-    () => window.localStorage.getItem("postmade.sidebar-collapsed") === "true",
+    () => window.localStorage.getItem("postmade.sidebar-collapsed") === "true"
   );
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const navigationSections = [
     {
-      items: [{ to: ROUTES.dashboard, label: t("dashboard"), icon: LayoutDashboard }],
+      items: [
+        { to: ROUTES.dashboard, label: t("dashboard"), icon: LayoutDashboard },
+      ],
     },
     {
       label: t("postsSection"),
@@ -28,8 +38,16 @@ export function AppShell() {
       label: t("workspaceSection"),
       items: [
         { to: ROUTES.workspaceChannels, label: t("channels"), icon: Radio },
-        { to: ROUTES.workspaceSettings, label: t("workspaceSettings"), icon: Settings2 },
-        { to: ROUTES.workspaceSubscription, label: t("subscription"), icon: CreditCard },
+        {
+          to: ROUTES.workspaceSettings,
+          label: t("workspaceSettings"),
+          icon: Settings2,
+        },
+        {
+          to: ROUTES.workspaceSubscription,
+          label: t("subscription"),
+          icon: CreditCard,
+        },
       ],
     },
   ];
@@ -58,7 +76,7 @@ export function AppShell() {
           onToggleSidebar={toggleSidebar}
           onOpenMobileSidebar={openMobileSidebar}
         />
-        <main className="min-w-0 flex-1 px-5 pb-12 pt-7 sm:px-8 sm:pt-10 lg:px-12">
+        <main className="min-w-0 flex-1 px-5 pt-7 pb-12 sm:px-8 sm:pt-10 lg:px-12">
           <Outlet />
         </main>
         <AppFooter />

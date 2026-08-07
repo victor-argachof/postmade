@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+
 import "@/shared/i18n";
+
 import { SubscriptionFaq } from "../subscription-faq";
 
 describe("SubscriptionFaq", () => {
@@ -17,6 +19,8 @@ describe("SubscriptionFaq", () => {
     await user.click(pricingQuestion);
 
     expect(pricingQuestion).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByText(/3 canais e 1 membro|3 channels and 1 member/i)).toBeVisible();
+    expect(
+      screen.getByText(/3 canais e 1 membro|3 channels and 1 member/i)
+    ).toBeVisible();
   });
 });

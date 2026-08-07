@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { NavLink } from "react-router-dom";
+
 import { cn } from "@/shared/lib/utils";
 
 export interface SidebarNavigationItem {
@@ -31,10 +32,13 @@ export function SidebarNavigation({
       {sections.map((section, sectionIndex) => (
         <div
           key={section.label ?? "primary"}
-          className={cn(sectionIndex > 0 && (collapsed ? "mt-4 border-t border-border pt-4" : "mt-7"))}
+          className={cn(
+            sectionIndex > 0 &&
+              (collapsed ? "mt-4 border-t border-border pt-4" : "mt-7")
+          )}
         >
           {section.label && !collapsed && (
-            <p className="mb-2 px-3 text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-muted-foreground/75">
+            <p className="mb-2 px-3 text-[0.6875rem] font-bold tracking-[0.16em] text-muted-foreground/75 uppercase">
               {section.label}
             </p>
           )}
@@ -50,7 +54,7 @@ export function SidebarNavigation({
                   cn(
                     "flex h-11 items-center rounded-xl text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground",
                     collapsed ? "justify-center px-0" : "gap-3 px-3",
-                    isActive && "bg-primary/10 text-primary",
+                    isActive && "bg-primary/10 text-primary"
                   )
                 }
               >

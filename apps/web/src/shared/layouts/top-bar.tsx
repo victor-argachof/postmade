@@ -1,13 +1,14 @@
 import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
+
+import { WorkspaceSwitcher } from "@/features/workspaces/components/workspace-switcher";
 import { ROUTES } from "@/routes/route-paths";
 import { Brand } from "@/shared/components/brand";
 import { LanguageSwitcher } from "@/shared/components/language-switcher";
 import { ThemeToggle } from "@/shared/components/theme-toggle";
-import { UserMenu } from "@/shared/components/user-menu";
 import { Button } from "@/shared/components/ui/button";
-import { WorkspaceSwitcher } from "@/features/workspaces/components/workspace-switcher";
+import { UserMenu } from "@/shared/components/user-menu";
 
 interface TopBarProps {
   sidebarCollapsed: boolean;
@@ -15,7 +16,11 @@ interface TopBarProps {
   onOpenMobileSidebar: () => void;
 }
 
-export function TopBar({ sidebarCollapsed, onToggleSidebar, onOpenMobileSidebar }: TopBarProps) {
+export function TopBar({
+  sidebarCollapsed,
+  onToggleSidebar,
+  onOpenMobileSidebar,
+}: TopBarProps) {
   const { t } = useTranslation("navigation");
 
   return (
@@ -37,11 +42,17 @@ export function TopBar({ sidebarCollapsed, onToggleSidebar, onOpenMobileSidebar 
             size="icon"
             className="hidden md:inline-flex"
             onClick={onToggleSidebar}
-            aria-label={t(sidebarCollapsed ? "expandSidebar" : "collapseSidebar")}
+            aria-label={t(
+              sidebarCollapsed ? "expandSidebar" : "collapseSidebar"
+            )}
             title={t(sidebarCollapsed ? "expandSidebar" : "collapseSidebar")}
             aria-expanded={!sidebarCollapsed}
           >
-            {sidebarCollapsed ? <PanelLeftOpen className="size-5" aria-hidden="true" /> : <PanelLeftClose className="size-5" aria-hidden="true" />}
+            {sidebarCollapsed ? (
+              <PanelLeftOpen className="size-5" aria-hidden="true" />
+            ) : (
+              <PanelLeftClose className="size-5" aria-hidden="true" />
+            )}
           </Button>
           <NavLink to={ROUTES.dashboard} className="md:hidden">
             <Brand className="[&_img]:size-[26px] [&_span]:text-lg" />

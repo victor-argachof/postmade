@@ -1,11 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { createVerificationCodeSchema, type VerificationCodeFormValues } from "../schemas/auth-schemas";
+
+import {
+  createVerificationCodeSchema,
+  type VerificationCodeFormValues,
+} from "../schemas/auth-schemas";
 import { centeredBackActionClassName } from "./auth-action-styles";
 
 export function EmailVerificationForm({
@@ -57,12 +62,23 @@ export function EmailVerificationForm({
         {t("verificationDescription", { email })}
       </p>
 
-      <form className="mt-8 space-y-5" noValidate onSubmit={handleSubmit(onVerified)}>
+      <form
+        className="mt-8 space-y-5"
+        noValidate
+        onSubmit={handleSubmit(onVerified)}
+      >
         <div>
-          <label className="block text-sm font-medium" htmlFor="verification-code">{t("verificationCode")}</label>
+          <label
+            className="block text-sm font-medium"
+            htmlFor="verification-code"
+          >
+            {t("verificationCode")}
+          </label>
           <Input
             {...codeField}
-            aria-describedby={errors.code ? "verification-code-error" : undefined}
+            aria-describedby={
+              errors.code ? "verification-code-error" : undefined
+            }
             aria-invalid={Boolean(errors.code)}
             autoComplete="one-time-code"
             className={`mt-2 text-center text-2xl font-bold tracking-[0.45em] ${errors.code ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
@@ -70,15 +86,27 @@ export function EmailVerificationForm({
             inputMode="numeric"
             maxLength={6}
             onChange={(event) => {
-              event.target.value = event.target.value.replace(/\D/g, "").slice(0, 6);
+              event.target.value = event.target.value
+                .replace(/\D/g, "")
+                .slice(0, 6);
               void codeField.onChange(event);
             }}
           />
-          {errors.code && <p className="mt-2 text-xs text-red-600" id="verification-code-error" role="alert">{errors.code.message}</p>}
+          {errors.code && (
+            <p
+              className="mt-2 text-xs text-red-600"
+              id="verification-code-error"
+              role="alert"
+            >
+              {errors.code.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <Button className="w-full" type="submit">{t("validateCode")}</Button>
+          <Button className="w-full" type="submit">
+            {t("validateCode")}
+          </Button>
           <Button
             className="w-full bg-muted/70 text-foreground hover:bg-muted"
             disabled={resendSeconds > 0}
@@ -86,14 +114,27 @@ export function EmailVerificationForm({
             variant="outline"
             onClick={handleResendCode}
           >
-            {resendSeconds > 0 ? t("resendCodeCountdown", { time: resendTimer }) : t("resendCode")}
+            {resendSeconds > 0
+              ? t("resendCodeCountdown", { time: resendTimer })
+              : t("resendCode")}
           </Button>
         </div>
 
-        {codeResent && <p className="text-center text-xs font-medium text-emerald-700 dark:text-emerald-400" role="status">{t("codeResent")}</p>}
+        {codeResent && (
+          <p
+            className="text-center text-xs font-medium text-emerald-700 dark:text-emerald-400"
+            role="status"
+          >
+            {t("codeResent")}
+          </p>
+        )}
 
         {showBackAction && (
-          <button className={centeredBackActionClassName} type="button" onClick={onBack}>
+          <button
+            className={centeredBackActionClassName}
+            type="button"
+            onClick={onBack}
+          >
             <ArrowLeft aria-hidden="true" className="size-4" />
             {t("changeEmail")}
           </button>

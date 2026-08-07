@@ -1,5 +1,6 @@
-import { useId, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
+import { useId, type ReactNode } from "react";
+
 import { cn } from "@/shared/lib/utils";
 
 interface SectionCardProps {
@@ -30,7 +31,10 @@ export function SectionCard({
   return (
     <section
       id={id}
-      className={cn("rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8", className)}
+      className={cn(
+        "rounded-3xl border border-border bg-card p-6 sm:p-8",
+        className
+      )}
       aria-labelledby={titleId}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -41,9 +45,16 @@ export function SectionCard({
             </span>
           )}
           <div className="min-w-0">
-            <h2 id={titleId} className={cn("text-lg font-bold", titleClassName)}>{title}</h2>
+            <h2
+              id={titleId}
+              className={cn("text-lg font-bold", titleClassName)}
+            >
+              {title}
+            </h2>
             {description && (
-              <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+              <p className="text-sm leading-6 text-muted-foreground">
+                {description}
+              </p>
             )}
           </div>
         </div>

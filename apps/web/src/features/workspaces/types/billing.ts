@@ -1,9 +1,5 @@
 export type SubscriptionStatus =
-  | "trialing"
-  | "active"
-  | "past_due"
-  | "canceled"
-  | "expired";
+  "trialing" | "active" | "past_due" | "canceled" | "expired";
 
 export interface WorkspaceSubscriptionConfiguration {
   channels: number;

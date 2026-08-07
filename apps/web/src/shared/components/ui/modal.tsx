@@ -1,5 +1,5 @@
-import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 export function Modal({
@@ -27,7 +27,10 @@ export function Modal({
   useEffect(() => {
     if (!open) return;
 
-    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previouslyFocused =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     closeButtonRef.current?.focus();
@@ -40,9 +43,10 @@ export function Modal({
 
       if (event.key !== "Tab") return;
 
-      const focusableElements = dialogRef.current?.querySelectorAll<HTMLElement>(
-        "button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex='-1'])",
-      );
+      const focusableElements =
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          "button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex='-1'])"
+        );
       if (!focusableElements?.length) return;
 
       const firstElement = focusableElements[0]!;
@@ -81,10 +85,12 @@ export function Modal({
         role="dialog"
       >
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-2xl font-black tracking-tight" id={titleId}>{title}</h2>
+          <h2 className="text-2xl font-black tracking-tight" id={titleId}>
+            {title}
+          </h2>
           <button
             aria-label={closeLabel}
-            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
@@ -95,6 +101,6 @@ export function Modal({
         {children}
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
