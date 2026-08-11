@@ -91,7 +91,7 @@ export function CalendarPage() {
   }).format(new Date(`${month}-01T00:00:00Z`));
 
   return (
-    <section className="mx-auto max-w-7xl">
+    <section className="mx-auto max-w-6xl">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <PageHeader title={t("pageTitle")} description={t("pageDescription")} />
         {canManage && (

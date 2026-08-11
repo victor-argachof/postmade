@@ -33,7 +33,7 @@ export function DashboardHome() {
   const { t } = useTranslation(["dashboard", "navigation"]);
 
   return (
-    <section className="mx-auto max-w-5xl">
+    <section className="mx-auto max-w-6xl">
       <PageHeader
         eyebrow={t("eyebrow", { ns: "dashboard" })}
         title={t("title", { ns: "dashboard" })}

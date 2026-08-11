@@ -12,7 +12,7 @@ export function AccountPage() {
   const { t } = useTranslation("account");
 
   return (
-    <section className="mx-auto max-w-5xl">
+    <section className="mx-auto max-w-6xl">
       <PageHeader title={t("pageTitle")} description={t("pageDescription")} />
 
       <SectionCard

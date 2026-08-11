@@ -224,7 +224,7 @@ export function PostComposerPage() {
   const preview =
     selected.find((channel) => channel.id === previewChannel) ?? selected[0];
   return (
-    <section className="mx-auto max-w-7xl">
+    <section className="mx-auto max-w-6xl">
       <button
         className="mb-5 flex cursor-pointer items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
         onClick={() => navigate(ROUTES.posts)}

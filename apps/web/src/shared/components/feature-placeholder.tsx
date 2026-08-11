@@ -14,7 +14,7 @@ export function FeaturePlaceholder({
   icon: Icon,
 }: FeaturePlaceholderProps) {
   return (
-    <section className="mx-auto max-w-5xl">
+    <section className="mx-auto max-w-6xl">
       <PageHeader title={title} />
       <div className="mt-10 flex min-h-72 flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-card p-8 text-center">
         <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
