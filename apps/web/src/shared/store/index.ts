@@ -15,7 +15,8 @@ import { api } from "@/shared/api/api";
 
 const LEGACY_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v1";
 const PREVIOUS_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
-const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v3";
+const V3_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v3";
+const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v4";
 const AUTH_STORAGE_KEY = "postmade.auth-session.v1";
 
 function loadPersistedAuth() {
@@ -49,7 +50,9 @@ function loadPersistedAuth() {
 
 function loadPersistedWorkspaces() {
   try {
-    const raw = window.localStorage.getItem(WORKSPACES_STORAGE_KEY);
+    const currentRaw = window.localStorage.getItem(WORKSPACES_STORAGE_KEY);
+    const v3Raw = window.localStorage.getItem(V3_WORKSPACES_STORAGE_KEY);
+    const raw = currentRaw ?? v3Raw;
     if (!raw) return undefined;
     const parsed = JSON.parse(raw) as unknown;
     if (
@@ -60,12 +63,21 @@ function loadPersistedWorkspaces() {
     )
       return undefined;
     const persisted = parsed as ReturnType<typeof workspacesReducer>;
+    if (!currentRaw && v3Raw) {
+      persisted.items.forEach((workspace) => {
+        workspace.resources.tagGroups = [];
+        workspace.resources.posts.forEach((publication) => {
+          publication.tagGroupSnapshots ??= [];
+        });
+      });
+    }
     const isValid = persisted.items.every((workspace) => {
       const configuration = workspace.subscriptionConfiguration;
       return (
         configuration &&
         typeof workspace.timezone === "string" &&
         Array.isArray(workspace.resources?.posts) &&
+        Array.isArray(workspace.resources?.tagGroups) &&
         Number.isInteger(configuration.channels) &&
         configuration.channels >= SUBSCRIPTION_INCLUDED_QUANTITIES.channels &&
         configuration.channels <= SUBSCRIPTION_MAX_QUANTITIES.channels &&
@@ -83,6 +95,7 @@ function loadPersistedWorkspaces() {
 const persistedWorkspaces = loadPersistedWorkspaces();
 window.localStorage.removeItem(LEGACY_WORKSPACES_STORAGE_KEY);
 window.localStorage.removeItem(PREVIOUS_WORKSPACES_STORAGE_KEY);
+window.localStorage.removeItem(V3_WORKSPACES_STORAGE_KEY);
 const persistedAuth = loadPersistedAuth();
 const initialAuthState = authReducer(undefined, { type: "@@INIT" });
 const initialWorkspacesState = workspacesReducer(undefined, { type: "@@INIT" });

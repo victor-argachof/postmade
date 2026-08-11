@@ -1,6 +1,8 @@
 import type { ScheduledPublication } from "@postmade/types";
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 
+import { normalizeTags } from "@/features/tags/lib/tags";
+
 import { SUBSCRIPTION_INCLUDED_QUANTITIES } from "../lib/subscription-pricing";
 import {
   getWorkspaceMemberLimit,
@@ -55,6 +57,7 @@ function createOwnedWorkspace(payload: {
     resources: {
       channels: [],
       posts: [],
+      tagGroups: [],
       selectedCalendarDate: null,
     },
   };
@@ -661,6 +664,118 @@ const workspacesSlice = createSlice({
         target.errorCode = null;
       });
     },
+    createWorkspaceTagGroup: {
+      reducer: (
+        state,
+        action: PayloadAction<{
+          workspaceId: string;
+          actorId: string;
+          id: string;
+          name: string;
+          tags: string[];
+          now: string;
+        }>
+      ) => {
+        const workspace = state.items.find(
+          (item) => item.id === action.payload.workspaceId
+        );
+        const actor = workspace?.members.find(
+          (member) => member.id === action.payload.actorId
+        );
+        const name = action.payload.name.trim();
+        const tags = normalizeTags(action.payload.tags);
+        if (
+          !workspace ||
+          !actor ||
+          actor.role === "viewer" ||
+          !name ||
+          tags.length === 0 ||
+          workspace.resources.tagGroups.some(
+            (group) =>
+              group.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+          )
+        )
+          return;
+        workspace.resources.tagGroups.push({
+          id: action.payload.id,
+          name,
+          tags,
+          createdBy: action.payload.actorId,
+          createdAt: action.payload.now,
+          updatedAt: action.payload.now,
+        });
+      },
+      prepare: (payload: {
+        workspaceId: string;
+        actorId: string;
+        name: string;
+        tags: string[];
+      }) => ({
+        payload: {
+          ...payload,
+          id: nanoid(),
+          now: new Date().toISOString(),
+        },
+      }),
+    },
+    updateWorkspaceTagGroup: (
+      state,
+      action: PayloadAction<{
+        workspaceId: string;
+        actorId: string;
+        tagGroupId: string;
+        name: string;
+        tags: string[];
+      }>
+    ) => {
+      const workspace = state.items.find(
+        (item) => item.id === action.payload.workspaceId
+      );
+      const actor = workspace?.members.find(
+        (member) => member.id === action.payload.actorId
+      );
+      const group = workspace?.resources.tagGroups.find(
+        (item) => item.id === action.payload.tagGroupId
+      );
+      const name = action.payload.name.trim();
+      const tags = normalizeTags(action.payload.tags);
+      if (
+        !workspace ||
+        !actor ||
+        actor.role === "viewer" ||
+        !group ||
+        !name ||
+        tags.length === 0 ||
+        workspace.resources.tagGroups.some(
+          (item) =>
+            item.id !== group.id &&
+            item.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+        )
+      )
+        return;
+      group.name = name;
+      group.tags = tags;
+      group.updatedAt = new Date().toISOString();
+    },
+    deleteWorkspaceTagGroup: (
+      state,
+      action: PayloadAction<{
+        workspaceId: string;
+        actorId: string;
+        tagGroupId: string;
+      }>
+    ) => {
+      const workspace = state.items.find(
+        (item) => item.id === action.payload.workspaceId
+      );
+      const actor = workspace?.members.find(
+        (member) => member.id === action.payload.actorId
+      );
+      if (!workspace || !actor || actor.role === "viewer") return;
+      workspace.resources.tagGroups = workspace.resources.tagGroups.filter(
+        (group) => group.id !== action.payload.tagGroupId
+      );
+    },
     clearWorkspaceSession: (state) => {
       state.activeWorkspaceId = null;
     },
@@ -694,6 +809,9 @@ export const {
   cancelWorkspacePublication,
   duplicateWorkspacePublication,
   retryWorkspacePublication,
+  createWorkspaceTagGroup,
+  updateWorkspaceTagGroup,
+  deleteWorkspaceTagGroup,
   disconnectWorkspaceChannel,
   inviteMember,
   removeMember,

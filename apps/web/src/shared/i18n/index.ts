@@ -13,6 +13,8 @@ import postsEn from "@/features/posts/i18n/en.json";
 import postsPtBR from "@/features/posts/i18n/pt-BR.json";
 import subscriptionEn from "@/features/subscription/i18n/en.json";
 import subscriptionPtBR from "@/features/subscription/i18n/pt-BR.json";
+import tagsEn from "@/features/tags/i18n/en.json";
+import tagsPtBR from "@/features/tags/i18n/pt-BR.json";
 import workspacesEn from "@/features/workspaces/i18n/en.json";
 import workspacesPtBR from "@/features/workspaces/i18n/pt-BR.json";
 
@@ -40,6 +42,7 @@ export const resources = {
     workspaces: workspacesEn,
     channels: channelsEn,
     calendar: calendarEn,
+    tags: tagsEn,
   },
   "pt-BR": {
     common: commonPtBR,
@@ -52,6 +55,7 @@ export const resources = {
     workspaces: workspacesPtBR,
     channels: channelsPtBR,
     calendar: calendarPtBR,
+    tags: tagsPtBR,
   },
 } as const;
 
@@ -70,6 +74,7 @@ void i18n.use(initReactI18next).init({
     "posts",
     "channels",
     "calendar",
+    "tags",
     "subscription",
     "workspaces",
   ],

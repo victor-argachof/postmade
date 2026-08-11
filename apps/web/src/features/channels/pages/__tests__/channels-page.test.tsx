@@ -87,7 +87,12 @@ function createPageStore({
             createdAt: "2026-01-01T00:00:00.000Z",
             members: [{ ...owner, role, joinedAt: "2026-01-01T00:00:00.000Z" }],
             invitations: [],
-            resources: { channels, posts: [], selectedCalendarDate: null },
+            resources: {
+              channels,
+              posts: [],
+              tagGroups: [],
+              selectedCalendarDate: null,
+            },
           },
         ],
       },

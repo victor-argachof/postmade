@@ -1,0 +1,82 @@
+{
+  "pageTitle": "Tags",
+  "pageDescription": "Crie grupos de hashtags reutilizáveis para suas publicações.",
+  "newGroup": "Novo grupo",
+  "filters": {
+    "search": "Buscar grupos",
+    "clear": "Limpar busca",
+    "placeholder": "Buscar por nome ou hashtag"
+  },
+  "empty": {
+    "title": "Nenhum grupo de tags ainda",
+    "filtered": "Nenhum grupo encontrado",
+    "description": "Crie um grupo ou ajuste os termos da busca."
+  },
+  "table": {
+    "label": "Lista de grupos de tags",
+    "name": "Nome",
+    "tags": "Hashtags",
+    "actions": "Ações",
+    "results": "{{count}} grupos"
+  },
+  "actions": {
+    "editNamed": "Editar {{name}}",
+    "deleteNamed": "Excluir {{name}}"
+  },
+  "pagination": {
+    "perPage": "Itens por página",
+    "navigation": "Paginação de grupos de tags",
+    "previous": "Anterior",
+    "next": "Próxima",
+    "page": "Ir para a página {{number}}"
+  },
+  "input": {
+    "label": "Adicionar hashtag",
+    "placeholder": "Digite uma hashtag",
+    "hint": "Pressione Enter, espaço ou vírgula para adicionar.",
+    "invalid": "Use somente letras, números e underline.",
+    "remove": "Remover #{{tag}}"
+  },
+  "modal": {
+    "createTitle": "Criar grupo de tags",
+    "editTitle": "Editar grupo de tags",
+    "name": "Nome do grupo",
+    "tags": "Hashtags",
+    "nameRequired": "Informe o nome do grupo.",
+    "tagsRequired": "Adicione ao menos uma hashtag.",
+    "duplicate": "Já existe um grupo com este nome.",
+    "cancel": "Cancelar",
+    "create": "Criar grupo",
+    "save": "Salvar alterações",
+    "close": "Fechar"
+  },
+  "deleteModal": {
+    "title": "Excluir grupo de tags",
+    "description": "Excluir “{{name}}”? Publicações existentes manterão as hashtags salvas.",
+    "cancel": "Cancelar",
+    "confirm": "Excluir grupo",
+    "close": "Fechar"
+  },
+  "feedback": {
+    "created": "Grupo de tags criado.",
+    "updated": "Grupo de tags atualizado.",
+    "deleted": "Grupo de tags excluído."
+  },
+  "composer": {
+    "title": "Tags",
+    "groupsLabel": "Grupos de tags",
+    "description": "Selecione grupos para anexar hashtags à publicação.",
+    "select": "Selecionar grupos de tags",
+    "selectedCount_one": "{{count}} grupo selecionado",
+    "selectedCount_other": "{{count}} grupos selecionados",
+    "search": "Buscar por nome ou hashtag",
+    "noResults": "Nenhum grupo encontrado.",
+    "empty": "Crie grupos na página Tags para reutilizá-los aqui.",
+    "emptyAction": "Clique aqui",
+    "emptyDescription": "para criar grupos de Tags e usá-los nas suas publicações.",
+    "manage": "Gerenciar tags",
+    "removed": "Grupo removido",
+    "removedDescription": "Este snapshot não existe mais na biblioteca.",
+    "remove": "Remover {{name}}"
+  }
+}

@@ -30,7 +30,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           {...props}
           ref={ref}
           className={cn(
-            "pl-10 focus:border-primary focus:ring-2 focus:ring-primary/20",
+            "pl-10 focus:border-primary focus:ring-2 focus:ring-primary/20 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
             hasValue && onClear ? "pr-11" : "pr-3",
             className
           )}

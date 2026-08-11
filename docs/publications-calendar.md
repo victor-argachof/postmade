@@ -21,6 +21,11 @@ pode sobrescrever o texto, a mídia e configurações específicas. As regras fi
 centralizadas em `features/posts/lib/platform-rules.ts`. O protótipo usa URLs de
 objeto temporárias para uploads; URLs definitivas deverão vir do backend.
 
+Grupos selecionados são preservados como snapshots na publicação. As hashtags
+deduplicadas são anexadas ao conteúdo-base e aos overrides somente ao calcular o
+conteúdo efetivo para validação, preview e envio; o texto digitado permanece separado.
+As decisões completas estão em [`tags.md`](tags.md).
+
 ## Datas e calendário
 
 O workspace possui um timezone IANA. A interface exibe datas nesse fuso e persiste

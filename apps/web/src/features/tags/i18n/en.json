@@ -1,0 +1,79 @@
+{
+  "pageTitle": "Tags",
+  "pageDescription": "Create reusable hashtag groups for your publications.",
+  "newGroup": "New group",
+  "filters": {
+    "search": "Search groups",
+    "clear": "Clear search",
+    "placeholder": "Search by name or hashtag"
+  },
+  "empty": {
+    "title": "No tag groups yet",
+    "filtered": "No groups found",
+    "description": "Create a group or adjust your search."
+  },
+  "table": {
+    "label": "Tag groups list",
+    "name": "Name",
+    "tags": "Hashtags",
+    "actions": "Actions",
+    "results": "{{count}} groups"
+  },
+  "actions": { "editNamed": "Edit {{name}}", "deleteNamed": "Delete {{name}}" },
+  "pagination": {
+    "perPage": "Items per page",
+    "navigation": "Tag groups pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Go to page {{number}}"
+  },
+  "input": {
+    "label": "Add hashtag",
+    "placeholder": "Type a hashtag",
+    "hint": "Press Enter, space, or comma to add.",
+    "invalid": "Use only letters, numbers, and underscores.",
+    "remove": "Remove #{{tag}}"
+  },
+  "modal": {
+    "createTitle": "Create tag group",
+    "editTitle": "Edit tag group",
+    "name": "Group name",
+    "tags": "Hashtags",
+    "nameRequired": "Enter a group name.",
+    "tagsRequired": "Add at least one hashtag.",
+    "duplicate": "A group with this name already exists.",
+    "cancel": "Cancel",
+    "create": "Create group",
+    "save": "Save changes",
+    "close": "Close"
+  },
+  "deleteModal": {
+    "title": "Delete tag group",
+    "description": "Delete “{{name}}”? Existing publications will preserve their saved hashtags.",
+    "cancel": "Cancel",
+    "confirm": "Delete group",
+    "close": "Close"
+  },
+  "feedback": {
+    "created": "Tag group created.",
+    "updated": "Tag group updated.",
+    "deleted": "Tag group deleted."
+  },
+  "composer": {
+    "title": "Tags",
+    "groupsLabel": "Tag groups",
+    "description": "Select groups to append hashtags to the publication.",
+    "select": "Select tag groups",
+    "selectedCount_one": "{{count}} group selected",
+    "selectedCount_other": "{{count}} groups selected",
+    "search": "Search by name or hashtag",
+    "noResults": "No groups found.",
+    "empty": "Create groups on the Tags page to reuse them here.",
+    "emptyAction": "Click here",
+    "emptyDescription": "to create Tag groups and use them in your publications.",
+    "manage": "Manage tags",
+    "removed": "Removed group",
+    "removedDescription": "This snapshot no longer exists in the library.",
+    "remove": "Remove {{name}}"
+  }
+}

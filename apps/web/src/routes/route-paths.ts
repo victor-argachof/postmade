@@ -11,6 +11,7 @@ export const ROUTES = {
   editPost: (publicationId: string) => `/posts/${publicationId}/edit`,
   workspaceChannels: "/workspace/channels",
   calendar: "/calendar",
+  tags: "/tags",
   workspaceSettings: "/workspace/settings",
   workspaceMembers: "/workspace/settings#workspace-members",
   account: "/account",

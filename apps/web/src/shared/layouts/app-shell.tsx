@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   CreditCard,
+  Hash,
   LayoutDashboard,
   Radio,
   Send,
@@ -32,6 +33,7 @@ export function AppShell() {
       items: [
         { to: ROUTES.posts, label: t("posts"), icon: Send },
         { to: ROUTES.calendar, label: t("calendar"), icon: CalendarDays },
+        { to: ROUTES.tags, label: t("tags"), icon: Hash },
       ],
     },
     {

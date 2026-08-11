@@ -1,5 +1,9 @@
-import type { PublicationRecurrence, SocialChannel } from "@postmade/types";
-import { CalendarClock, RefreshCcw, Send, Users } from "lucide-react";
+import type {
+  PublicationRecurrence,
+  PublicationTagGroupSnapshot,
+  SocialChannel,
+} from "@postmade/types";
+import { CalendarClock, RefreshCcw, Send, Tags, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/shared/components/ui/button";
@@ -26,6 +30,7 @@ export function PublicationConfirmationModal({
   onClose,
   onConfirm,
   recurrence,
+  tagGroupSnapshots,
   scheduledFor,
   timezone,
 }: {
@@ -36,6 +41,7 @@ export function PublicationConfirmationModal({
   onClose: () => void;
   onConfirm: () => void;
   recurrence: PublicationRecurrence | null;
+  tagGroupSnapshots: PublicationTagGroupSnapshot[];
   scheduledFor: string | null;
   timezone: string;
 }) {
@@ -83,6 +89,21 @@ export function PublicationConfirmationModal({
             {content || t("mediaOnly")}
           </p>
         </div>
+        {tagGroupSnapshots.length > 0 && (
+          <div className="flex gap-3 rounded-xl border border-border p-3">
+            <Tags className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <div className="min-w-0">
+              <p className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+                {t("composer.confirmation.tags")}
+              </p>
+              <p className="mt-1 text-sm font-semibold">
+                {tagGroupSnapshots
+                  .map((snapshot) => snapshot.groupName)
+                  .join(", ")}
+              </p>
+            </div>
+          </div>
+        )}
         {scheduled && formattedSchedule && (
           <div className="flex gap-3 rounded-xl border border-border p-3">
             <CalendarClock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />

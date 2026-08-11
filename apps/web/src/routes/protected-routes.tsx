@@ -5,6 +5,7 @@ import { CalendarPage } from "@/features/calendar";
 import { ChannelsPage } from "@/features/channels";
 import { PostComposerPage, PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
+import { TagsPage } from "@/features/tags";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
 import { DashboardHome } from "@/shared/components/dashboard-home";
 import { AppShell } from "@/shared/layouts/app-shell";
@@ -22,6 +23,7 @@ export const protectedRoutes: RouteObject = {
     { path: "/posts/:publicationId/edit", element: <PostComposerPage /> },
     { path: ROUTES.workspaceChannels, element: <ChannelsPage /> },
     { path: ROUTES.calendar, element: <CalendarPage /> },
+    { path: ROUTES.tags, element: <TagsPage /> },
     { path: ROUTES.workspaceSettings, element: <WorkspaceSettingsPage /> },
     { path: ROUTES.account, element: <AccountPage /> },
     { path: ROUTES.workspaceSubscription, element: <SubscriptionPage /> },

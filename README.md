@@ -18,6 +18,7 @@ TikTok e YouTube. Entre os principais recursos previstos estão:
 - publicação em múltiplas redes sociais;
 - agendamento e calendário de conteúdo;
 - personalização e preview por plataforma;
+- grupos reutilizáveis de tags e hashtags;
 - upload e gerenciamento de mídia;
 - assinatura mensal configurável por quantidade de canais e membros.
 
@@ -25,7 +26,7 @@ TikTok e YouTube. Entre os principais recursos previstos estão:
 
 Esta fase concentra-se somente no front-end do MVP: autenticação, shell do
 dashboard, conta do usuário, assinatura, canais e os fluxos locais de criação,
-gestão e agendamento de publicações. Os dados e a sessão ainda são locais; integrações
+gestão e agendamento de publicações, além de grupos reutilizáveis de tags. Os dados e a sessão ainda são locais; integrações
 OAuth, pagamentos e publicação real dependerão do futuro back-end.
 
 O projeto foi organizado para evoluir para uma arquitetura com NestJS,

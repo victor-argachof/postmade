@@ -2,14 +2,17 @@ import type {
   PublicationMedia,
   PublicationRecurrence,
   PublicationStatus,
+  PublicationTagGroupSnapshot,
   ScheduledPublication,
 } from "@postmade/types";
-import { ArrowLeft, Clock3, Save, Send } from "lucide-react";
+import { ArrowLeft, Clock3, ExternalLink, Save, Send } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import { PostTagGroupsSelector } from "@/features/tags/components/post-tag-groups-selector";
+import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import {
   createWorkspacePublication,
@@ -41,7 +44,11 @@ import { selectActiveWorkspace } from "../lib/selectors";
 
 export function PostComposerPage() {
   const { t, i18n } = useTranslation("posts");
+  const { t: tTags } = useTranslation("tags");
   const navigate = useNavigate();
+  const openTagsManager = () => {
+    window.open(ROUTES.tags, "_blank", "noopener,noreferrer");
+  };
   const dispatch = useAppDispatch();
   const { publicationId } = useParams();
   const [search] = useSearchParams();
@@ -78,6 +85,9 @@ export function PostComposerPage() {
   const [recurrence, setRecurrence] = useState<PublicationRecurrence>(
     existing?.recurrence ?? { interval: 1, unit: "day" }
   );
+  const [tagGroupSnapshots, setTagGroupSnapshots] = useState<
+    PublicationTagGroupSnapshot[]
+  >(existing?.tagGroupSnapshots ?? []);
   const [confirmationMode, setConfirmationMode] = useState<
     "published" | "scheduled" | null
   >(null);
@@ -87,19 +97,27 @@ export function PostComposerPage() {
   }, [channelIds, previewChannel]);
   const channels =
     workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
+  const tagGroups = workspace?.resources.tagGroups ?? [];
   const selected = channels.filter((channel) =>
     channelIds.includes(channel.id)
+  );
+  const effectiveContent = effectivePublicationContent(
+    content,
+    tagGroupSnapshots
   );
   const errors = useMemo(
     () =>
       selected.flatMap((channel) =>
         validateTarget(
           channel.platform,
-          overrides[channel.id]?.trim() || content,
+          effectivePublicationContent(
+            overrides[channel.id]?.trim() || content,
+            tagGroupSnapshots
+          ),
           media
         ).map((error) => ({ channel, error }))
       ),
-    [selected, overrides, content, media]
+    [selected, overrides, content, media, tagGroupSnapshots]
   );
   const used =
     workspace?.resources.posts.filter(
@@ -171,6 +189,7 @@ export function PostComposerPage() {
         errorCode: null,
         externalUrl: null,
       })),
+      tagGroupSnapshots,
       recurrence: repeatPublication ? recurrence : null,
       scheduledFor:
         status === "scheduled"
@@ -270,7 +289,7 @@ export function PostComposerPage() {
             <div className="flex justify-between">
               <h2 className="font-bold">{t("composer.content")}</h2>
               <span className="text-xs text-muted-foreground">
-                {content.length}
+                {effectiveContent.length}
               </span>
             </div>
             <textarea
@@ -288,9 +307,30 @@ export function PostComposerPage() {
               />
             </div>
           </div>
-          {selected.length > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="font-bold">{t("composer.customize")}</h2>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="font-bold">{t("composer.tags")}</h2>
+              <Button
+                size="sm"
+                type="button"
+                variant="ghost"
+                onClick={openTagsManager}
+              >
+                {tTags("composer.manage")}
+                <ExternalLink className="size-3.5" />
+              </Button>
+            </div>
+            <PostTagGroupsSelector
+              disabled={readOnly}
+              groups={tagGroups}
+              value={tagGroupSnapshots}
+              onChange={setTagGroupSnapshots}
+              onManage={openTagsManager}
+            />
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h2 className="font-bold">{t("composer.customize")}</h2>
+            {selected.length > 0 ? (
               <div className="mt-4 space-y-4">
                 {selected.map((channel) => {
                   const targetErrors = errors.filter(
@@ -307,8 +347,13 @@ export function PostComposerPage() {
                           {t(`platforms.${channel.platform}`)}
                         </label>
                         <span className="text-muted-foreground">
-                          {(overrides[channel.id] || content).length}/
-                          {PLATFORM_RULES[channel.platform].maxCharacters}
+                          {
+                            effectivePublicationContent(
+                              overrides[channel.id] || content,
+                              tagGroupSnapshots
+                            ).length
+                          }
+                          /{PLATFORM_RULES[channel.platform].maxCharacters}
                         </span>
                       </div>
                       <textarea
@@ -337,8 +382,12 @@ export function PostComposerPage() {
                   );
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">
+                {t("composer.customizeNoChannels")}
+              </p>
+            )}
+          </div>
           <div className="rounded-2xl border border-border bg-card p-5">
             <p className="font-bold">{t("composer.schedule")}</p>
             <PublicationTimingSwitcher
@@ -429,7 +478,10 @@ export function PostComposerPage() {
                 {preview && (
                   <div className="mt-4">
                     <PlatformPreview
-                      content={overrides[preview.id]?.trim() || content}
+                      content={effectivePublicationContent(
+                        overrides[preview.id]?.trim() || content,
+                        tagGroupSnapshots
+                      )}
                       media={media}
                       platform={preview.platform}
                     />
@@ -446,7 +498,7 @@ export function PostComposerPage() {
       </div>
       <PublicationConfirmationModal
         channels={selected}
-        content={content.trim()}
+        content={effectiveContent}
         locale={i18n.language}
         mode={confirmationMode}
         onClose={() => setConfirmationMode(null)}
@@ -457,6 +509,7 @@ export function PostComposerPage() {
           save(status, true);
         }}
         recurrence={repeatPublication ? recurrence : null}
+        tagGroupSnapshots={tagGroupSnapshots}
         scheduledFor={
           confirmationMode === "scheduled" && scheduledFor && workspace
             ? zonedInputToUtc(scheduledFor, workspace.timezone)

@@ -12,6 +12,21 @@ export interface SocialChannel {
   connected: boolean;
 }
 
+export interface TagGroup {
+  id: string;
+  name: string;
+  tags: string[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PublicationTagGroupSnapshot {
+  groupId: string;
+  groupName: string;
+  tags: string[];
+}
+
 export interface PublicationMedia {
   id: string;
   type: "image" | "video";
@@ -43,6 +58,7 @@ export interface ScheduledPublication {
   content: string;
   media: PublicationMedia[];
   targets: PublicationTarget[];
+  tagGroupSnapshots?: PublicationTagGroupSnapshot[];
   recurrence?: PublicationRecurrence | null;
   scheduledFor: string | null;
   publishedAt: string | null;
