@@ -37,6 +37,14 @@ export function TagGroupModal({
       item.toLocaleLowerCase() === name.trim().toLocaleLowerCase() &&
       item.toLocaleLowerCase() !== group?.name.toLocaleLowerCase()
   );
+  const nameError =
+    submitted && !name.trim()
+      ? t("modal.nameRequired")
+      : duplicate
+        ? t("modal.duplicate")
+        : undefined;
+  const tagsError =
+    submitted && !tags.length ? t("modal.tagsRequired") : undefined;
   const valid = Boolean(name.trim() && tags.length && !duplicate);
   return (
     <Modal
@@ -61,30 +69,31 @@ export function TagGroupModal({
             {t("modal.name")}
           </label>
           <Input
+            aria-describedby={nameError ? "tag-group-name-error" : undefined}
+            aria-invalid={Boolean(nameError)}
             autoFocus
+            className={
+              nameError
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500/15"
+                : undefined
+            }
             id="tag-group-name"
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
-          {submitted && !name.trim() && (
-            <p className="text-destructive mt-2 text-xs font-semibold">
-              {t("modal.nameRequired")}
-            </p>
-          )}
-          {duplicate && (
-            <p className="text-destructive mt-2 text-xs font-semibold">
-              {t("modal.duplicate")}
+          {nameError && (
+            <p
+              className="mt-2 text-xs text-red-600"
+              id="tag-group-name-error"
+              role="alert"
+            >
+              {nameError}
             </p>
           )}
         </div>
         <div>
           <p className="mb-2 text-sm font-semibold">{t("modal.tags")}</p>
-          <TagInput value={tags} onChange={setTags} />
-          {submitted && !tags.length && (
-            <p className="text-destructive mt-2 text-xs font-semibold">
-              {t("modal.tagsRequired")}
-            </p>
-          )}
+          <TagInput error={tagsError} value={tags} onChange={setTags} />
         </div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>

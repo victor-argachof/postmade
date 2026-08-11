@@ -1,21 +1,27 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { isValidTag, normalizeTag, normalizeTags } from "../lib/tags";
+import { cn } from "@/shared/lib/utils";
+
+import { isValidTag, normalizeTags } from "../lib/tags";
 
 export function TagInput({
   disabled,
+  error,
   onChange,
   value,
 }: {
   disabled?: boolean;
+  error?: string;
   onChange: (tags: string[]) => void;
   value: string[];
 }) {
   const { t } = useTranslation("tags");
+  const errorId = useId();
   const [draft, setDraft] = useState("");
   const [invalid, setInvalid] = useState(false);
+  const errorMessage = invalid ? t("input.invalid") : error;
   const commit = (raw: string) => {
     const candidates = raw.split(/[\s,]+/).filter(Boolean);
     if (!candidates.length) return;
@@ -29,7 +35,13 @@ export function TagInput({
   };
   return (
     <div>
-      <div className="flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-input bg-background px-3 py-2 transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15">
+      <div
+        className={cn(
+          "flex min-h-11 flex-wrap items-center gap-2 rounded-xl border border-input bg-background px-3 py-2 transition focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/15",
+          errorMessage &&
+            "border-red-500 focus-within:border-red-500 focus-within:ring-red-500/15"
+        )}
+      >
         {value.map((tag) => (
           <span
             className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1 text-sm font-semibold text-primary"
@@ -48,6 +60,8 @@ export function TagInput({
           </span>
         ))}
         <input
+          aria-describedby={errorMessage ? errorId : undefined}
+          aria-invalid={Boolean(errorMessage)}
           aria-label={t("input.label")}
           className="h-7 min-w-32 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           disabled={disabled}
@@ -77,9 +91,13 @@ export function TagInput({
           }}
         />
       </div>
-      {invalid && (
-        <p className="text-destructive mt-2 text-xs font-semibold">
-          {t("input.invalid")}
+      {errorMessage && (
+        <p
+          className="mt-2 text-xs text-red-600"
+          id={errorId}
+          role="alert"
+        >
+          {errorMessage}
         </p>
       )}
       <p className="mt-2 text-xs text-muted-foreground">{t("input.hint")}</p>
