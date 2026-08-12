@@ -20,8 +20,13 @@ atual pode ser selecionado novamente.
 
 O conteúdo efetivo é calculado sem alterar o texto-base: hashtags deduplicadas
 são anexadas após uma linha em branco. O mesmo cálculo é usado para conteúdo-base,
-overrides de legenda, contadores, validação por plataforma, previews e confirmação. Uma
+overrides, contadores, validação por plataforma, previews e confirmação. Uma
 publicação apenas com hashtags é considerada conteúdo textual válido.
+
+Na etapa de Personalização por canal, cada plataforma ativada pode substituir os snapshots
+globais por sua própria seleção de grupos. Ao ativar uma plataforma pela primeira
+vez, a seleção começa como uma cópia dos grupos globais e passa a evoluir de forma
+independente. Uma lista vazia é válida e significa publicar naquela rede sem tags.
 
 ## Persistência e API futura
 

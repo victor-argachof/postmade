@@ -33,6 +33,7 @@ import { PlatformPreview } from "../components/platform-preview";
 import type { PublicationTimingMode } from "../components/publication-timing-switcher";
 import { ChannelsStep } from "../components/steps/channels-step";
 import { ContentStep } from "../components/steps/content-step";
+import { PersonalizationStep } from "../components/steps/personalization-step";
 import { SchedulingStep } from "../components/steps/scheduling-step";
 import { utcToZonedInput, zonedInputToUtc } from "../lib/dates";
 import { validateTarget } from "../lib/platform-rules";
@@ -60,7 +61,7 @@ export function PostComposerPage() {
   const [channelIds, setChannelIds] = useState<string[]>(
     existing?.targets.map((target) => target.channelId) ?? []
   );
-  const [captionOverrides, setCaptionOverrides] = useState<
+  const [overrides, setOverrides] = useState<
     Partial<Record<SocialPlatform, string>>
   >(() =>
     existing?.targets.reduce<Partial<Record<SocialPlatform, string>>>(
@@ -73,8 +74,32 @@ export function PostComposerPage() {
       {}
     ) ?? {}
   );
-  const [customizeByPlatform, setCustomizeByPlatform] = useState(() =>
-    Boolean(existing?.targets.some((target) => target.contentOverride))
+  const [tagGroupOverrides, setTagGroupOverrides] = useState<
+    Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
+  >(() =>
+    existing?.targets.reduce<
+      Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
+    >((current, target) => {
+      if (target.tagGroupSnapshotsOverride != null) {
+        current[target.platform] = target.tagGroupSnapshotsOverride;
+      }
+      return current;
+    }, {}) ?? {}
+  );
+  const [customizedPlatforms, setCustomizedPlatforms] = useState<
+    SocialPlatform[]
+  >(() =>
+    Array.from(
+      new Set(
+        existing?.targets
+          .filter(
+            (target) =>
+              target.contentOverride ||
+              target.tagGroupSnapshotsOverride != null
+          )
+          .map((target) => target.platform) ?? []
+      )
+    )
   );
   const defaultDate = search.get("date") ? `${search.get("date")}T09:00` : "";
   const [scheduledFor, setScheduledFor] = useState(
@@ -104,8 +129,12 @@ export function PostComposerPage() {
   const selectedPlatforms = Array.from(
     new Set(selected.map((channel) => channel.platform))
   );
-  const usesPlatformCustomization =
-    customizeByPlatform && selectedPlatforms.length > 1;
+  const activeCustomizedPlatforms =
+    selectedPlatforms.length > 1
+      ? customizedPlatforms.filter((platform) =>
+          selectedPlatforms.includes(platform)
+        )
+      : [];
   const effectiveContent = effectivePublicationContent(
     content,
     tagGroupSnapshots
@@ -116,21 +145,24 @@ export function PostComposerPage() {
         validateTarget(
           channel.platform,
           effectivePublicationContent(
-            usesPlatformCustomization
-              ? captionOverrides[channel.platform]?.trim() || content
+            activeCustomizedPlatforms.includes(channel.platform)
+              ? overrides[channel.platform]?.trim() || content
               : content,
-            tagGroupSnapshots
+            activeCustomizedPlatforms.includes(channel.platform)
+              ? tagGroupOverrides[channel.platform] ?? tagGroupSnapshots
+              : tagGroupSnapshots
           ),
           media
         ).map((error) => ({ channel, error }))
       ),
     [
       selected,
-      captionOverrides,
+      overrides,
       content,
       media,
       tagGroupSnapshots,
-      usesPlatformCustomization,
+      tagGroupOverrides,
+      activeCustomizedPlatforms,
     ]
   );
   const used =
@@ -194,8 +226,13 @@ export function PostComposerPage() {
       targets: selected.map((channel) => ({
         channelId: channel.id,
         platform: channel.platform,
-        contentOverride: usesPlatformCustomization
-          ? captionOverrides[channel.platform]?.trim() || null
+        contentOverride: activeCustomizedPlatforms.includes(channel.platform)
+          ? overrides[channel.platform]?.trim() || null
+          : null,
+        tagGroupSnapshotsOverride: activeCustomizedPlatforms.includes(
+          channel.platform
+        )
+          ? tagGroupOverrides[channel.platform] ?? tagGroupSnapshots
           : null,
         mediaOverride: null,
         settings:
@@ -272,23 +309,32 @@ export function PostComposerPage() {
           />
           <ContentStep
             content={content}
-            customizeByPlatform={usesPlatformCustomization}
             disabled={readOnly}
             effectiveContentLength={effectiveContent.length}
+            media={media}
+            onContentChange={setContent}
+            onManageTags={openTagsManager}
+            onMediaChange={setMedia}
+            onTagGroupsChange={setTagGroupSnapshots}
+            tagGroups={tagGroups}
+            tagGroupSnapshots={tagGroupSnapshots}
+          />
+          <PersonalizationStep
+            content={content}
+            disabled={readOnly}
+            enabledPlatforms={activeCustomizedPlatforms}
             errors={errors.map(({ channel, error }) => ({
               error,
               platform: channel.platform,
             }))}
-            media={media}
-            onContentChange={setContent}
-            onCustomizeByPlatformChange={setCustomizeByPlatform}
+            onEnabledPlatformsChange={setCustomizedPlatforms}
             onManageTags={openTagsManager}
-            onMediaChange={setMedia}
-            onCaptionOverridesChange={setCaptionOverrides}
-            onTagGroupsChange={setTagGroupSnapshots}
-            captionOverrides={captionOverrides}
-            selectedPlatforms={selectedPlatforms}
+            onOverridesChange={setOverrides}
+            onTagGroupOverridesChange={setTagGroupOverrides}
+            overrides={overrides}
+            platforms={selectedPlatforms}
             tagGroups={tagGroups}
+            tagGroupOverrides={tagGroupOverrides}
             tagGroupSnapshots={tagGroupSnapshots}
           />
           <SchedulingStep
@@ -357,10 +403,13 @@ export function PostComposerPage() {
                   <div className="mt-4">
                     <PlatformPreview
                       content={effectivePublicationContent(
-                        usesPlatformCustomization
-                          ? captionOverrides[preview.platform]?.trim() || content
+                        activeCustomizedPlatforms.includes(preview.platform)
+                          ? overrides[preview.platform]?.trim() || content
                           : content,
-                        tagGroupSnapshots
+                        activeCustomizedPlatforms.includes(preview.platform)
+                          ? tagGroupOverrides[preview.platform] ??
+                              tagGroupSnapshots
+                          : tagGroupSnapshots
                       )}
                       media={media}
                       platform={preview.platform}

@@ -16,17 +16,19 @@ independentemente da quantidade de canais; rascunhos não consomem a cota.
 
 ## Conteúdo multicanal
 
-Uma publicação agrega legenda e mídia base e possui um target por conta conectada.
-A legenda pode ser personalizada por plataforma e é aplicada a todos os targets
-daquela rede.
+Uma publicação agrega texto e mídia base e possui um target por canal. O conteúdo
+pode ser personalizado por plataforma e é aplicado a todos os targets daquela rede.
 As regras ficam
 centralizadas em `features/posts/lib/platform-rules.ts`. O protótipo usa URLs de
 objeto temporárias para uploads; no produto, URLs assinadas e com expiração deverão
 vir do serviço de mídia do backend.
 
 Grupos selecionados são preservados como snapshots na publicação. As hashtags
-deduplicadas são anexadas à legenda-base e aos overrides somente ao calcular o
+deduplicadas são anexadas ao conteúdo-base e aos overrides somente ao calcular o
 conteúdo efetivo para validação, preview e envio; o texto digitado permanece separado.
+Quando uma plataforma é personalizada, ela pode possuir seus próprios snapshots de
+grupos de tags. Esses snapshots são aplicados a todos os targets daquela plataforma;
+as demais redes continuam utilizando os grupos definidos no conteúdo-base.
 As decisões completas estão em [`tags.md`](tags.md).
 
 ## Mídia e retenção

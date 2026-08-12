@@ -40,6 +40,7 @@ export interface PublicationTarget {
   channelId: string;
   platform: SocialPlatform;
   contentOverride: string | null;
+  tagGroupSnapshotsOverride?: PublicationTagGroupSnapshot[] | null;
   mediaOverride: PublicationMedia[] | null;
   settings: Record<string, unknown>;
   status: PublicationStatus;
