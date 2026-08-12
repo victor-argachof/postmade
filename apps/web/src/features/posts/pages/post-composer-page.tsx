@@ -316,6 +316,7 @@ export function PostComposerPage() {
             onManageTags={openTagsManager}
             onMediaChange={setMedia}
             onTagGroupsChange={setTagGroupSnapshots}
+            selectedPlatforms={selectedPlatforms}
             tagGroups={tagGroups}
             tagGroupSnapshots={tagGroupSnapshots}
           />

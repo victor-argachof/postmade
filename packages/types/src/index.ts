@@ -34,6 +34,7 @@ export interface PublicationMedia {
   url: string;
   filename: string;
   mimeType: string;
+  size?: number;
 }
 
 export interface PublicationTarget {

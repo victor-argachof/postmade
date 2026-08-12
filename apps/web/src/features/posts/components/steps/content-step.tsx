@@ -1,6 +1,7 @@
 import type {
   PublicationMedia,
   PublicationTagGroupSnapshot,
+  SocialPlatform,
   TagGroup,
 } from "@postmade/types";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,7 @@ export function ContentStep({
   onManageTags,
   onMediaChange,
   onTagGroupsChange,
+  selectedPlatforms,
   tagGroups,
   tagGroupSnapshots,
 }: {
@@ -31,6 +33,7 @@ export function ContentStep({
   onManageTags: () => void;
   onMediaChange: (media: PublicationMedia[]) => void;
   onTagGroupsChange: (snapshots: PublicationTagGroupSnapshot[]) => void;
+  selectedPlatforms: SocialPlatform[];
   tagGroups: TagGroup[];
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
 }) {
@@ -39,7 +42,12 @@ export function ContentStep({
 
   return (
     <PostComposerStepCard title={t("composer.content")}>
-      <MediaUploader disabled={disabled} media={media} onChange={onMediaChange} />
+      <MediaUploader
+        disabled={disabled}
+        media={media}
+        platforms={selectedPlatforms}
+        onChange={onMediaChange}
+      />
       <div className="mt-5 flex justify-between gap-4">
         <label className="text-sm font-semibold" htmlFor="post-caption">
           {t("composer.caption")}
