@@ -8,7 +8,7 @@ export function MobilePreferences() {
 
   return (
     <section
-      className="mt-auto border-t border-border px-2 pt-4"
+      className="border-t border-border px-2 pt-4"
       aria-label={t("preferences")}
     >
       <p className="px-2 pb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">

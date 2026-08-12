@@ -62,7 +62,7 @@ export function MobileSidebar({
         aria-modal="true"
         aria-label={navigationLabel}
       >
-        <div className="flex h-10 items-center justify-between px-2">
+        <div className="flex h-10 shrink-0 items-center justify-between px-2">
           <NavLink to={ROUTES.dashboard} onClick={onClose}>
             <Brand />
           </NavLink>
@@ -76,12 +76,15 @@ export function MobileSidebar({
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
-        <SidebarNavigation
-          sections={sections}
-          ariaLabel={navigationLabel}
-          onNavigate={onClose}
-        />
-        <MobilePreferences />
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain">
+          <SidebarNavigation
+            sections={sections}
+            ariaLabel={navigationLabel}
+            onNavigate={onClose}
+          />
+          <div className="min-h-6 flex-1" aria-hidden="true" />
+          <MobilePreferences />
+        </div>
       </aside>
     </>
   );
