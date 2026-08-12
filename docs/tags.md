@@ -20,7 +20,7 @@ atual pode ser selecionado novamente.
 
 O conteúdo efetivo é calculado sem alterar o texto-base: hashtags deduplicadas
 são anexadas após uma linha em branco. O mesmo cálculo é usado para conteúdo-base,
-overrides, contadores, validação por plataforma, previews e confirmação. Uma
+overrides de legenda, contadores, validação por plataforma, previews e confirmação. Uma
 publicação apenas com hashtags é considerada conteúdo textual válido.
 
 ## Persistência e API futura

@@ -87,8 +87,8 @@
     "placeholder": "What would you like to share?",
     "addMedia": "Add images or video",
     "tags": "Add tags",
-    "customize": "Customize by channel",
-    "customizeNoChannels": "Select at least one channel to customize its content.",
+    "customize": "Customize caption by channel",
+    "customizeNoChannels": "Select channels from at least two networks to customize the caption.",
     "inherit": "Leave empty to use the main content",
     "schedule": "3. Scheduling",
     "timing": {

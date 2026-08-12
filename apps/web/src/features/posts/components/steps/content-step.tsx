@@ -21,9 +21,9 @@ interface ContentStepProps {
   onCustomizeByPlatformChange: (enabled: boolean) => void;
   onManageTags: () => void;
   onMediaChange: (media: PublicationMedia[]) => void;
-  onOverridesChange: (overrides: Partial<Record<SocialPlatform, string>>) => void;
+  onCaptionOverridesChange: (captionOverrides: Partial<Record<SocialPlatform, string>>) => void;
   onTagGroupsChange: (snapshots: PublicationTagGroupSnapshot[]) => void;
-  overrides: Partial<Record<SocialPlatform, string>>;
+  captionOverrides: Partial<Record<SocialPlatform, string>>;
   selectedPlatforms: SocialPlatform[];
   tagGroups: TagGroup[];
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
@@ -35,7 +35,7 @@ export function ContentStep(props: ContentStepProps) {
   const {
     content, customizeByPlatform, disabled, effectiveContentLength, errors,
     media, onContentChange, onCustomizeByPlatformChange, onManageTags,
-    onMediaChange, onOverridesChange, onTagGroupsChange, overrides,
+    onMediaChange, onCaptionOverridesChange, onTagGroupsChange, captionOverrides,
     selectedPlatforms, tagGroups, tagGroupSnapshots,
   } = props;
 
@@ -80,7 +80,7 @@ export function ContentStep(props: ContentStepProps) {
                       <div className="flex justify-between gap-4 text-sm">
                         <label className="font-semibold" htmlFor={`override-${platform}`}>{t(`platforms.${platform}`)}</label>
                         <span className="shrink-0 text-muted-foreground">
-                          {effectivePublicationContent(overrides[platform] || content, tagGroupSnapshots).length}/{PLATFORM_RULES[platform].maxCharacters}
+                          {effectivePublicationContent(captionOverrides[platform] || content, tagGroupSnapshots).length}/{PLATFORM_RULES[platform].maxCharacters}
                         </span>
                       </div>
                       <textarea
@@ -88,8 +88,8 @@ export function ContentStep(props: ContentStepProps) {
                         disabled={disabled}
                         id={`override-${platform}`}
                         placeholder={t("composer.inherit")}
-                        value={overrides[platform] ?? ""}
-                        onChange={(event) => onOverridesChange({ ...overrides, [platform]: event.target.value })}
+                        value={captionOverrides[platform] ?? ""}
+                        onChange={(event) => onCaptionOverridesChange({ ...captionOverrides, [platform]: event.target.value })}
                       />
                       {platformErrors.length > 0 && (
                         <p className="mt-1 text-xs font-semibold text-red-600">

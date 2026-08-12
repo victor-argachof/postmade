@@ -87,8 +87,8 @@
     "placeholder": "O que você quer compartilhar?",
     "addMedia": "Adicionar imagens ou vídeo",
     "tags": "Adicione tags",
-    "customize": "Personalizar por canal",
-    "customizeNoChannels": "Selecione ao menos um canal para personalizar o conteúdo.",
+    "customize": "Personalizar legenda por canal",
+    "customizeNoChannels": "Selecione canais de pelo menos duas redes para personalizar a legenda.",
     "inherit": "Deixe vazio para usar o conteúdo principal",
     "schedule": "3. Programação",
     "timing": {

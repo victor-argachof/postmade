@@ -9,7 +9,7 @@ diversas redes sociais em um único lugar.
 
 O Postmade permitirá conectar contas sociais via OAuth, criar publicações com
 texto, imagens ou vídeos e distribuí-las simultaneamente entre diferentes
-plataformas. O usuário poderá personalizar o conteúdo por rede, publicar
+plataformas. O usuário poderá personalizar a legenda por rede, publicar
 imediatamente ou programar o envio por meio de um calendário.
 
 As integrações planejadas inicialmente incluem Facebook, LinkedIn, Instagram,

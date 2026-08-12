@@ -60,7 +60,7 @@ export function PostComposerPage() {
   const [channelIds, setChannelIds] = useState<string[]>(
     existing?.targets.map((target) => target.channelId) ?? []
   );
-  const [overrides, setOverrides] = useState<
+  const [captionOverrides, setCaptionOverrides] = useState<
     Partial<Record<SocialPlatform, string>>
   >(() =>
     existing?.targets.reduce<Partial<Record<SocialPlatform, string>>>(
@@ -117,7 +117,7 @@ export function PostComposerPage() {
           channel.platform,
           effectivePublicationContent(
             usesPlatformCustomization
-              ? overrides[channel.platform]?.trim() || content
+              ? captionOverrides[channel.platform]?.trim() || content
               : content,
             tagGroupSnapshots
           ),
@@ -126,7 +126,7 @@ export function PostComposerPage() {
       ),
     [
       selected,
-      overrides,
+      captionOverrides,
       content,
       media,
       tagGroupSnapshots,
@@ -195,7 +195,7 @@ export function PostComposerPage() {
         channelId: channel.id,
         platform: channel.platform,
         contentOverride: usesPlatformCustomization
-          ? overrides[channel.platform]?.trim() || null
+          ? captionOverrides[channel.platform]?.trim() || null
           : null,
         mediaOverride: null,
         settings:
@@ -284,9 +284,9 @@ export function PostComposerPage() {
             onCustomizeByPlatformChange={setCustomizeByPlatform}
             onManageTags={openTagsManager}
             onMediaChange={setMedia}
-            onOverridesChange={setOverrides}
+            onCaptionOverridesChange={setCaptionOverrides}
             onTagGroupsChange={setTagGroupSnapshots}
-            overrides={overrides}
+            captionOverrides={captionOverrides}
             selectedPlatforms={selectedPlatforms}
             tagGroups={tagGroups}
             tagGroupSnapshots={tagGroupSnapshots}
@@ -358,7 +358,7 @@ export function PostComposerPage() {
                     <PlatformPreview
                       content={effectivePublicationContent(
                         usesPlatformCustomization
-                          ? overrides[preview.platform]?.trim() || content
+                          ? captionOverrides[preview.platform]?.trim() || content
                           : content,
                         tagGroupSnapshots
                       )}
