@@ -9,6 +9,7 @@ export interface SocialChannel {
   platform: SocialPlatform;
   displayName: string;
   username: string;
+  avatarUrl?: string | null;
   connected: boolean;
 }
 
@@ -46,11 +47,6 @@ export interface PublicationTarget {
   externalUrl: string | null;
 }
 
-export interface PublicationRecurrence {
-  interval: number;
-  unit: "day" | "week" | "month";
-}
-
 export interface ScheduledPublication {
   id: string;
   createdBy: string;
@@ -59,7 +55,6 @@ export interface ScheduledPublication {
   media: PublicationMedia[];
   targets: PublicationTarget[];
   tagGroupSnapshots?: PublicationTagGroupSnapshot[];
-  recurrence?: PublicationRecurrence | null;
   scheduledFor: string | null;
   publishedAt: string | null;
   createdAt: string;

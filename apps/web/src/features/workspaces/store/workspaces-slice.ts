@@ -168,17 +168,52 @@ const workspacesSlice = createSlice({
     ) => {
       const workspace = state.items.find(
         (item) =>
-          item.subscriptionStatus === "trialing" &&
-          item.ownerId === action.payload.userId
+          item.id === state.activeWorkspaceId &&
+          item.members.some((member) => member.id === action.payload.userId)
       );
-      if (!workspace || workspace.resources.channels.length > 0) return;
-      workspace.resources.channels.push({
-        id: `development-instagram-channel:${workspace.id}`,
-        platform: "instagram",
-        displayName: "Postmade",
-        username: "@postmade",
-        connected: true,
-      });
+      if (!workspace) return;
+
+      const developmentChannels = [
+        {
+          id: `development-instagram-channel:${workspace.id}`,
+          platform: "instagram" as const,
+          displayName: "Postmade Instagram",
+          username: "@postmade",
+          avatarUrl: "/favicon.png",
+          connected: true,
+        },
+        {
+          id: `development-linkedin-channel:${workspace.id}`,
+          platform: "linkedin" as const,
+          displayName: "Postmade LinkedIn",
+          username: "Postmade",
+          avatarUrl: "/favicon.png",
+          connected: true,
+        },
+        {
+          id: `development-facebook-channel:${workspace.id}`,
+          platform: "facebook" as const,
+          displayName: "Postmade Facebook",
+          username: "@postmade.app",
+          avatarUrl: "/favicon.png",
+          connected: true,
+        },
+      ];
+
+      for (const channel of developmentChannels) {
+        if (
+          workspace.resources.channels.filter((item) => item.connected)
+            .length >= 3
+        )
+          break;
+        const existing = workspace.resources.channels.find(
+          (item) => item.id === channel.id
+        );
+        if (existing) {
+          existing.connected = true;
+          existing.avatarUrl = channel.avatarUrl;
+        } else workspace.resources.channels.push(channel);
+      }
     },
     selectWorkspace: (
       state,

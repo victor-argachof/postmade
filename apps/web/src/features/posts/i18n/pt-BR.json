@@ -70,15 +70,27 @@
     "timezone": "Horários em {{timezone}}",
     "trialUsage": "Trial: {{used}} de {{limit}} publicações usadas",
     "channels": "1. Selecione os canais",
+    "manageChannels": "Gerenciar canais",
     "noChannels": "Conecte um canal antes de publicar.",
+    "channelSelector": {
+      "select": "Selecionar canais",
+      "selectedCount_one": "{{count}} canal selecionado",
+      "selectedCount_other": "{{count}} canais selecionados",
+      "selectAll": "Selecionar todos os canais",
+      "clearAll": "Desmarcar todos os canais",
+      "search": "Buscar por canal, plataforma ou usuário",
+      "noResults": "Nenhum canal encontrado.",
+      "remove": "Remover {{name}}"
+    },
     "content": "2. Crie o conteúdo",
+    "caption": "Legenda",
     "placeholder": "O que você quer compartilhar?",
     "addMedia": "Adicionar imagens ou vídeo",
-    "tags": "3. Adicione tags",
-    "customize": "4. Personalize por canal",
+    "tags": "Adicione tags",
+    "customize": "Personalizar por canal",
     "customizeNoChannels": "Selecione ao menos um canal para personalizar o conteúdo.",
     "inherit": "Deixe vazio para usar o conteúdo principal",
-    "schedule": "5. Publicação",
+    "schedule": "3. Programação",
     "timing": {
       "question": "Quando publicar?",
       "toggleLabel": "Agendar publicação",
@@ -91,21 +103,6 @@
         "description": "Escolher uma data e um horário futuros."
       }
     },
-    "recurrence": {
-      "label": "Repetir publicação a cada",
-      "interval": "Intervalo de repetição",
-      "options": {
-        "day": "Dia",
-        "twoDays": "Dois dias",
-        "threeDays": "Três dias",
-        "fourDays": "Quatro dias",
-        "fiveDays": "Cinco dias",
-        "sixDays": "Seis dias",
-        "week": "Semana",
-        "twoWeeks": "Duas semanas",
-        "month": "Mês"
-      }
-    },
     "confirmation": {
       "publishTitle": "Confirmar publicação",
       "scheduleTitle": "Confirmar agendamento",
@@ -115,7 +112,6 @@
       "content": "Conteúdo",
       "tags": "Grupos de tags",
       "schedule": "Data e horário",
-      "recurrence": "Repetição",
       "cancel": "Cancelar",
       "close": "Fechar",
       "confirmPublish": "Publicar agora",

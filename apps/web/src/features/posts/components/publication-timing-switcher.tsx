@@ -19,7 +19,7 @@ export function PublicationTimingSwitcher({
   const { t } = useTranslation("posts");
   const scheduled = value === "scheduled";
   return (
-    <div className="mt-4 rounded-xl border border-border p-4">
+    <div className="rounded-xl border border-border p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0">
           <label

@@ -16,15 +16,42 @@ independentemente da quantidade de canais; rascunhos não consomem a cota.
 
 ## Conteúdo multicanal
 
-Uma publicação agrega texto e mídia base e possui um target por canal. Cada target
-pode sobrescrever o texto, a mídia e configurações específicas. As regras ficam
+Uma publicação agrega texto e mídia base e possui um target por canal. O conteúdo
+pode ser personalizado por plataforma e é aplicado a todos os targets daquela rede.
+As regras ficam
 centralizadas em `features/posts/lib/platform-rules.ts`. O protótipo usa URLs de
-objeto temporárias para uploads; URLs definitivas deverão vir do backend.
+objeto temporárias para uploads; no produto, URLs assinadas e com expiração deverão
+vir do serviço de mídia do backend.
 
 Grupos selecionados são preservados como snapshots na publicação. As hashtags
 deduplicadas são anexadas ao conteúdo-base e aos overrides somente ao calcular o
 conteúdo efetivo para validação, preview e envio; o texto digitado permanece separado.
 As decisões completas estão em [`tags.md`](tags.md).
+
+## Mídia e retenção
+
+Imagens e vídeos são ativos temporários, mantidos somente enquanto forem necessários
+para rascunho, agendamento, processamento e retry. O arquivo original não deve ser
+copiado por target nem preservado indefinidamente depois da confirmação das redes.
+
+O backend deverá aplicar uma política automática de ciclo de vida:
+
+- manter a mídia de publicações agendadas até todos os targets terminarem;
+- manter falhas durante uma janela curta e configurável de retry;
+- remover originais após uma pequena margem de segurança quando todos os targets
+  estiverem publicados;
+- expirar mídia de rascunhos abandonados;
+- usar referências e contagem de uso para nunca excluir um ativo ainda necessário.
+
+O histórico priorizará `externalUrl`, ligando o usuário à publicação real em cada
+rede. Quando uma representação visual local for necessária, deverá ser armazenada
+somente uma thumbnail otimizada, pequena e sem metadados, nunca uma cópia do arquivo
+original. Depois da remoção do original, duplicar uma publicação antiga exigirá um
+novo upload de mídia.
+
+Recorrência fica fora do escopo. Ela exigiria retenção potencialmente indefinida dos
+originais e uma infraestrutura própria para séries, ocorrências e cancelamento, em
+conflito com a política de mídia temporária do MVP.
 
 ## Datas e calendário
 
@@ -43,4 +70,5 @@ A futura API deverá oferecer listagem filtrada, criação, atualização, exclu
 duplicação, retry e upload sob `/workspaces/:workspaceId`. O servidor repetirá
 validações de associação, papel, trial, canais, plataforma e datas. Publicação e
 retry serão assíncronos, idempotentes e executados por filas; o navegador nunca
-armazenará credenciais sociais.
+armazenará credenciais sociais. Jobs de ciclo de vida deverão remover objetos
+expirados e registrar a limpeza de forma idempotente.

@@ -65,7 +65,7 @@ describe("workspacesSlice", () => {
     expect(activeWorkspace?.members).toHaveLength(3);
   });
 
-  it("stores the development channel mock in the trial workspace", () => {
+  it("stores three development channel mocks in the active workspace", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
     state = reducer(
       state,
@@ -78,6 +78,8 @@ describe("workspacesSlice", () => {
 
     expect(state.items[0]!.resources.channels).toEqual([
       expect.objectContaining({ platform: "instagram", connected: true }),
+      expect.objectContaining({ platform: "linkedin", connected: true }),
+      expect.objectContaining({ platform: "facebook", connected: true }),
     ]);
   });
 

@@ -39,6 +39,7 @@ export function DatePicker({
   disabled = false,
   min,
   onChange,
+  placement = "bottom",
   value,
 }: {
   "aria-label": string;
@@ -46,6 +47,7 @@ export function DatePicker({
   disabled?: boolean;
   min?: string;
   onChange: (value: string) => void;
+  placement?: "top" | "bottom";
   value: string;
 }) {
   const { t, i18n } = useTranslation("common");
@@ -121,7 +123,10 @@ export function DatePicker({
       {open && (
         <div
           aria-label={t("datePicker.calendar")}
-          className="absolute top-full left-0 z-50 mt-2 w-80 rounded-2xl border border-border bg-card p-4 shadow-xl"
+          className={cn(
+            "absolute left-0 z-50 w-80 rounded-2xl border border-border bg-card p-4 shadow-xl",
+            placement === "top" ? "bottom-full mb-2" : "top-full mt-2"
+          )}
           role="dialog"
         >
           <div className="flex items-center justify-between">
@@ -207,6 +212,7 @@ export function DateTimePicker({
   disablePast = false,
   min,
   onChange,
+  pickerPlacement = "bottom",
   value,
 }: {
   "aria-describedby"?: string;
@@ -215,6 +221,7 @@ export function DateTimePicker({
   disablePast?: boolean;
   min?: string;
   onChange: (value: string) => void;
+  pickerPlacement?: "top" | "bottom";
   value: string;
 }) {
   const { t } = useTranslation("common");
@@ -270,6 +277,7 @@ export function DateTimePicker({
           aria-label={ariaLabel}
           disabled={disabled}
           min={effectiveMinimum?.slice(0, 10)}
+          placement={pickerPlacement}
           value={date}
           onChange={selectDate}
         />

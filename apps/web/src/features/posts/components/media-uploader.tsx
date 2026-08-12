@@ -31,7 +31,7 @@ export function MediaUploader({
   };
   return (
     <div>
-      <label className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 p-6 text-sm font-semibold hover:bg-muted">
+      <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 p-8 text-center text-sm font-semibold transition-colors hover:bg-muted">
         <ImagePlus className="size-5" />
         {t("composer.addMedia")}
         <input

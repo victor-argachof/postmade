@@ -70,15 +70,27 @@
     "timezone": "Times in {{timezone}}",
     "trialUsage": "Trial: {{used}} of {{limit}} publications used",
     "channels": "1. Select channels",
+    "manageChannels": "Manage channels",
     "noChannels": "Connect a channel before publishing.",
+    "channelSelector": {
+      "select": "Select channels",
+      "selectedCount_one": "{{count}} channel selected",
+      "selectedCount_other": "{{count}} channels selected",
+      "selectAll": "Select all channels",
+      "clearAll": "Clear all channels",
+      "search": "Search by channel, platform, or username",
+      "noResults": "No channels found.",
+      "remove": "Remove {{name}}"
+    },
     "content": "2. Create content",
+    "caption": "Caption",
     "placeholder": "What would you like to share?",
     "addMedia": "Add images or video",
-    "tags": "3. Add tags",
-    "customize": "4. Customize by channel",
+    "tags": "Add tags",
+    "customize": "Customize by channel",
     "customizeNoChannels": "Select at least one channel to customize its content.",
     "inherit": "Leave empty to use the main content",
-    "schedule": "5. Publication",
+    "schedule": "3. Scheduling",
     "timing": {
       "question": "When should it be published?",
       "toggleLabel": "Schedule publication",
@@ -91,21 +103,6 @@
         "description": "Choose a future date and time."
       }
     },
-    "recurrence": {
-      "label": "Repeat publication every",
-      "interval": "Repeat interval",
-      "options": {
-        "day": "Day",
-        "twoDays": "Two days",
-        "threeDays": "Three days",
-        "fourDays": "Four days",
-        "fiveDays": "Five days",
-        "sixDays": "Six days",
-        "week": "Week",
-        "twoWeeks": "Two weeks",
-        "month": "Month"
-      }
-    },
     "confirmation": {
       "publishTitle": "Confirm publication",
       "scheduleTitle": "Confirm schedule",
@@ -115,7 +112,6 @@
       "content": "Content",
       "tags": "Tag groups",
       "schedule": "Date and time",
-      "recurrence": "Recurrence",
       "cancel": "Cancel",
       "close": "Close",
       "confirmPublish": "Publish now",

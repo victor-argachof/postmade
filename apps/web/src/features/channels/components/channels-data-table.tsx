@@ -7,6 +7,7 @@ import {
   DataTable,
   type DataTableColumn,
 } from "@/shared/components/data-table";
+import { ChannelAvatar } from "@/shared/components/channel-avatar";
 import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
 
@@ -62,10 +63,15 @@ export function ChannelsDataTable({
       id: "account",
       header: t("table.account"),
       cell: (channel) => (
-        <span className="block min-w-44">
-          <span className="block font-semibold">{channel.displayName}</span>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
-            {channel.username}
+        <span className="flex min-w-44 items-center gap-3">
+          <ChannelAvatar channel={channel} />
+          <span className="min-w-0">
+            <span className="block truncate font-semibold">
+              {channel.displayName}
+            </span>
+            <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+              {channel.username}
+            </span>
           </span>
         </span>
       ),

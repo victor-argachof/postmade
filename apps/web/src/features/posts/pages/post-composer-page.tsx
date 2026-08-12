@@ -1,17 +1,16 @@
 import type {
   PublicationMedia,
-  PublicationRecurrence,
   PublicationStatus,
   PublicationTagGroupSnapshot,
   ScheduledPublication,
+  SocialPlatform,
 } from "@postmade/types";
-import { ArrowLeft, Clock3, ExternalLink, Save, Send } from "lucide-react";
+import { ArrowLeft, Clock3, Save, Send } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
-import { PostTagGroupsSelector } from "@/features/tags/components/post-tag-groups-selector";
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import {
@@ -19,7 +18,6 @@ import {
   updateWorkspacePublication,
 } from "@/features/workspaces/store/workspaces-slice";
 import { ROUTES } from "@/routes/route-paths";
-import { DateTimePicker } from "@/shared/components/date-time-picker";
 import { Button } from "@/shared/components/ui/button";
 import {
   Select,
@@ -30,24 +28,24 @@ import {
 } from "@/shared/components/ui/select";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
-import { MediaUploader } from "../components/media-uploader";
 import { PublicationConfirmationModal } from "../components/overlays/publication-confirmation-modal";
 import { PlatformPreview } from "../components/platform-preview";
-import { PublicationRecurrenceSettings } from "../components/publication-recurrence-settings";
-import {
-  PublicationTimingSwitcher,
-  type PublicationTimingMode,
-} from "../components/publication-timing-switcher";
+import type { PublicationTimingMode } from "../components/publication-timing-switcher";
+import { ChannelsStep } from "../components/steps/channels-step";
+import { ContentStep } from "../components/steps/content-step";
+import { SchedulingStep } from "../components/steps/scheduling-step";
 import { utcToZonedInput, zonedInputToUtc } from "../lib/dates";
-import { PLATFORM_RULES, validateTarget } from "../lib/platform-rules";
+import { validateTarget } from "../lib/platform-rules";
 import { selectActiveWorkspace } from "../lib/selectors";
 
 export function PostComposerPage() {
   const { t, i18n } = useTranslation("posts");
-  const { t: tTags } = useTranslation("tags");
   const navigate = useNavigate();
   const openTagsManager = () => {
     window.open(ROUTES.tags, "_blank", "noopener,noreferrer");
+  };
+  const openChannelsManager = () => {
+    window.open(ROUTES.workspaceChannels, "_blank", "noopener,noreferrer");
   };
   const dispatch = useAppDispatch();
   const { publicationId } = useParams();
@@ -62,13 +60,21 @@ export function PostComposerPage() {
   const [channelIds, setChannelIds] = useState<string[]>(
     existing?.targets.map((target) => target.channelId) ?? []
   );
-  const [overrides, setOverrides] = useState<Record<string, string>>(() =>
-    Object.fromEntries(
-      existing?.targets.map((target) => [
-        target.channelId,
-        target.contentOverride ?? "",
-      ]) ?? []
-    )
+  const [overrides, setOverrides] = useState<
+    Partial<Record<SocialPlatform, string>>
+  >(() =>
+    existing?.targets.reduce<Partial<Record<SocialPlatform, string>>>(
+      (current, target) => {
+        if (!(target.platform in current) || target.contentOverride) {
+          current[target.platform] = target.contentOverride ?? "";
+        }
+        return current;
+      },
+      {}
+    ) ?? {}
+  );
+  const [customizeByPlatform, setCustomizeByPlatform] = useState(() =>
+    Boolean(existing?.targets.some((target) => target.contentOverride))
   );
   const defaultDate = search.get("date") ? `${search.get("date")}T09:00` : "";
   const [scheduledFor, setScheduledFor] = useState(
@@ -78,12 +84,6 @@ export function PostComposerPage() {
   );
   const [timingMode, setTimingMode] = useState<PublicationTimingMode>(
     existing?.status === "scheduled" || defaultDate ? "scheduled" : "immediate"
-  );
-  const [repeatPublication, setRepeatPublication] = useState(
-    Boolean(existing?.recurrence)
-  );
-  const [recurrence, setRecurrence] = useState<PublicationRecurrence>(
-    existing?.recurrence ?? { interval: 1, unit: "day" }
   );
   const [tagGroupSnapshots, setTagGroupSnapshots] = useState<
     PublicationTagGroupSnapshot[]
@@ -101,6 +101,11 @@ export function PostComposerPage() {
   const selected = channels.filter((channel) =>
     channelIds.includes(channel.id)
   );
+  const selectedPlatforms = Array.from(
+    new Set(selected.map((channel) => channel.platform))
+  );
+  const usesPlatformCustomization =
+    customizeByPlatform && selectedPlatforms.length > 1;
   const effectiveContent = effectivePublicationContent(
     content,
     tagGroupSnapshots
@@ -111,13 +116,22 @@ export function PostComposerPage() {
         validateTarget(
           channel.platform,
           effectivePublicationContent(
-            overrides[channel.id]?.trim() || content,
+            usesPlatformCustomization
+              ? overrides[channel.platform]?.trim() || content
+              : content,
             tagGroupSnapshots
           ),
           media
         ).map((error) => ({ channel, error }))
       ),
-    [selected, overrides, content, media, tagGroupSnapshots]
+    [
+      selected,
+      overrides,
+      content,
+      media,
+      tagGroupSnapshots,
+      usesPlatformCustomization,
+    ]
   );
   const used =
     workspace?.resources.posts.filter(
@@ -180,7 +194,9 @@ export function PostComposerPage() {
       targets: selected.map((channel) => ({
         channelId: channel.id,
         platform: channel.platform,
-        contentOverride: overrides[channel.id]?.trim() || null,
+        contentOverride: usesPlatformCustomization
+          ? overrides[channel.platform]?.trim() || null
+          : null,
         mediaOverride: null,
         settings:
           existing?.targets.find((target) => target.channelId === channel.id)
@@ -190,7 +206,6 @@ export function PostComposerPage() {
         externalUrl: null,
       })),
       tagGroupSnapshots,
-      recurrence: repeatPublication ? recurrence : null,
       scheduledFor:
         status === "scheduled"
           ? zonedInputToUtc(scheduledFor, workspace.timezone)
@@ -248,180 +263,43 @@ export function PostComposerPage() {
       </div>
       <div className="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,.8fr)]">
         <div className="space-y-5">
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <h2 className="font-bold">{t("composer.channels")}</h2>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              {channels.map((channel) => (
-                <label
-                  className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-3"
-                  key={channel.id}
-                >
-                  <input
-                    checked={channelIds.includes(channel.id)}
-                    disabled={readOnly}
-                    type="checkbox"
-                    onChange={() =>
-                      setChannelIds((current) =>
-                        current.includes(channel.id)
-                          ? current.filter((id) => id !== channel.id)
-                          : [...current, channel.id]
-                      )
-                    }
-                  />
-                  <span>
-                    <span className="block text-sm font-bold">
-                      {channel.displayName}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {t(`platforms.${channel.platform}`)} · {channel.username}
-                    </span>
-                  </span>
-                </label>
-              ))}
-            </div>
-            {channels.length === 0 && (
-              <p className="mt-3 text-sm text-muted-foreground">
-                {t("composer.noChannels")}
-              </p>
-            )}
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex justify-between">
-              <h2 className="font-bold">{t("composer.content")}</h2>
-              <span className="text-xs text-muted-foreground">
-                {effectiveContent.length}
-              </span>
-            </div>
-            <textarea
-              className="mt-3 min-h-40 w-full resize-y rounded-xl border border-border bg-background p-4 text-sm"
-              disabled={readOnly}
-              placeholder={t("composer.placeholder")}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-            <div className="mt-4">
-              <MediaUploader
-                disabled={readOnly}
-                media={media}
-                onChange={setMedia}
-              />
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="flex items-center justify-between gap-4">
-              <h2 className="font-bold">{t("composer.tags")}</h2>
-              <Button
-                size="sm"
-                type="button"
-                variant="ghost"
-                onClick={openTagsManager}
-              >
-                {tTags("composer.manage")}
-                <ExternalLink className="size-3.5" />
-              </Button>
-            </div>
-            <PostTagGroupsSelector
-              disabled={readOnly}
-              groups={tagGroups}
-              value={tagGroupSnapshots}
-              onChange={setTagGroupSnapshots}
-              onManage={openTagsManager}
-            />
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <h2 className="font-bold">{t("composer.customize")}</h2>
-            {selected.length > 0 ? (
-              <div className="mt-4 space-y-4">
-                {selected.map((channel) => {
-                  const targetErrors = errors.filter(
-                    (item) => item.channel.id === channel.id
-                  );
-                  return (
-                    <div key={channel.id}>
-                      <div className="flex justify-between text-sm">
-                        <label
-                          className="font-semibold"
-                          htmlFor={`override-${channel.id}`}
-                        >
-                          {channel.displayName} ·{" "}
-                          {t(`platforms.${channel.platform}`)}
-                        </label>
-                        <span className="text-muted-foreground">
-                          {
-                            effectivePublicationContent(
-                              overrides[channel.id] || content,
-                              tagGroupSnapshots
-                            ).length
-                          }
-                          /{PLATFORM_RULES[channel.platform].maxCharacters}
-                        </span>
-                      </div>
-                      <textarea
-                        className="mt-2 min-h-24 w-full rounded-xl border border-border bg-background p-3 text-sm"
-                        disabled={readOnly}
-                        id={`override-${channel.id}`}
-                        placeholder={t("composer.inherit")}
-                        value={overrides[channel.id] ?? ""}
-                        onChange={(e) =>
-                          setOverrides((current) => ({
-                            ...current,
-                            [channel.id]: e.target.value,
-                          }))
-                        }
-                      />
-                      {targetErrors.length > 0 && (
-                        <p className="mt-1 text-xs font-semibold text-red-600">
-                          {targetErrors
-                            .map((item) =>
-                              t(`composer.validation.${item.error}`)
-                            )
-                            .join(" ")}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="mt-3 text-sm text-muted-foreground">
-                {t("composer.customizeNoChannels")}
-              </p>
-            )}
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <p className="font-bold">{t("composer.schedule")}</p>
-            <PublicationTimingSwitcher
-              disabled={readOnly}
-              value={timingMode}
-              onChange={changeTimingMode}
-            >
-              {timingMode === "scheduled" && (
-                <div>
-                  <p
-                    className="text-sm text-muted-foreground"
-                    id="schedule-timezone"
-                  >
-                    {t("composer.timezone", { timezone: workspace?.timezone })}
-                  </p>
-                  <DateTimePicker
-                    aria-describedby="schedule-timezone"
-                    aria-label={t("composer.schedule")}
-                    disabled={readOnly}
-                    disablePast={!readOnly}
-                    min={minimumSchedule}
-                    value={scheduledFor}
-                    onChange={setScheduledFor}
-                  />
-                </div>
-              )}
-            </PublicationTimingSwitcher>
-            <PublicationRecurrenceSettings
-              enabled={repeatPublication}
-              onEnabledChange={setRepeatPublication}
-              onValueChange={setRecurrence}
-              value={recurrence}
-            />
-          </div>
+          <ChannelsStep
+            channels={channels}
+            disabled={readOnly}
+            onChange={setChannelIds}
+            onManage={openChannelsManager}
+            value={channelIds}
+          />
+          <ContentStep
+            content={content}
+            customizeByPlatform={usesPlatformCustomization}
+            disabled={readOnly}
+            effectiveContentLength={effectiveContent.length}
+            errors={errors.map(({ channel, error }) => ({
+              error,
+              platform: channel.platform,
+            }))}
+            media={media}
+            onContentChange={setContent}
+            onCustomizeByPlatformChange={setCustomizeByPlatform}
+            onManageTags={openTagsManager}
+            onMediaChange={setMedia}
+            onOverridesChange={setOverrides}
+            onTagGroupsChange={setTagGroupSnapshots}
+            overrides={overrides}
+            selectedPlatforms={selectedPlatforms}
+            tagGroups={tagGroups}
+            tagGroupSnapshots={tagGroupSnapshots}
+          />
+          <SchedulingStep
+            disabled={readOnly}
+            minimumSchedule={minimumSchedule}
+            onScheduledForChange={setScheduledFor}
+            onTimingModeChange={changeTimingMode}
+            scheduledFor={scheduledFor}
+            timezone={workspace?.timezone ?? "UTC"}
+            timingMode={timingMode}
+          />
           {!readOnly && (
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
               <Button
@@ -479,7 +357,9 @@ export function PostComposerPage() {
                   <div className="mt-4">
                     <PlatformPreview
                       content={effectivePublicationContent(
-                        overrides[preview.id]?.trim() || content,
+                        usesPlatformCustomization
+                          ? overrides[preview.platform]?.trim() || content
+                          : content,
                         tagGroupSnapshots
                       )}
                       media={media}
@@ -508,7 +388,6 @@ export function PostComposerPage() {
           setConfirmationMode(null);
           save(status, true);
         }}
-        recurrence={repeatPublication ? recurrence : null}
         tagGroupSnapshots={tagGroupSnapshots}
         scheduledFor={
           confirmationMode === "scheduled" && scheduledFor && workspace
