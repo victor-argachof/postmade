@@ -31,7 +31,7 @@ export function PublicationChannelsSelector({
   onChange: (channelIds: string[]) => void;
   value: string[];
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const selectedChannels = channels.filter((channel) =>
@@ -187,7 +187,7 @@ function ChannelPlatformGroup({
   selectedIds: string[];
   toggle: (channelId: string) => void;
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
 
   return (
     <CommandGroup heading={t(`platforms.${platform}`)}>

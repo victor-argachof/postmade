@@ -16,7 +16,7 @@ export function PublicationTimingSwitcher({
   onChange: (mode: PublicationTimingMode) => void;
   value: PublicationTimingMode;
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   const scheduled = value === "scheduled";
   return (
     <div className="rounded-xl border border-border p-4">

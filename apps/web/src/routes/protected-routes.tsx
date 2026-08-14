@@ -1,9 +1,9 @@
 import type { RouteObject } from "react-router-dom";
 
 import { AccountPage } from "@/features/account";
-import { CalendarPage } from "@/features/calendar";
 import { ChannelsPage } from "@/features/channels";
-import { PostComposerPage, PostsPage } from "@/features/posts";
+import { PostComposerPage } from "@/features/create-post";
+import { CalendarPage, PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
 import { TagsPage } from "@/features/tags";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
@@ -19,10 +19,10 @@ export const protectedRoutes: RouteObject = {
   children: [
     { path: ROUTES.dashboard, element: <DashboardHome /> },
     { path: ROUTES.posts, element: <PostsPage /> },
+    { path: ROUTES.postsCalendar, element: <CalendarPage /> },
     { path: ROUTES.newPost, element: <PostComposerPage /> },
     { path: "/posts/:publicationId/edit", element: <PostComposerPage /> },
     { path: ROUTES.workspaceChannels, element: <ChannelsPage /> },
-    { path: ROUTES.calendar, element: <CalendarPage /> },
     { path: ROUTES.tags, element: <TagsPage /> },
     { path: ROUTES.workspaceSettings, element: <WorkspaceSettingsPage /> },
     { path: ROUTES.account, element: <AccountPage /> },

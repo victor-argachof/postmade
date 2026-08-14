@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import authReducer from "@/features/auth/store/auth-slice";
-import calendarReducer from "@/features/calendar/store/calendar-slice";
+import calendarReducer from "@/features/posts/store/calendar-slice";
 import postsReducer from "@/features/posts/store/posts-slice";
 import {
   SUBSCRIPTION_INCLUDED_QUANTITIES,

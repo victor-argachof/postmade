@@ -53,7 +53,7 @@ export function DashboardHome() {
           icon={Radio}
         />
         <ModuleCard
-          to={ROUTES.calendar}
+          to={ROUTES.postsCalendar}
           title={t("calendar", { ns: "navigation" })}
           description={t("calendarDescription", { ns: "dashboard" })}
           icon={CalendarDays}

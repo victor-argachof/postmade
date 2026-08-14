@@ -18,7 +18,7 @@ export function PublicationDetailsPanel({
   onEdit: (id: string) => void;
   publication: ScheduledPublication | null;
 }) {
-  const { t } = useTranslation("calendar");
+  const { t } = useTranslation("posts", { keyPrefix: "calendar" });
   if (!publication) return null;
   return (
     <div

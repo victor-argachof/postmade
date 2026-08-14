@@ -33,7 +33,7 @@ export function CalendarGrid({
   onSelectDate: (date: string) => void;
   onSelectPublication: (post: ScheduledPublication) => void;
 }) {
-  const { t, i18n } = useTranslation("calendar");
+  const { t, i18n } = useTranslation("posts", { keyPrefix: "calendar" });
   const today = new Date().toISOString().slice(0, 10);
   const weekdays = Array.from({ length: 7 }, (_, day) =>
     new Intl.DateTimeFormat(i18n.language, {

@@ -12,6 +12,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
+import { selectActiveWorkspace } from "@/features/posts/lib/selectors";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import {
   createWorkspacePublication,
@@ -37,10 +38,9 @@ import { PersonalizationStep } from "../components/steps/personalization-step";
 import { SchedulingStep } from "../components/steps/scheduling-step";
 import { utcToZonedInput, zonedInputToUtc } from "../lib/dates";
 import { validateTarget } from "../lib/platform-rules";
-import { selectActiveWorkspace } from "../lib/selectors";
 
 export function PostComposerPage() {
-  const { t, i18n } = useTranslation("posts");
+  const { t, i18n } = useTranslation("createPost");
   const navigate = useNavigate();
   const openTagsManager = () => {
     window.open(ROUTES.tags, "_blank", "noopener,noreferrer");

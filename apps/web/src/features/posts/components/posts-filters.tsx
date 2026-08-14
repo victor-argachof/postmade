@@ -1,5 +1,4 @@
 import type {
-  PublicationStatus,
   SocialChannel,
   SocialPlatform,
 } from "@postmade/types";
@@ -15,15 +14,10 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 
+import { publicationFilterStatuses } from "../lib/publication-statuses";
 import type { PublicationFilters } from "../types";
 
-const statuses: Array<"all" | PublicationStatus> = [
-  "all",
-  "draft",
-  "scheduled",
-  "published",
-  "failed",
-];
+const statuses = ["all", ...publicationFilterStatuses] as const;
 const platforms: SocialPlatform[] = [
   "facebook",
   "linkedin",
@@ -44,19 +38,7 @@ export function PostsFilters({
   const { t } = useTranslation("posts");
   return (
     <div className="mt-6 rounded-2xl border border-border bg-card p-4">
-      <div className="flex flex-wrap gap-2" role="tablist">
-        {statuses.map((status) => (
-          <button
-            className={`cursor-pointer rounded-xl px-3 py-2 text-sm font-semibold ${filters.status === status ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
-            key={status}
-            onClick={() => onChange({ status })}
-            type="button"
-          >
-            {t(`statuses.${status}`)}
-          </button>
-        ))}
-      </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <SearchInput
           aria-label={t("filters.search")}
           className="h-10"
@@ -67,6 +49,39 @@ export function PostsFilters({
           onChange={(event) => onChange({ query: event.target.value })}
           onClear={() => onChange({ query: "" })}
         />
+        <DatePicker
+          aria-label={t("filters.from")}
+          className="min-w-0"
+          value={filters.from}
+          onChange={(from) => onChange({ from })}
+        />
+        <DatePicker
+          aria-label={t("filters.to")}
+          className="min-w-0"
+          value={filters.to}
+          onChange={(to) => onChange({ to })}
+        />
+      </div>
+      <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <Select
+          value={filters.status}
+          onValueChange={(status) =>
+            onChange({ status: status as PublicationFilters["status"] })
+          }
+        >
+          <SelectTrigger aria-label={t("filters.status")} className="h-10">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {statuses.map((status) => (
+              <SelectItem key={status} value={status}>
+                {status === "all"
+                  ? t("filters.allStatuses")
+                  : t(`statuses.${status}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Select
           value={filters.platform}
           onValueChange={(platform) =>
@@ -101,18 +116,6 @@ export function PostsFilters({
             ))}
           </SelectContent>
         </Select>
-        <DatePicker
-          aria-label={t("filters.from")}
-          className="min-w-0"
-          value={filters.from}
-          onChange={(from) => onChange({ from })}
-        />
-        <DatePicker
-          aria-label={t("filters.to")}
-          className="min-w-0"
-          value={filters.to}
-          onChange={(to) => onChange({ to })}
-        />
       </div>
     </div>
   );

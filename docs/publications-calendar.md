@@ -7,6 +7,10 @@ As publicações pertencem ao workspace e ficam exclusivamente em
 transitório da interface. Trocar de workspace troca imediatamente a listagem e o
 calendário.
 
+Publicações possui dois modos de visualização: Lista, acessível em `/posts`, e
+Calendário, acessível em `/posts/calendar`. Ambos fazem parte da feature `posts` e
+utilizam a mesma fonte de dados.
+
 ## Permissões e trial
 
 Owners, admins e editors podem criar, editar, duplicar, cancelar e excluir.
@@ -19,7 +23,7 @@ independentemente da quantidade de canais; rascunhos não consomem a cota.
 Uma publicação agrega texto e mídia base e possui um target por canal. O conteúdo
 pode ser personalizado por plataforma e é aplicado a todos os targets daquela rede.
 As regras ficam
-centralizadas em `features/posts/lib/platform-rules.ts`. O protótipo usa URLs de
+centralizadas em `features/create-post/lib/platform-rules.ts`. O protótipo usa URLs de
 objeto temporárias para uploads; no produto, URLs assinadas e com expiração deverão
 vir do serviço de mídia do backend.
 

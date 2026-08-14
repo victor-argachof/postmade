@@ -2,6 +2,57 @@
   "pageTitle": "Publications",
   "pageDescription": "Create, schedule, and track content across all your channels.",
   "newPost": "New publication",
+  "views": {
+    "navigation": "Publication view",
+    "list": "List",
+    "calendar": "Calendar"
+  },
+  "calendar": {
+    "comingSoonDescription": "Schedule viewing and editing are available.",
+    "pageTitle": "Calendar",
+    "pageDescription": "Plan your schedule and track every publication.",
+    "newPost": "New publication",
+    "today": "Today",
+    "previous": "Previous month",
+    "next": "Next month",
+    "selectDate": "Select date",
+    "scheduleForDate": "Schedule publication for {{date}}",
+    "more": "+{{count}} more",
+    "mediaOnly": "Media publication",
+    "channels": "channels",
+    "close": "Close",
+    "platforms": {
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    },
+    "statuses": {
+      "draft": "Drafts",
+      "scheduled": "Scheduled",
+      "publishing": "Publishing",
+      "published": "Published",
+      "failed": "Failed"
+    },
+    "filters": {
+      "platform": "Platform",
+      "status": "Status",
+      "channel": "Channel",
+      "allPlatforms": "All platforms",
+      "allStatuses": "All statuses",
+      "allChannels": "All channels"
+    },
+    "agenda": {
+      "title": "Daily agenda",
+      "add": "Add",
+      "empty": "No publications for this day."
+    },
+    "details": {
+      "title": "Publication details",
+      "edit": "Edit publication"
+    }
+  },
   "channels": "channels",
   "mediaOnly": "Media publication",
   "confirmDelete": "Delete this publication?",
@@ -23,10 +74,12 @@
   "filters": {
     "search": "Search content",
     "clearSearch": "Clear search",
+    "status": "Status",
     "platform": "Platform",
     "channel": "Channel",
     "from": "From",
     "to": "To",
+    "allStatuses": "All statuses",
     "allPlatforms": "All platforms",
     "allChannels": "All channels"
   },
@@ -62,94 +115,5 @@
     "cancel": "Schedule canceled.",
     "duplicate": "Draft duplicated.",
     "retry": "Retry started."
-  },
-  "composer": {
-    "title": "New publication",
-    "editTitle": "Edit publication",
-    "back": "Back to Publications",
-    "timezone": "Times in {{timezone}}",
-    "trialUsage": "Trial: {{used}} of {{limit}} publications used",
-    "channels": "1. Select channels",
-    "manageChannels": "Manage channels",
-    "noChannels": "Connect a channel before publishing.",
-    "channelSelector": {
-      "select": "Select channels",
-      "selectedCount_one": "{{count}} channel selected",
-      "selectedCount_other": "{{count}} channels selected",
-      "selectAll": "Select all channels",
-      "clearAll": "Clear all channels",
-      "search": "Search by channel, platform, or username",
-      "noResults": "No channels found.",
-      "remove": "Remove {{name}}"
-    },
-    "content": "2. Create content",
-    "caption": "Caption",
-    "placeholder": "What would you like to share?",
-    "addMedia": "Add images or video",
-    "mediaGuidance": {
-      "summary_one": "{{formats}} · up to {{count}} file",
-      "summary_other": "{{formats}} · up to {{count}} files",
-      "imageLimit": "Images up to {{size}} MB",
-      "videoLimit": "Videos up to {{size}} MB",
-      "tooMany_one": "You can add at most {{count}} file for the selected channels.",
-      "tooMany_other": "You can add at most {{count}} files for the selected channels.",
-      "invalidType": "One or more files use a format incompatible with the selected channels.",
-      "tooLarge": "One or more files exceed the allowed size."
-    },
-    "tags": "Tags",
-    "personalization": "3. Customize by channel",
-    "customize": "Customize caption by channel",
-    "customizeNoChannels": "Select at least one channel to customize its content.",
-    "inherit": "Leave empty to use the main content",
-    "schedule": "4. Schedule your post",
-    "timing": {
-      "question": "When should it be published?",
-      "toggleLabel": "Schedule publication",
-      "immediate": {
-        "label": "Publish now",
-        "description": "Send for publication immediately."
-      },
-      "scheduled": {
-        "label": "Schedule",
-        "description": "Choose a future date and time."
-      }
-    },
-    "confirmation": {
-      "publishTitle": "Confirm publication",
-      "scheduleTitle": "Confirm schedule",
-      "publishDescription": "Review the information before publishing now.",
-      "scheduleDescription": "Review the information before confirming the schedule.",
-      "destinations": "Destinations",
-      "content": "Content",
-      "tags": "Tag groups",
-      "schedule": "Date and time",
-      "cancel": "Cancel",
-      "close": "Close",
-      "confirmPublish": "Publish now",
-      "confirmSchedule": "Confirm schedule"
-    },
-    "preview": "Preview",
-    "previewEmpty": "Your content will appear here.",
-    "previewNoChannel": "Select a channel to preview.",
-    "saveDraft": "Save draft",
-    "scheduleAction": "Schedule",
-    "publishNow": "Publish now",
-    "validation": {
-      "fix": "Review the channels and fix the errors.",
-      "future": "Choose a future date.",
-      "trial": "The 3-publication trial limit has been reached.",
-      "empty": "Add text or media.",
-      "characters": "The text exceeds the limit.",
-      "mediaRequired": "This platform requires media.",
-      "mediaCount": "Too much media for this platform.",
-      "mediaType": "Incompatible media format."
-    },
-    "feedback": {
-      "draft": "Draft saved.",
-      "scheduled": "Publication scheduled.",
-      "published": "Publication recorded as published.",
-      "publishing": "Publication sent.",
-      "failed": "Publication saved."
-    }
   }
 }

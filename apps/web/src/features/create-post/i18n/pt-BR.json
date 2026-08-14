@@ -1,0 +1,91 @@
+{
+  "composer": {
+    "title": "Nova publicação",
+    "editTitle": "Editar publicação",
+    "back": "Voltar para Publicações",
+    "timezone": "Horários em {{timezone}}",
+    "trialUsage": "Trial: {{used}} de {{limit}} publicações usadas",
+    "channels": "1. Selecione os canais",
+    "manageChannels": "Gerenciar canais",
+    "noChannels": "Conecte um canal antes de publicar.",
+    "channelSelector": {
+      "select": "Selecionar canais",
+      "selectedCount_one": "{{count}} canal selecionado",
+      "selectedCount_other": "{{count}} canais selecionados",
+      "selectAll": "Selecionar todos os canais",
+      "clearAll": "Desmarcar todos os canais",
+      "search": "Buscar por canal, plataforma ou usuário",
+      "noResults": "Nenhum canal encontrado.",
+      "remove": "Remover {{name}}"
+    },
+    "content": "2. Crie o conteúdo",
+    "caption": "Legenda",
+    "placeholder": "O que você quer compartilhar?",
+    "addMedia": "Adicionar imagens ou vídeo",
+    "mediaGuidance": {
+      "summary_one": "{{formats}} · até {{count}} arquivo",
+      "summary_other": "{{formats}} · até {{count}} arquivos",
+      "imageLimit": "Imagens até {{size}} MB",
+      "videoLimit": "Vídeos até {{size}} MB",
+      "tooMany_one": "Você pode adicionar no máximo {{count}} arquivo para os canais selecionados.",
+      "tooMany_other": "Você pode adicionar no máximo {{count}} arquivos para os canais selecionados.",
+      "invalidType": "Um ou mais arquivos possuem formato incompatível com os canais selecionados.",
+      "tooLarge": "Um ou mais arquivos excedem o tamanho permitido."
+    },
+    "tags": "Tags",
+    "personalization": "3. Personalize por canal",
+    "customize": "Personalizar legenda por canal",
+    "customizeNoChannels": "Selecione ao menos um canal para personalizar o conteúdo.",
+    "inherit": "Deixe vazio para usar o conteúdo principal",
+    "schedule": "4. Programe seu post",
+    "timing": {
+      "question": "Quando publicar?",
+      "toggleLabel": "Agendar publicação",
+      "immediate": {
+        "label": "Publicar agora",
+        "description": "Enviar para publicação imediatamente."
+      },
+      "scheduled": {
+        "label": "Agendar",
+        "description": "Escolher uma data e um horário futuros."
+      }
+    },
+    "confirmation": {
+      "publishTitle": "Confirmar publicação",
+      "scheduleTitle": "Confirmar agendamento",
+      "publishDescription": "Revise as informações antes de publicar agora.",
+      "scheduleDescription": "Revise as informações antes de confirmar o agendamento.",
+      "destinations": "Destinos",
+      "content": "Conteúdo",
+      "tags": "Grupos de tags",
+      "schedule": "Data e horário",
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "confirmPublish": "Publicar agora",
+      "confirmSchedule": "Confirmar agendamento"
+    },
+    "preview": "Preview",
+    "previewEmpty": "Seu conteúdo aparecerá aqui.",
+    "previewNoChannel": "Selecione um canal para visualizar.",
+    "saveDraft": "Salvar rascunho",
+    "scheduleAction": "Agendar",
+    "publishNow": "Publicar agora",
+    "validation": {
+      "fix": "Revise os canais e corrija os erros.",
+      "future": "Escolha uma data futura.",
+      "trial": "O limite de 3 publicações do trial foi atingido.",
+      "empty": "Adicione texto ou mídia.",
+      "characters": "O texto excede o limite.",
+      "mediaRequired": "Esta plataforma exige mídia.",
+      "mediaCount": "Mídia demais para esta plataforma.",
+      "mediaType": "Formato de mídia incompatível."
+    },
+    "feedback": {
+      "draft": "Rascunho salvo.",
+      "scheduled": "Publicação agendada.",
+      "published": "Publicação registrada como publicada.",
+      "publishing": "Publicação enviada.",
+      "failed": "Publicação salva."
+    }
+  }
+}

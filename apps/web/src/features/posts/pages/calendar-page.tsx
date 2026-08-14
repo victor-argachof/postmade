@@ -8,6 +8,7 @@ import {
   groupPublicationsByLocalDay,
   selectActiveWorkspace,
 } from "@/features/posts/lib/selectors";
+import { PostsViewSwitcher } from "@/features/posts/components/posts-view-switcher";
 import { ROUTES } from "@/routes/route-paths";
 import { DatePicker } from "@/shared/components/date-time-picker";
 import { PageHeader } from "@/shared/components/page-header";
@@ -29,7 +30,8 @@ const initialFilters: CalendarFilters = {
 };
 
 export function CalendarPage() {
-  const { t, i18n } = useTranslation("calendar");
+  const { t, i18n } = useTranslation("posts", { keyPrefix: "calendar" });
+  const { t: tPosts } = useTranslation("posts");
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const workspace = useAppSelector(selectActiveWorkspace);
@@ -93,7 +95,10 @@ export function CalendarPage() {
   return (
     <section className="mx-auto max-w-6xl">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <PageHeader title={t("pageTitle")} description={t("pageDescription")} />
+        <PageHeader
+          title={tPosts("pageTitle")}
+          description={tPosts("pageDescription")}
+        />
         {canManage && (
           <Button onClick={newPost}>
             <Plus className="size-4" />
@@ -101,6 +106,7 @@ export function CalendarPage() {
           </Button>
         )}
       </div>
+      <PostsViewSwitcher />
       <CalendarToolbar
         channels={workspace?.resources.channels ?? []}
         filters={filters}

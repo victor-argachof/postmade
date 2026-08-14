@@ -49,7 +49,7 @@ export function PersonalizationStep({
   >;
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
 
   if (platforms.length <= 1) return null;
 

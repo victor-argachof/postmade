@@ -6,6 +6,7 @@ import type {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { publicationFilterStatuses } from "@/features/posts/lib/publication-statuses";
 import { Button } from "@/shared/components/ui/button";
 import {
   Select,
@@ -28,8 +29,6 @@ const platforms: SocialPlatform[] = [
   "tiktok",
   "youtube",
 ];
-const statuses: PublicationStatus[] = ["scheduled", "published", "failed"];
-
 export function CalendarToolbar({
   channels,
   filters,
@@ -45,7 +44,7 @@ export function CalendarToolbar({
   onMonthChange: (delta: number) => void;
   onToday: () => void;
 }) {
-  const { t } = useTranslation("calendar");
+  const { t } = useTranslation("posts", { keyPrefix: "calendar" });
   return (
     <div className="mt-7 flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-1.5">
@@ -72,6 +71,24 @@ export function CalendarToolbar({
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
         <Select
+          value={filters.status}
+          onValueChange={(status) =>
+            onChange({ status: status as CalendarFilters["status"] })
+          }
+        >
+          <SelectTrigger aria-label={t("filters.status")} className="h-10">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
+            {publicationFilterStatuses.map((status) => (
+              <SelectItem key={status} value={status}>
+                {t(`statuses.${status}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
           value={filters.platform}
           onValueChange={(platform) =>
             onChange({ platform: platform as CalendarFilters["platform"] })
@@ -85,24 +102,6 @@ export function CalendarToolbar({
             {platforms.map((platform) => (
               <SelectItem key={platform} value={platform}>
                 {t(`platforms.${platform}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select
-          value={filters.status}
-          onValueChange={(status) =>
-            onChange({ status: status as CalendarFilters["status"] })
-          }
-        >
-          <SelectTrigger aria-label={t("filters.status")} className="h-10">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filters.allStatuses")}</SelectItem>
-            {statuses.map((status) => (
-              <SelectItem key={status} value={status}>
-                {t(`statuses.${status}`)}
               </SelectItem>
             ))}
           </SelectContent>

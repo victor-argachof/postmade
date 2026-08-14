@@ -37,7 +37,7 @@ export function ContentStep({
   tagGroups: TagGroup[];
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   const { t: tTags } = useTranslation("tags");
 
   return (

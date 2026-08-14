@@ -5,10 +5,10 @@ import accountEn from "@/features/account/i18n/en.json";
 import accountPtBR from "@/features/account/i18n/pt-BR.json";
 import authEn from "@/features/auth/i18n/en.json";
 import authPtBR from "@/features/auth/i18n/pt-BR.json";
-import calendarEn from "@/features/calendar/i18n/en.json";
-import calendarPtBR from "@/features/calendar/i18n/pt-BR.json";
 import channelsEn from "@/features/channels/i18n/en.json";
 import channelsPtBR from "@/features/channels/i18n/pt-BR.json";
+import createPostEn from "@/features/create-post/i18n/en.json";
+import createPostPtBR from "@/features/create-post/i18n/pt-BR.json";
 import postsEn from "@/features/posts/i18n/en.json";
 import postsPtBR from "@/features/posts/i18n/pt-BR.json";
 import subscriptionEn from "@/features/subscription/i18n/en.json";
@@ -37,11 +37,11 @@ export const resources = {
     account: accountEn,
     dashboard: dashboardEn,
     auth: authEn,
+    createPost: createPostEn,
     posts: postsEn,
     subscription: subscriptionEn,
     workspaces: workspacesEn,
     channels: channelsEn,
-    calendar: calendarEn,
     tags: tagsEn,
   },
   "pt-BR": {
@@ -50,11 +50,11 @@ export const resources = {
     account: accountPtBR,
     dashboard: dashboardPtBR,
     auth: authPtBR,
+    createPost: createPostPtBR,
     posts: postsPtBR,
     subscription: subscriptionPtBR,
     workspaces: workspacesPtBR,
     channels: channelsPtBR,
-    calendar: calendarPtBR,
     tags: tagsPtBR,
   },
 } as const;
@@ -71,9 +71,9 @@ void i18n.use(initReactI18next).init({
     "account",
     "dashboard",
     "auth",
+    "createPost",
     "posts",
     "channels",
-    "calendar",
     "tags",
     "subscription",
     "workspaces",

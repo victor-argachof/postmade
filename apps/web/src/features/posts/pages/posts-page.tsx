@@ -16,8 +16,11 @@ import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { PostsDataTable } from "../components/posts-data-table";
 import { PostsFilters } from "../components/posts-filters";
-import { PostsSummary } from "../components/posts-summary";
-import { filterPublications, selectActiveWorkspace } from "../lib/selectors";
+import { PostsViewSwitcher } from "../components/posts-view-switcher";
+import {
+  filterPublications,
+  selectActiveWorkspace,
+} from "../lib/selectors";
 import { setPublicationFilters } from "../store/posts-slice";
 
 export function PostsPage() {
@@ -68,7 +71,7 @@ export function PostsPage() {
           </Button>
         )}
       </div>
-      <PostsSummary publications={publications} />
+      <PostsViewSwitcher />
       <PostsFilters
         channels={workspace?.resources.channels ?? []}
         filters={filters}

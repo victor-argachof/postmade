@@ -21,7 +21,7 @@ export function MediaUploader({
   platforms: SocialPlatform[];
   disabled?: boolean;
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   const constraints = mediaConstraintsForPlatforms(platforms);
   const addFiles = (files: FileList | null) => {
     if (!files) return;

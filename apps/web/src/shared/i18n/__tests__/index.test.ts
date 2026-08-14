@@ -14,7 +14,7 @@ describe("i18n namespaces", () => {
 
     expect(i18n.t("posts", { ns: "navigation" })).toBe("Publicações");
     expect(i18n.t("loginTitle", { ns: "auth" })).toBe("Bem-vindo de volta");
-    expect(i18n.t("comingSoonDescription", { ns: "calendar" })).toContain(
+    expect(i18n.t("calendar.comingSoonDescription", { ns: "posts" })).toContain(
       "agendamentos"
     );
   });

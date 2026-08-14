@@ -31,7 +31,7 @@ export function PublicationConfirmationModal({
   scheduledFor: string | null;
   timezone: string;
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   const scheduled = mode === "scheduled";
   const formattedSchedule = scheduledFor
     ? new Intl.DateTimeFormat(locale, {

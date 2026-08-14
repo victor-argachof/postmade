@@ -22,7 +22,7 @@ export function CalendarAgenda({
   publications: ScheduledPublication[];
   timezone: string;
 }) {
-  const { t } = useTranslation("calendar");
+  const { t } = useTranslation("posts", { keyPrefix: "calendar" });
   const dateLabel = new Intl.DateTimeFormat(locale, {
     dateStyle: "full",
     timeZone: "UTC",

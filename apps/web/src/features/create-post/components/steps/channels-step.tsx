@@ -13,7 +13,7 @@ export function ChannelsStep({ channels, disabled, onChange, onManage, value }: 
   onManage: () => void;
   value: string[];
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   return (
     <PostComposerStepCard
       title={t("composer.channels")}

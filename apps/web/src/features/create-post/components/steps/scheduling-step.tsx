@@ -14,7 +14,7 @@ export function SchedulingStep({ disabled, minimumSchedule, onScheduledForChange
   timezone: string;
   timingMode: PublicationTimingMode;
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   return (
     <PostComposerStepCard title={t("composer.schedule")}>
       <PublicationTimingSwitcher disabled={disabled} value={timingMode} onChange={onTimingModeChange}>

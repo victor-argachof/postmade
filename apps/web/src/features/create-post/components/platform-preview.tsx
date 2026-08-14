@@ -10,7 +10,7 @@ export function PlatformPreview({
   content: string;
   media: PublicationMedia[];
 }) {
-  const { t } = useTranslation("posts");
+  const { t } = useTranslation("createPost");
   return (
     <div className="rounded-2xl border border-border bg-background p-4">
       <div className="flex items-center gap-3">
