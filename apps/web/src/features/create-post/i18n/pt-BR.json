@@ -1,4 +1,15 @@
 {
+  "platforms": {
+    "facebook": "Facebook",
+    "linkedin": "LinkedIn",
+    "instagram": "Instagram",
+    "tiktok": "TikTok",
+    "youtube": "YouTube"
+  },
+  "mediaOnly": "Publicação com mídia",
+  "actions": {
+    "delete": "Remover mídia"
+  },
   "composer": {
     "title": "Nova publicação",
     "editTitle": "Editar publicação",

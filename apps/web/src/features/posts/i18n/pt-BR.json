@@ -53,15 +53,22 @@
       "edit": "Editar publicação"
     }
   },
-  "channels": "canais",
+  "channels_one": "{{count}} canal",
+  "channels_other": "{{count}} canais",
   "mediaOnly": "Publicação com mídia",
-  "confirmDelete": "Excluir esta publicação?",
   "statuses": {
     "all": "Todas",
     "draft": "Rascunhos",
     "scheduled": "Agendadas",
     "publishing": "Publicando",
     "published": "Publicadas",
+    "failed": "Com falha"
+  },
+  "statusLabels": {
+    "draft": "Rascunho",
+    "scheduled": "Agendada",
+    "publishing": "Publicando",
+    "published": "Publicada",
     "failed": "Com falha"
   },
   "platforms": {
@@ -106,8 +113,15 @@
   "table": {
     "label": "Lista de publicações",
     "publication": "Publicação",
+    "fullContent": "Exibir conteúdo completo",
+    "status": "Status",
     "channels": "Canais",
+    "channelDetails": "Canais da publicação",
     "date": "Data",
+    "sortByPublication": "Ordenar por publicação",
+    "sortByStatus": "Ordenar por status",
+    "sortByChannels": "Ordenar por canais",
+    "sortByDate": "Ordenar por data",
     "actions": "Ações"
   },
   "feedback": {
@@ -115,5 +129,26 @@
     "cancel": "Agendamento cancelado.",
     "duplicate": "Rascunho duplicado.",
     "retry": "Nova tentativa iniciada."
+  },
+  "duplicateModal": {
+    "title": "Duplicar publicação",
+    "description": "Uma cópia será criada como rascunho, sem reutilizar o agendamento ou o estado de execução.",
+    "close": "Fechar",
+    "cancel": "Voltar",
+    "confirm": "Duplicar"
+  },
+  "cancelModal": {
+    "title": "Cancelar agendamento",
+    "description": "A publicação deixará de ser enviada na data programada e voltará para rascunhos.",
+    "close": "Fechar",
+    "cancel": "Voltar",
+    "confirm": "Cancelar agendamento"
+  },
+  "deleteModal": {
+    "title": "Excluir publicação",
+    "description": "Esta publicação será removida permanentemente. Esta ação não pode ser desfeita.",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "confirm": "Excluir"
   }
 }

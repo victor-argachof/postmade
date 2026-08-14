@@ -215,6 +215,152 @@ const workspacesSlice = createSlice({
         } else workspace.resources.channels.push(channel);
       }
     },
+    createPublicationsMock: (
+      state,
+      action: PayloadAction<{ userId: string }>
+    ) => {
+      const workspace = state.items.find(
+        (item) =>
+          item.id === state.activeWorkspaceId &&
+          item.members.some((member) => member.id === action.payload.userId)
+      );
+      if (
+        !workspace ||
+        workspace.resources.posts.some((post) =>
+          post.id.startsWith("development-publication:")
+        )
+      )
+        return;
+
+      const channels = Object.fromEntries(
+        workspace.resources.channels.map((channel) => [
+          channel.platform,
+          channel,
+        ])
+      );
+      const instagram = channels.instagram;
+      const linkedin = channels.linkedin;
+      const facebook = channels.facebook;
+      if (!instagram || !linkedin || !facebook) return;
+
+      const now = Date.now();
+      const instant = (hoursFromNow: number) =>
+        new Date(now + hoursFromNow * 60 * 60 * 1000).toISOString();
+      const target = (
+        channel: typeof instagram,
+        status: ScheduledPublication["status"],
+        options?: { errorCode?: string; externalUrl?: string }
+      ): ScheduledPublication["targets"][number] => ({
+        channelId: channel.id,
+        platform: channel.platform,
+        contentOverride: null,
+        mediaOverride: null,
+        settings: {},
+        status,
+        errorCode: options?.errorCode ?? null,
+        externalUrl: options?.externalUrl ?? null,
+      });
+      const image = {
+        id: "development-media:brand",
+        type: "image" as const,
+        url: "/favicon.png",
+        filename: "postmade.png",
+        mimeType: "image/png",
+      };
+
+      workspace.resources.posts.push(
+        {
+          id: "development-publication:draft",
+          createdBy: action.payload.userId,
+          status: "draft",
+          content:
+            "Ideias para a próxima semana: bastidores do produto e dicas de organização.",
+          media: [],
+          targets: [target(linkedin, "draft")],
+          tagGroupSnapshots: [],
+          scheduledFor: null,
+          publishedAt: null,
+          createdAt: instant(-48),
+          updatedAt: instant(-3),
+        },
+        {
+          id: "development-publication:scheduled-multichannel",
+          createdBy: action.payload.userId,
+          status: "scheduled",
+          content:
+            "Planejar, criar e publicar em todos os canais pode ser mais simples.",
+          media: [image],
+          targets: [
+            target(instagram, "scheduled"),
+            target(linkedin, "scheduled"),
+            target(facebook, "scheduled"),
+          ],
+          tagGroupSnapshots: [
+            {
+              groupId: "development-tag-snapshot:product",
+              groupName: "Produto",
+              tags: ["Postmade", "SocialMedia", "Produtividade"],
+            },
+          ],
+          scheduledFor: instant(26),
+          publishedAt: null,
+          createdAt: instant(-24),
+          updatedAt: instant(-2),
+        },
+        {
+          id: "development-publication:scheduled-instagram",
+          createdBy: action.payload.userId,
+          status: "scheduled",
+          content: "Um novo jeito de organizar seu calendário de conteúdo.",
+          media: [image],
+          targets: [target(instagram, "scheduled")],
+          tagGroupSnapshots: [],
+          scheduledFor: instant(74),
+          publishedAt: null,
+          createdAt: instant(-12),
+          updatedAt: instant(-1),
+        },
+        {
+          id: "development-publication:published",
+          createdBy: action.payload.userId,
+          status: "published",
+          content:
+            "Centralize suas publicações e ganhe mais tempo para criar.",
+          media: [image],
+          targets: [
+            target(instagram, "published", {
+              externalUrl: "https://instagram.com/postmade",
+            }),
+            target(linkedin, "published", {
+              externalUrl: "https://linkedin.com/company/postmade",
+            }),
+          ],
+          tagGroupSnapshots: [],
+          scheduledFor: instant(-25),
+          publishedAt: instant(-24),
+          createdAt: instant(-72),
+          updatedAt: instant(-24),
+        },
+        {
+          id: "development-publication:failed",
+          createdBy: action.payload.userId,
+          status: "failed",
+          content:
+            "Confira as novidades que preparamos para melhorar sua rotina.",
+          media: [],
+          targets: [
+            target(facebook, "failed", {
+              errorCode: "DEVELOPMENT_PROVIDER_ERROR",
+            }),
+          ],
+          tagGroupSnapshots: [],
+          scheduledFor: instant(-2),
+          publishedAt: null,
+          createdAt: instant(-26),
+          updatedAt: instant(-2),
+        }
+      );
+    },
     selectWorkspace: (
       state,
       action: PayloadAction<{ workspaceId: string; userId: string }>
@@ -837,6 +983,7 @@ export const {
   createInitialWorkspace,
   createActiveWorkspaceMock,
   createConnectedChannelMock,
+  createPublicationsMock,
   createWorkspace,
   createWorkspacePublication,
   updateWorkspacePublication,

@@ -1,4 +1,6 @@
+import type { ScheduledPublication } from "@postmade/types";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -14,13 +16,13 @@ import { PageHeader } from "@/shared/components/page-header";
 import { Button } from "@/shared/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
+import { CancelScheduleModal } from "../components/overlays/cancel-schedule-modal";
+import { DeletePublicationModal } from "../components/overlays/delete-publication-modal";
+import { DuplicatePublicationModal } from "../components/overlays/duplicate-publication-modal";
 import { PostsDataTable } from "../components/posts-data-table";
 import { PostsFilters } from "../components/posts-filters";
 import { PostsViewSwitcher } from "../components/posts-view-switcher";
-import {
-  filterPublications,
-  selectActiveWorkspace,
-} from "../lib/selectors";
+import { filterPublications, selectActiveWorkspace } from "../lib/selectors";
 import { setPublicationFilters } from "../store/posts-slice";
 
 export function PostsPage() {
@@ -30,24 +32,27 @@ export function PostsPage() {
   const workspace = useAppSelector(selectActiveWorkspace);
   const user = useAppSelector((state) => state.auth.user);
   const filters = useAppSelector((state) => state.posts.filters);
-  const publications = workspace?.resources.posts ?? [];
-  const filtered = filterPublications(publications, filters).sort((a, b) =>
-    b.updatedAt.localeCompare(a.updatedAt)
+  const [duplicating, setDuplicating] = useState<ScheduledPublication | null>(
+    null
   );
+  const [canceling, setCanceling] = useState<ScheduledPublication | null>(null);
+  const [deleting, setDeleting] = useState<ScheduledPublication | null>(null);
+  const publications = workspace?.resources.posts ?? [];
+  const filtered = filterPublications(publications, filters);
   const role = workspace?.members.find(
     (member) => member.id === user?.id
   )?.role;
   const canManage = Boolean(role && role !== "viewer");
-  const action = (
+  useEffect(() => {
+    setDuplicating(null);
+    setCanceling(null);
+    setDeleting(null);
+  }, [workspace?.id]);
+  const executeAction = (
     type: "delete" | "cancel" | "duplicate" | "retry",
     id: string
   ) => {
-    if (
-      !workspace ||
-      !user ||
-      (type === "delete" && !window.confirm(t("confirmDelete")))
-    )
-      return;
+    if (!workspace || !user) return;
     const base = { workspaceId: workspace.id, actorId: user.id };
     if (type === "delete")
       dispatch(deleteWorkspacePublication({ ...base, publicationId: id }));
@@ -58,6 +63,17 @@ export function PostsPage() {
     if (type === "retry")
       dispatch(retryWorkspacePublication({ ...base, publicationId: id }));
     toast.success(t(`feedback.${type}`));
+  };
+  const requestAction = (
+    type: "delete" | "cancel" | "duplicate" | "retry",
+    id: string
+  ) => {
+    const publication = publications.find((post) => post.id === id);
+    if (!publication) return;
+    if (type === "duplicate") setDuplicating(publication);
+    else if (type === "cancel") setCanceling(publication);
+    else if (type === "delete") setDeleting(publication);
+    else executeAction(type, id);
   };
 
   return (
@@ -79,6 +95,7 @@ export function PostsPage() {
       />
       <PostsDataTable
         canManage={canManage}
+        channels={workspace?.resources.channels ?? []}
         empty={
           <div className="p-12 text-center">
             <p className="font-bold">
@@ -90,11 +107,35 @@ export function PostsPage() {
           </div>
         }
         locale={i18n.language}
-        onAction={action}
+        onAction={requestAction}
         onEdit={(id) => navigate(ROUTES.editPost(id))}
         publications={filtered}
         resetKey={`${workspace?.id}-${JSON.stringify(filters)}`}
         timezone={workspace?.timezone ?? "UTC"}
+      />
+      <DuplicatePublicationModal
+        publication={duplicating}
+        onClose={() => setDuplicating(null)}
+        onConfirm={() => {
+          if (duplicating) executeAction("duplicate", duplicating.id);
+          setDuplicating(null);
+        }}
+      />
+      <CancelScheduleModal
+        publication={canceling}
+        onClose={() => setCanceling(null)}
+        onConfirm={() => {
+          if (canceling) executeAction("cancel", canceling.id);
+          setCanceling(null);
+        }}
+      />
+      <DeletePublicationModal
+        publication={deleting}
+        onClose={() => setDeleting(null)}
+        onConfirm={() => {
+          if (deleting) executeAction("delete", deleting.id);
+          setDeleting(null);
+        }}
       />
     </section>
   );

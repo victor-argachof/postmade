@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import {
   DataTable,
   type DataTableColumn,
+  type DataTableSorting,
 } from "@/shared/components/data-table";
 import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
@@ -25,16 +26,26 @@ export function TagsDataTable({
   onEdit: (group: TagGroup) => void;
   resetKey: string;
 }) {
-  const { t } = useTranslation("tags");
+  const { t, i18n } = useTranslation("tags");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [sorting, setSorting] = useState<DataTableSorting>();
   const totalPages = Math.max(1, Math.ceil(groups.length / pageSize));
   useEffect(
     () => setPage((current) => Math.min(current, totalPages)),
     [totalPages]
   );
   useEffect(() => setPage(1), [resetKey]);
-  const visible = groups.slice((page - 1) * pageSize, page * pageSize);
+  const sorted = sorting
+    ? [...groups].sort((first, second) => {
+        const comparison =
+          sorting.columnId === "tags"
+            ? first.tags.length - second.tags.length
+            : first.name.localeCompare(second.name, i18n.language);
+        return sorting.direction === "asc" ? comparison : -comparison;
+      })
+    : groups;
+  const visible = sorted.slice((page - 1) * pageSize, page * pageSize);
   const actions = (group: TagGroup) => (
     <div className="flex justify-end gap-1">
       <Button
@@ -75,12 +86,20 @@ export function TagsDataTable({
     {
       id: "name",
       header: t("table.name"),
+      sortable: true,
+      sortLabel: t("table.sortByName"),
       cell: (group) => <span className="font-semibold">{group.name}</span>,
     },
-    { id: "tags", header: t("table.tags"), cell: tags },
+    {
+      id: "tags",
+      header: t("table.tags"),
+      sortable: true,
+      sortLabel: t("table.sortByTags"),
+      cell: tags,
+    },
     {
       id: "actions",
-      header: <span className="sr-only">{t("table.actions")}</span>,
+      header: t("table.actions"),
       className: "text-right",
       headerClassName: "text-right",
       cell: actions,
@@ -105,6 +124,11 @@ export function TagsDataTable({
             </p>
           }
           label={t("table.label")}
+          sorting={sorting}
+          onSortingChange={(nextSorting) => {
+            setSorting(nextSorting);
+            setPage(1);
+          }}
         />
       </div>
       <div className="divide-y divide-border md:hidden">

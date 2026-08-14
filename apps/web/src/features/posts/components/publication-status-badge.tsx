@@ -23,7 +23,7 @@ export function PublicationStatusBadge({
           "bg-amber-500/15 text-amber-700 dark:text-amber-300"
       )}
     >
-      {t(`statuses.${status}`)}
+      {t(`statusLabels.${status}`)}
     </span>
   );
 }

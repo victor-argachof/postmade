@@ -1,4 +1,4 @@
-import type { ScheduledPublication } from "@postmade/types";
+import type { ScheduledPublication, SocialChannel } from "@postmade/types";
 import { Copy, Edit3, RotateCcw, Trash2, XCircle } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,9 +6,11 @@ import { useTranslation } from "react-i18next";
 import {
   DataTable,
   type DataTableColumn,
+  type DataTableSorting,
 } from "@/shared/components/data-table";
 import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
+import { Tooltip } from "@/shared/components/ui/tooltip";
 
 import { PublicationStatusBadge } from "./publication-status-badge";
 
@@ -16,6 +18,7 @@ type Action = "delete" | "cancel" | "duplicate" | "retry";
 
 export function PostsDataTable({
   canManage,
+  channels,
   empty,
   locale,
   onAction,
@@ -25,6 +28,7 @@ export function PostsDataTable({
   timezone,
 }: {
   canManage: boolean;
+  channels: SocialChannel[];
   empty: ReactNode;
   locale: string;
   onAction: (action: Action, id: string) => void;
@@ -36,13 +40,35 @@ export function PostsDataTable({
   const { t } = useTranslation("posts");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [sorting, setSorting] = useState<DataTableSorting>();
   const totalPages = Math.max(1, Math.ceil(publications.length / pageSize));
   useEffect(
     () => setPage((current) => Math.min(current, totalPages)),
     [totalPages]
   );
   useEffect(() => setPage(1), [resetKey]);
-  const visible = publications.slice((page - 1) * pageSize, page * pageSize);
+  const sortableValue = (post: ScheduledPublication, columnId: string) => {
+    if (columnId === "publication")
+      return post.content.toLocaleLowerCase(locale);
+    if (columnId === "status")
+      return t(`statusLabels.${post.status}`).toLocaleLowerCase(locale);
+    if (columnId === "channels") return post.targets.length;
+    return new Date(
+      post.scheduledFor ?? post.publishedAt ?? post.createdAt
+    ).getTime();
+  };
+  const sorted = sorting
+    ? [...publications].sort((first, second) => {
+        const firstValue = sortableValue(first, sorting.columnId);
+        const secondValue = sortableValue(second, sorting.columnId);
+        const comparison =
+          typeof firstValue === "number" && typeof secondValue === "number"
+            ? firstValue - secondValue
+            : String(firstValue).localeCompare(String(secondValue), locale);
+        return sorting.direction === "asc" ? comparison : -comparison;
+      })
+    : publications;
+  const visible = sorted.slice((page - 1) * pageSize, page * pageSize);
   const date = (post: ScheduledPublication) =>
     new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
@@ -51,85 +77,121 @@ export function PostsDataTable({
     }).format(
       new Date(post.scheduledFor ?? post.publishedAt ?? post.createdAt)
     );
+  const channelNames = (post: ScheduledPublication) =>
+    post.targets.map(
+      (target) =>
+        channels.find((channel) => channel.id === target.channelId)
+          ?.displayName ?? t(`platforms.${target.platform}`)
+    );
+  const actionButton = (
+    label: string,
+    icon: ReactNode,
+    onClick: () => void
+  ) => (
+    <Tooltip className="w-max whitespace-nowrap" content={label} label={label}>
+      <Button aria-label={label} size="icon" variant="ghost" onClick={onClick}>
+        {icon}
+      </Button>
+    </Tooltip>
+  );
   const actions = (post: ScheduledPublication) => (
     <div className="flex flex-wrap justify-end gap-1">
-      {canManage && !["published", "publishing"].includes(post.status) && (
-        <Button
-          aria-label={t("actions.edit")}
-          size="icon"
-          variant="ghost"
-          onClick={() => onEdit(post.id)}
-        >
-          <Edit3 className="size-4" />
-        </Button>
-      )}
-      {canManage && (
-        <Button
-          aria-label={t("actions.duplicate")}
-          size="icon"
-          variant="ghost"
-          onClick={() => onAction("duplicate", post.id)}
-        >
-          <Copy className="size-4" />
-        </Button>
-      )}
-      {canManage && post.status === "scheduled" && (
-        <Button
-          aria-label={t("actions.cancel")}
-          size="icon"
-          variant="ghost"
-          onClick={() => onAction("cancel", post.id)}
-        >
-          <XCircle className="size-4" />
-        </Button>
-      )}
-      {canManage && post.status === "failed" && (
-        <Button
-          aria-label={t("actions.retry")}
-          size="icon"
-          variant="ghost"
-          onClick={() => onAction("retry", post.id)}
-        >
-          <RotateCcw className="size-4" />
-        </Button>
-      )}
-      {canManage && !["published", "publishing"].includes(post.status) && (
-        <Button
-          aria-label={t("actions.delete")}
-          size="icon"
-          variant="ghost"
-          onClick={() => onAction("delete", post.id)}
-        >
-          <Trash2 className="size-4" />
-        </Button>
-      )}
+      {canManage &&
+        !["published", "publishing"].includes(post.status) &&
+        actionButton(t("actions.edit"), <Edit3 className="size-4" />, () =>
+          onEdit(post.id)
+        )}
+      {canManage &&
+        actionButton(t("actions.duplicate"), <Copy className="size-4" />, () =>
+          onAction("duplicate", post.id)
+        )}
+      {canManage &&
+        post.status === "scheduled" &&
+        actionButton(t("actions.cancel"), <XCircle className="size-4" />, () =>
+          onAction("cancel", post.id)
+        )}
+      {canManage &&
+        post.status === "failed" &&
+        actionButton(t("actions.retry"), <RotateCcw className="size-4" />, () =>
+          onAction("retry", post.id)
+        )}
+      {canManage &&
+        !["published", "publishing"].includes(post.status) &&
+        actionButton(t("actions.delete"), <Trash2 className="size-4" />, () =>
+          onAction("delete", post.id)
+        )}
     </div>
   );
   const columns: DataTableColumn<ScheduledPublication>[] = [
     {
       id: "publication",
       header: t("table.publication"),
-      cell: (post) => (
-        <div className="min-w-52">
-          <PublicationStatusBadge status={post.status} />
-          <p className="mt-2 max-w-md truncate font-semibold">
-            {post.content || t("mediaOnly")}
-          </p>
-        </div>
-      ),
+      sortable: true,
+      sortLabel: t("table.sortByPublication"),
+      cell: (post) => {
+        const content = post.content || t("mediaOnly");
+        return (
+          <div className="max-w-sm min-w-52">
+            <Tooltip
+              className="w-72 max-w-[min(24rem,80vw)]"
+              containerClassName="w-full"
+              content={content}
+              label={t("table.fullContent")}
+            >
+              <p
+                className="w-full cursor-help truncate font-semibold"
+                tabIndex={0}
+              >
+                {content}
+              </p>
+            </Tooltip>
+          </div>
+        );
+      },
+    },
+    {
+      id: "status",
+      header: t("table.status"),
+      sortable: true,
+      sortLabel: t("table.sortByStatus"),
+      cell: (post) => <PublicationStatusBadge status={post.status} />,
     },
     {
       id: "channels",
       header: t("table.channels"),
-      cell: (post) => (
-        <span className="text-muted-foreground">
-          {post.targets.length} {t("channels")}
-        </span>
-      ),
+      sortable: true,
+      sortLabel: t("table.sortByChannels"),
+      cell: (post) => {
+        const names = channelNames(post);
+        return (
+          <Tooltip
+            className="w-max max-w-64"
+            content={
+              <span className="flex flex-col gap-1">
+                {names.map((name, index) => (
+                  <span key={`${post.targets[index]?.channelId}-${index}`}>
+                    {name}
+                  </span>
+                ))}
+              </span>
+            }
+            label={t("table.channelDetails")}
+          >
+            <span
+              className="cursor-help text-muted-foreground underline decoration-dotted underline-offset-4"
+              tabIndex={0}
+            >
+              {t("channels", { count: post.targets.length })}
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       id: "date",
       header: t("table.date"),
+      sortable: true,
+      sortLabel: t("table.sortByDate"),
       cell: (post) => (
         <span className="whitespace-nowrap text-muted-foreground">
           {date(post)}
@@ -138,7 +200,7 @@ export function PostsDataTable({
     },
     {
       id: "actions",
-      header: <span className="sr-only">{t("table.actions")}</span>,
+      header: t("table.actions"),
       className: "text-right",
       headerClassName: "text-right",
       cell: actions,
@@ -163,6 +225,11 @@ export function PostsDataTable({
             </p>
           }
           label={t("table.label")}
+          sorting={sorting}
+          onSortingChange={(nextSorting) => {
+            setSorting(nextSorting);
+            setPage(1);
+          }}
         />
       </div>
       <div className="divide-y divide-border md:hidden">
@@ -173,7 +240,7 @@ export function PostsDataTable({
               {post.content || t("mediaOnly")}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {date(post)} · {post.targets.length} {t("channels")}
+              {date(post)} · {t("channels", { count: post.targets.length })}
             </p>
             <div className="mt-3">{actions(post)}</div>
           </article>

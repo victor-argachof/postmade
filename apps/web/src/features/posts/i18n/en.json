@@ -53,12 +53,19 @@
       "edit": "Edit publication"
     }
   },
-  "channels": "channels",
+  "channels_one": "{{count}} channel",
+  "channels_other": "{{count}} channels",
   "mediaOnly": "Media publication",
-  "confirmDelete": "Delete this publication?",
   "statuses": {
     "all": "All",
     "draft": "Drafts",
+    "scheduled": "Scheduled",
+    "publishing": "Publishing",
+    "published": "Published",
+    "failed": "Failed"
+  },
+  "statusLabels": {
+    "draft": "Draft",
     "scheduled": "Scheduled",
     "publishing": "Publishing",
     "published": "Published",
@@ -106,8 +113,15 @@
   "table": {
     "label": "Publications list",
     "publication": "Publication",
+    "fullContent": "Show full content",
+    "status": "Status",
     "channels": "Channels",
+    "channelDetails": "Publication channels",
     "date": "Date",
+    "sortByPublication": "Sort by publication",
+    "sortByStatus": "Sort by status",
+    "sortByChannels": "Sort by channels",
+    "sortByDate": "Sort by date",
     "actions": "Actions"
   },
   "feedback": {
@@ -115,5 +129,26 @@
     "cancel": "Schedule canceled.",
     "duplicate": "Draft duplicated.",
     "retry": "Retry started."
+  },
+  "duplicateModal": {
+    "title": "Duplicate publication",
+    "description": "A copy will be created as a draft without reusing its schedule or execution state.",
+    "close": "Close",
+    "cancel": "Go back",
+    "confirm": "Duplicate"
+  },
+  "cancelModal": {
+    "title": "Cancel schedule",
+    "description": "The publication will no longer be sent at the scheduled time and will return to drafts.",
+    "close": "Close",
+    "cancel": "Go back",
+    "confirm": "Cancel schedule"
+  },
+  "deleteModal": {
+    "title": "Delete publication",
+    "description": "This publication will be permanently removed. This action cannot be undone.",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Delete"
   }
 }

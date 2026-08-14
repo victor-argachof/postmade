@@ -10,6 +10,7 @@ import {
 import workspacesReducer, {
   createActiveWorkspaceMock,
   createConnectedChannelMock,
+  createPublicationsMock,
 } from "@/features/workspaces/store/workspaces-slice";
 import { api } from "@/shared/api/api";
 
@@ -133,6 +134,7 @@ if (import.meta.env.MODE === "development" && store.getState().auth.user) {
     })
   );
   store.dispatch(createConnectedChannelMock({ userId: user.id }));
+  store.dispatch(createPublicationsMock({ userId: user.id }));
 }
 
 store.subscribe(() => {

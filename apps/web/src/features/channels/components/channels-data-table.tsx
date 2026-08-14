@@ -88,7 +88,7 @@ export function ChannelsDataTable({
     },
     {
       id: "actions",
-      header: <span className="sr-only">{t("table.actions")}</span>,
+      header: t("table.actions"),
       headerClassName: "text-right",
       className: "text-right",
       cell: (channel) => (

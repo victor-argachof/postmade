@@ -16,6 +16,8 @@
     "label": "Tag groups list",
     "name": "Name",
     "tags": "Hashtags",
+    "sortByName": "Sort by name",
+    "sortByTags": "Sort by hashtag count",
     "actions": "Actions",
     "results": "{{count}} groups"
   },
