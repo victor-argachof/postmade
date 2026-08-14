@@ -20,7 +20,7 @@ describe("AppRouter", () => {
     );
 
     expect(
-      await screen.findByRole("heading", { name: /crie uma vez|create once/i })
+      await screen.findByRole("heading", { name: /dashboard/i })
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /configurações|settings/i })

@@ -24,8 +24,8 @@ TikTok e YouTube. Entre os principais recursos previstos estão:
 
 ## Escopo atual
 
-Esta fase concentra-se somente no front-end do MVP: autenticação, shell do
-dashboard, conta do usuário, assinatura, canais e os fluxos locais de criação,
+Esta fase concentra-se somente no front-end do MVP: autenticação, dashboard
+operacional do workspace, conta do usuário, assinatura, canais e os fluxos locais de criação,
 gestão e agendamento de publicações, além de grupos reutilizáveis de tags. Os dados e a sessão ainda são locais; integrações
 OAuth, pagamentos e publicação real dependerão do futuro back-end.
 

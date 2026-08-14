@@ -3,11 +3,11 @@ import type { RouteObject } from "react-router-dom";
 import { AccountPage } from "@/features/account";
 import { ChannelsPage } from "@/features/channels";
 import { PostComposerPage } from "@/features/create-post";
+import { DashboardPage } from "@/features/dashboard";
 import { CalendarPage, PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
 import { TagsPage } from "@/features/tags";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
-import { DashboardHome } from "@/shared/components/dashboard-home";
 import { AppShell } from "@/shared/layouts/app-shell";
 
 import { ROUTES } from "./route-paths";
@@ -17,7 +17,7 @@ import { ROUTES } from "./route-paths";
 export const protectedRoutes: RouteObject = {
   element: <AppShell />,
   children: [
-    { path: ROUTES.dashboard, element: <DashboardHome /> },
+    { path: ROUTES.dashboard, element: <DashboardPage /> },
     { path: ROUTES.posts, element: <PostsPage /> },
     { path: ROUTES.postsCalendar, element: <CalendarPage /> },
     { path: ROUTES.newPost, element: <PostComposerPage /> },

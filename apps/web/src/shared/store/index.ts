@@ -11,6 +11,7 @@ import workspacesReducer, {
   createActiveWorkspaceMock,
   createConnectedChannelMock,
   createPublicationsMock,
+  updateMemberIdentity,
 } from "@/features/workspaces/store/workspaces-slice";
 import { api } from "@/shared/api/api";
 
@@ -19,6 +20,8 @@ const PREVIOUS_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
 const V3_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v3";
 const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v4";
 const AUTH_STORAGE_KEY = "postmade.auth-session.v1";
+const LEGACY_DEVELOPMENT_USER_NAME = "Creator";
+const DEVELOPMENT_USER_NAME = "Victor Argachof";
 
 function loadPersistedAuth() {
   try {
@@ -42,6 +45,16 @@ function loadPersistedAuth() {
       (user !== null && !isValidUser(user))
     ) {
       return undefined;
+    }
+    if (
+      import.meta.env.MODE === "development" &&
+      parsed.user?.name === LEGACY_DEVELOPMENT_USER_NAME
+    ) {
+      parsed.user.name = DEVELOPMENT_USER_NAME;
+      const account = parsed.accounts.find(
+        (item) => item.id === parsed.user?.id
+      );
+      if (account) account.name = DEVELOPMENT_USER_NAME;
     }
     return parsed;
   } catch {
@@ -126,6 +139,7 @@ export const store = configureStore({
 
 if (import.meta.env.MODE === "development" && store.getState().auth.user) {
   const user = store.getState().auth.user!;
+  store.dispatch(updateMemberIdentity({ userId: user.id, name: user.name }));
   store.dispatch(
     createActiveWorkspaceMock({
       userId: user.id,

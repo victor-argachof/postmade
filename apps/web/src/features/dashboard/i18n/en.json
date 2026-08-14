@@ -1,0 +1,41 @@
+{
+  "title": "Dashboard",
+  "greeting": "Hello, {{name}}",
+  "description": "Track your operation and quickly access the workspace's main tasks.",
+  "newPost": "New publication",
+  "metrics": {
+    "channels": "Connected channels",
+    "channelsAction": "Manage channels",
+    "drafts": "Drafts",
+    "draftsAction": "View drafts",
+    "scheduled": "Scheduled",
+    "scheduledAction": "View schedule",
+    "failed": "Failed",
+    "failedAction": "Review failures"
+  },
+  "upcoming": {
+    "title": "Upcoming publications",
+    "description": "Times in {{timezone}}",
+    "viewCalendar": "View calendar",
+    "mediaOnly": "Media publication",
+    "table": {
+      "label": "Upcoming scheduled publications",
+      "publication": "Publication",
+      "status": "Status",
+      "channels": "Channels",
+      "date": "Date",
+      "actions": "Actions",
+      "open": "Open in calendar"
+    },
+    "emptyTitle": "No scheduled publications",
+    "emptyDescription": "Your upcoming scheduled publications will appear here."
+  },
+  "empty": {
+    "channelsTitle": "Connect your first channel",
+    "channelsDescription": "Add a social account to start distributing your publications.",
+    "channelsAction": "Manage channels",
+    "postsTitle": "Create your first publication",
+    "postsDescription": "Prepare a draft, publish now, or schedule it for later.",
+    "postsAction": "Create publication"
+  }
+}

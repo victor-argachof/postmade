@@ -1,0 +1,41 @@
+{
+  "title": "Dashboard",
+  "greeting": "Olá, {{name}}",
+  "description": "Acompanhe sua operação e acesse rapidamente as principais tarefas do workspace.",
+  "newPost": "Nova publicação",
+  "metrics": {
+    "channels": "Canais conectados",
+    "channelsAction": "Gerenciar canais",
+    "drafts": "Rascunhos",
+    "draftsAction": "Ver rascunhos",
+    "scheduled": "Agendadas",
+    "scheduledAction": "Ver agendamentos",
+    "failed": "Com falha",
+    "failedAction": "Revisar falhas"
+  },
+  "upcoming": {
+    "title": "Próximas publicações",
+    "description": "Horários em {{timezone}}",
+    "viewCalendar": "Ver calendário",
+    "mediaOnly": "Publicação com mídia",
+    "table": {
+      "label": "Próximas publicações agendadas",
+      "publication": "Publicação",
+      "status": "Status",
+      "channels": "Canais",
+      "date": "Data",
+      "actions": "Ações",
+      "open": "Abrir no calendário"
+    },
+    "emptyTitle": "Nenhuma publicação agendada",
+    "emptyDescription": "Os próximos agendamentos aparecerão aqui."
+  },
+  "empty": {
+    "channelsTitle": "Conecte seu primeiro canal",
+    "channelsDescription": "Adicione uma conta social para começar a distribuir suas publicações.",
+    "channelsAction": "Gerenciar canais",
+    "postsTitle": "Crie sua primeira publicação",
+    "postsDescription": "Prepare um rascunho, publique agora ou programe para outra data.",
+    "postsAction": "Criar publicação"
+  }
+}

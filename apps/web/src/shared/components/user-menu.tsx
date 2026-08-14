@@ -17,6 +17,12 @@ function getInitials(name: string) {
     .join("");
 }
 
+function abbreviateName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length < 2) return parts[0] ?? "";
+  return `${parts[0]} ${parts.at(-1)?.[0]?.toUpperCase()}.`;
+}
+
 export function UserMenu() {
   const menuRef = useDismissibleDetails();
   const { t } = useTranslation("account");
@@ -24,6 +30,7 @@ export function UserMenu() {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const name = user?.name ?? t("fallbackName");
+  const abbreviatedName = abbreviateName(name);
   const email = user?.email ?? "user@postmade.app";
 
   const signOut = () => {
@@ -50,7 +57,9 @@ export function UserMenu() {
           )}
         </span>
         <span className="hidden max-w-36 text-left lg:block">
-          <span className="block truncate text-sm font-semibold">{name}</span>
+          <span className="block truncate text-sm font-semibold">
+            {abbreviatedName}
+          </span>
           <span className="block truncate text-xs text-muted-foreground">
             {email}
           </span>
