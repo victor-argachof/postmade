@@ -1,7 +1,4 @@
-import type {
-  SocialChannel,
-  SocialPlatform,
-} from "@postmade/types";
+import type { SocialChannel, SocialPlatform } from "@postmade/types";
 import { useTranslation } from "react-i18next";
 
 import { DatePicker } from "@/shared/components/date-time-picker";

@@ -1,6 +1,6 @@
 import type { TagGroup } from "@postmade/types";
 import { Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -19,6 +19,13 @@ import { TagsDataTable } from "../components/tags-data-table";
 import { TagsFilters } from "../components/tags-filters";
 
 export function TagsPage() {
+  const workspaceId = useAppSelector(
+    (state) => state.workspaces.activeWorkspaceId
+  );
+  return <TagsPageContent key={workspaceId ?? "no-workspace"} />;
+}
+
+function TagsPageContent() {
   const { t } = useTranslation("tags");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
@@ -31,28 +38,18 @@ export function TagsPage() {
   const [editing, setEditing] = useState<TagGroup | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<TagGroup | null>(null);
-  useEffect(() => {
-    setQuery("");
-    setEditing(null);
-    setCreating(false);
-    setDeleting(null);
-  }, [workspace?.id]);
   const groups = workspace?.resources.tagGroups ?? [];
   const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filtered = useMemo(
-    () =>
-      groups
-        .filter(
-          (group) =>
-            !normalizedQuery ||
-            group.name.toLocaleLowerCase().includes(normalizedQuery) ||
-            group.tags.some((tag) =>
-              tag.toLocaleLowerCase().includes(normalizedQuery)
-            )
+  const filtered = groups
+    .filter(
+      (group) =>
+        !normalizedQuery ||
+        group.name.toLocaleLowerCase().includes(normalizedQuery) ||
+        group.tags.some((tag) =>
+          tag.toLocaleLowerCase().includes(normalizedQuery)
         )
-        .sort((a, b) => a.name.localeCompare(b.name)),
-    [groups, normalizedQuery]
-  );
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
   const role = workspace?.members.find(
     (member) => member.id === user?.id
   )?.role;
@@ -107,6 +104,7 @@ export function TagsPage() {
       </div>
       <TagsFilters query={query} onQueryChange={setQuery} />
       <TagsDataTable
+        key={`${workspace?.id}-${query}`}
         canManage={canManage}
         empty={
           <div className="p-12 text-center">
@@ -121,9 +119,9 @@ export function TagsPage() {
         groups={filtered}
         onDelete={setDeleting}
         onEdit={setEditing}
-        resetKey={`${workspace?.id}-${query}`}
       />
       <TagGroupModal
+        key={editing?.id ?? (creating ? "new" : "closed")}
         existingNames={groups.map((group) => group.name)}
         group={editing}
         onClose={() => {

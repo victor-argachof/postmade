@@ -1,5 +1,5 @@
 import type { TagGroup } from "@postmade/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/shared/components/ui/button";
@@ -22,16 +22,9 @@ export function TagGroupModal({
   open: boolean;
 }) {
   const { t } = useTranslation("tags");
-  const [name, setName] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
+  const [name, setName] = useState(group?.name ?? "");
+  const [tags, setTags] = useState<string[]>(group?.tags ?? []);
   const [submitted, setSubmitted] = useState(false);
-  useEffect(() => {
-    if (open) {
-      setName(group?.name ?? "");
-      setTags(group?.tags ?? []);
-      setSubmitted(false);
-    }
-  }, [group, open]);
   const duplicate = existingNames.some(
     (item) =>
       item.toLocaleLowerCase() === name.trim().toLocaleLowerCase() &&

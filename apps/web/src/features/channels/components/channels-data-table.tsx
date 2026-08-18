@@ -1,43 +1,34 @@
 import type { SocialChannel } from "@postmade/types";
 import { CheckCircle2, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ChannelAvatar } from "@/shared/components/channel-avatar";
 import {
   DataTable,
   type DataTableColumn,
 } from "@/shared/components/data-table";
-import { ChannelAvatar } from "@/shared/components/channel-avatar";
 import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
 
-import { platformVisuals } from "./platform-grid";
+import { platformVisuals } from "../lib/platform-visuals";
 
 export function ChannelsDataTable({
   channels,
   canManage,
   onDisconnect,
-  resetKey,
 }: {
   channels: SocialChannel[];
   canManage: boolean;
   onDisconnect: (channel: SocialChannel) => void;
-  resetKey?: string;
 }) {
   const { t } = useTranslation("channels");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const totalPages = Math.max(1, Math.ceil(channels.length / pageSize));
 
-  useEffect(() => {
-    setPage((current) => Math.min(current, totalPages));
-  }, [totalPages]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [resetKey]);
-
-  const start = (page - 1) * pageSize;
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * pageSize;
   const visibleChannels = channels.slice(start, start + pageSize);
   const columns: DataTableColumn<SocialChannel>[] = [
     {
@@ -135,7 +126,7 @@ export function ChannelsDataTable({
           setPageSize(size);
           setPage(1);
         }}
-        page={page}
+        page={currentPage}
         pageSize={pageSize}
         totalResults={channels.length}
       />

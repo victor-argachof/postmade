@@ -1,6 +1,6 @@
 import type { ScheduledPublication } from "@postmade/types";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,6 +26,13 @@ import { filterPublications, selectActiveWorkspace } from "../lib/selectors";
 import { setPublicationFilters } from "../store/posts-slice";
 
 export function PostsPage() {
+  const workspaceId = useAppSelector(
+    (state) => state.workspaces.activeWorkspaceId
+  );
+  return <PostsPageContent key={workspaceId ?? "no-workspace"} />;
+}
+
+function PostsPageContent() {
   const { t, i18n } = useTranslation("posts");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -43,11 +50,6 @@ export function PostsPage() {
     (member) => member.id === user?.id
   )?.role;
   const canManage = Boolean(role && role !== "viewer");
-  useEffect(() => {
-    setDuplicating(null);
-    setCanceling(null);
-    setDeleting(null);
-  }, [workspace?.id]);
   const executeAction = (
     type: "delete" | "cancel" | "duplicate" | "retry",
     id: string
@@ -94,6 +96,7 @@ export function PostsPage() {
         onChange={(change) => dispatch(setPublicationFilters(change))}
       />
       <PostsDataTable
+        key={`${workspace?.id}-${JSON.stringify(filters)}`}
         canManage={canManage}
         channels={workspace?.resources.channels ?? []}
         empty={
@@ -110,7 +113,6 @@ export function PostsPage() {
         onAction={requestAction}
         onEdit={(id) => navigate(ROUTES.editPost(id))}
         publications={filtered}
-        resetKey={`${workspace?.id}-${JSON.stringify(filters)}`}
         timezone={workspace?.timezone ?? "UTC"}
       />
       <DuplicatePublicationModal

@@ -6,13 +6,13 @@ import type {
   SocialPlatform,
 } from "@postmade/types";
 import { ArrowLeft, Clock3, Save, Send } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
-import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { selectActiveWorkspace } from "@/features/posts/lib/selectors";
+import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import {
   createWorkspacePublication,
@@ -63,28 +63,30 @@ export function PostComposerPage() {
   );
   const [overrides, setOverrides] = useState<
     Partial<Record<SocialPlatform, string>>
-  >(() =>
-    existing?.targets.reduce<Partial<Record<SocialPlatform, string>>>(
-      (current, target) => {
-        if (!(target.platform in current) || target.contentOverride) {
-          current[target.platform] = target.contentOverride ?? "";
-        }
-        return current;
-      },
-      {}
-    ) ?? {}
+  >(
+    () =>
+      existing?.targets.reduce<Partial<Record<SocialPlatform, string>>>(
+        (current, target) => {
+          if (!(target.platform in current) || target.contentOverride) {
+            current[target.platform] = target.contentOverride ?? "";
+          }
+          return current;
+        },
+        {}
+      ) ?? {}
   );
   const [tagGroupOverrides, setTagGroupOverrides] = useState<
     Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
-  >(() =>
-    existing?.targets.reduce<
-      Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
-    >((current, target) => {
-      if (target.tagGroupSnapshotsOverride != null) {
-        current[target.platform] = target.tagGroupSnapshotsOverride;
-      }
-      return current;
-    }, {}) ?? {}
+  >(
+    () =>
+      existing?.targets.reduce<
+        Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
+      >((current, target) => {
+        if (target.tagGroupSnapshotsOverride != null) {
+          current[target.platform] = target.tagGroupSnapshotsOverride;
+        }
+        return current;
+      }, {}) ?? {}
   );
   const [customizedPlatforms, setCustomizedPlatforms] = useState<
     SocialPlatform[]
@@ -94,8 +96,7 @@ export function PostComposerPage() {
         existing?.targets
           .filter(
             (target) =>
-              target.contentOverride ||
-              target.tagGroupSnapshotsOverride != null
+              target.contentOverride || target.tagGroupSnapshotsOverride != null
           )
           .map((target) => target.platform) ?? []
       )
@@ -117,9 +118,6 @@ export function PostComposerPage() {
     "published" | "scheduled" | null
   >(null);
   const [previewChannel, setPreviewChannel] = useState(channelIds[0] ?? "");
-  useEffect(() => {
-    if (!previewChannel && channelIds[0]) setPreviewChannel(channelIds[0]);
-  }, [channelIds, previewChannel]);
   const channels =
     workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
   const tagGroups = workspace?.resources.tagGroups ?? [];
@@ -139,31 +137,19 @@ export function PostComposerPage() {
     content,
     tagGroupSnapshots
   );
-  const errors = useMemo(
-    () =>
-      selected.flatMap((channel) =>
-        validateTarget(
-          channel.platform,
-          effectivePublicationContent(
-            activeCustomizedPlatforms.includes(channel.platform)
-              ? overrides[channel.platform]?.trim() || content
-              : content,
-            activeCustomizedPlatforms.includes(channel.platform)
-              ? tagGroupOverrides[channel.platform] ?? tagGroupSnapshots
-              : tagGroupSnapshots
-          ),
-          media
-        ).map((error) => ({ channel, error }))
+  const errors = selected.flatMap((channel) =>
+    validateTarget(
+      channel.platform,
+      effectivePublicationContent(
+        activeCustomizedPlatforms.includes(channel.platform)
+          ? overrides[channel.platform]?.trim() || content
+          : content,
+        activeCustomizedPlatforms.includes(channel.platform)
+          ? (tagGroupOverrides[channel.platform] ?? tagGroupSnapshots)
+          : tagGroupSnapshots
       ),
-    [
-      selected,
-      overrides,
-      content,
-      media,
-      tagGroupSnapshots,
-      tagGroupOverrides,
-      activeCustomizedPlatforms,
-    ]
+      media
+    ).map((error) => ({ channel, error }))
   );
   const used =
     workspace?.resources.posts.filter(
@@ -232,7 +218,7 @@ export function PostComposerPage() {
         tagGroupSnapshotsOverride: activeCustomizedPlatforms.includes(
           channel.platform
         )
-          ? tagGroupOverrides[channel.platform] ?? tagGroupSnapshots
+          ? (tagGroupOverrides[channel.platform] ?? tagGroupSnapshots)
           : null,
         mediaOverride: null,
         settings:
@@ -408,8 +394,8 @@ export function PostComposerPage() {
                           ? overrides[preview.platform]?.trim() || content
                           : content,
                         activeCustomizedPlatforms.includes(preview.platform)
-                          ? tagGroupOverrides[preview.platform] ??
-                              tagGroupSnapshots
+                          ? (tagGroupOverrides[preview.platform] ??
+                              tagGroupSnapshots)
                           : tagGroupSnapshots
                       )}
                       media={media}

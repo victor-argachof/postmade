@@ -38,9 +38,6 @@ export function PostTagGroupsSelector({
   const [open, setOpen] = useState(false);
   const [commandValue, setCommandValue] = useState("");
   const availableIds = new Set(groups.map((group) => group.id));
-  const removed = value.filter(
-    (snapshot) => !availableIds.has(snapshot.groupId)
-  );
   const toggle = (group: TagGroup) => {
     if (disabled) return;
     const selected = value.some((snapshot) => snapshot.groupId === group.id);

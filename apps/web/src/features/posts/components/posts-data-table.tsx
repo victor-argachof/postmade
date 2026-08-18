@@ -1,6 +1,6 @@
 import type { ScheduledPublication, SocialChannel } from "@postmade/types";
 import { Copy, Edit3, RotateCcw, Trash2, XCircle } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -24,7 +24,6 @@ export function PostsDataTable({
   onAction,
   onEdit,
   publications,
-  resetKey,
   timezone,
 }: {
   canManage: boolean;
@@ -34,7 +33,6 @@ export function PostsDataTable({
   onAction: (action: Action, id: string) => void;
   onEdit: (id: string) => void;
   publications: ScheduledPublication[];
-  resetKey: string;
   timezone: string;
 }) {
   const { t } = useTranslation("posts");
@@ -42,11 +40,7 @@ export function PostsDataTable({
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState<DataTableSorting>();
   const totalPages = Math.max(1, Math.ceil(publications.length / pageSize));
-  useEffect(
-    () => setPage((current) => Math.min(current, totalPages)),
-    [totalPages]
-  );
-  useEffect(() => setPage(1), [resetKey]);
+  const currentPage = Math.min(page, totalPages);
   const sortableValue = (post: ScheduledPublication, columnId: string) => {
     if (columnId === "publication")
       return post.content.toLocaleLowerCase(locale);
@@ -68,7 +62,10 @@ export function PostsDataTable({
         return sorting.direction === "asc" ? comparison : -comparison;
       })
     : publications;
-  const visible = sorted.slice((page - 1) * pageSize, page * pageSize);
+  const visible = sorted.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
   const date = (post: ScheduledPublication) =>
     new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
@@ -259,7 +256,7 @@ export function PostsDataTable({
           setPageSize(size);
           setPage(1);
         }}
-        page={page}
+        page={currentPage}
         pageSize={pageSize}
         totalResults={publications.length}
       />

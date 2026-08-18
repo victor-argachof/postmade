@@ -1,5 +1,5 @@
 import { Check, Minus, Plus } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -51,8 +51,10 @@ function QuantityControl({
   value: number;
 }) {
   const inputId = useId();
-  const [draft, setDraft] = useState(String(value));
-  useEffect(() => setDraft(String(value)), [value]);
+  const [draftState, setDraftState] = useState({ value, draft: String(value) });
+  const draft = draftState.value === value ? draftState.draft : String(value);
+  const setDraft = (nextDraft: string) =>
+    setDraftState({ value, draft: nextDraft });
   const commitDraft = () => {
     const parsed = Number(draft);
     const next = Math.min(
@@ -147,7 +149,25 @@ export function SubscriptionConfigurator({
   status?: SubscriptionStatus;
 }) {
   const { t, i18n } = useTranslation("subscription");
-  const [quantities, setQuantities] = useState(configuration);
+  const configurationKey = `${configuration.channels}:${configuration.members}`;
+  const [quantitiesState, setQuantitiesState] = useState({
+    configurationKey,
+    quantities: configuration,
+  });
+  const quantities =
+    quantitiesState.configurationKey === configurationKey
+      ? quantitiesState.quantities
+      : configuration;
+  const setQuantities = (
+    update:
+      | WorkspaceSubscriptionConfiguration
+      | ((
+          current: WorkspaceSubscriptionConfiguration
+        ) => WorkspaceSubscriptionConfiguration)
+  ) => {
+    const next = typeof update === "function" ? update(quantities) : update;
+    setQuantitiesState({ configurationKey, quantities: next });
+  };
   const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false);
   const [blockedResource, setBlockedResource] = useState<
     keyof WorkspaceSubscriptionConfiguration | null
@@ -166,10 +186,6 @@ export function SubscriptionConfigurator({
     : "USD";
   const locale = currency === "BRL" ? "pt-BR" : "en-US";
   const price = calculateSubscriptionPrice(quantities, currency);
-
-  useEffect(() => {
-    setQuantities(configuration);
-  }, [configuration.channels, configuration.members]);
 
   const formatPrice = (value: number) =>
     new Intl.NumberFormat(locale, {

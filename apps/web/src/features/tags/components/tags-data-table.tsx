@@ -1,6 +1,6 @@
 import type { TagGroup } from "@postmade/types";
 import { Edit3, Trash2 } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -17,25 +17,19 @@ export function TagsDataTable({
   groups,
   onDelete,
   onEdit,
-  resetKey,
 }: {
   canManage: boolean;
   empty: ReactNode;
   groups: TagGroup[];
   onDelete: (group: TagGroup) => void;
   onEdit: (group: TagGroup) => void;
-  resetKey: string;
 }) {
   const { t, i18n } = useTranslation("tags");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState<DataTableSorting>();
   const totalPages = Math.max(1, Math.ceil(groups.length / pageSize));
-  useEffect(
-    () => setPage((current) => Math.min(current, totalPages)),
-    [totalPages]
-  );
-  useEffect(() => setPage(1), [resetKey]);
+  const currentPage = Math.min(page, totalPages);
   const sorted = sorting
     ? [...groups].sort((first, second) => {
         const comparison =
@@ -45,7 +39,10 @@ export function TagsDataTable({
         return sorting.direction === "asc" ? comparison : -comparison;
       })
     : groups;
-  const visible = sorted.slice((page - 1) * pageSize, page * pageSize);
+  const visible = sorted.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
   const actions = (group: TagGroup) => (
     <div className="flex justify-end gap-1">
       <Button
@@ -155,7 +152,7 @@ export function TagsDataTable({
           setPageSize(size);
           setPage(1);
         }}
-        page={page}
+        page={currentPage}
         pageSize={pageSize}
         totalResults={groups.length}
       />

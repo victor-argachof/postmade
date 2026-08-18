@@ -20,6 +20,8 @@ import {
   useUpdateSubscriptionMutation,
 } from "../services/billing-api";
 
+const pageLoadedAt = Date.now();
+
 export function SubscriptionPage() {
   const { t } = useTranslation("subscription");
   const location = useLocation();
@@ -59,7 +61,8 @@ export function SubscriptionPage() {
     ? Math.max(
         0,
         Math.ceil(
-          (new Date(workspace.trialEndsAt).getTime() - Date.now()) / 86_400_000
+          (new Date(workspace.trialEndsAt).getTime() - pageLoadedAt) /
+            86_400_000
         )
       )
     : 15;

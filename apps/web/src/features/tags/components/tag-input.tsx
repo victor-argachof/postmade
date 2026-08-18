@@ -92,11 +92,7 @@ export function TagInput({
         />
       </div>
       {errorMessage && (
-        <p
-          className="mt-2 text-xs text-red-600"
-          id={errorId}
-          role="alert"
-        >
+        <p className="mt-2 text-xs text-red-600" id={errorId} role="alert">
           {errorMessage}
         </p>
       )}

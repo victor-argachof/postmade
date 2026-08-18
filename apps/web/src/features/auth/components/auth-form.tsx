@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
@@ -86,7 +86,7 @@ export function AuthForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     getValues,
     formState: { errors },
   } = useForm<AuthFormValues>({
@@ -95,7 +95,7 @@ export function AuthForm({
     mode: "onTouched",
     reValidateMode: "onChange",
   });
-  const password = watch("password") ?? "";
+  const password = useWatch({ control, name: "password" }) ?? "";
 
   const submitCredentials = (values: AuthFormValues) => {
     const normalizedEmail = values.email.trim().toLowerCase();

@@ -37,9 +37,7 @@ export function PersonalizationStep({
     overrides: Partial<Record<SocialPlatform, string>>
   ) => void;
   onTagGroupOverridesChange: (
-    overrides: Partial<
-      Record<SocialPlatform, PublicationTagGroupSnapshot[]>
-    >
+    overrides: Partial<Record<SocialPlatform, PublicationTagGroupSnapshot[]>>
   ) => void;
   overrides: Partial<Record<SocialPlatform, string>>;
   platforms: SocialPlatform[];
@@ -121,7 +119,7 @@ export function PersonalizationStep({
                     </span>
                   </div>
                   <textarea
-                    className="mt-2 min-h-24 w-full rounded-xl border border-border bg-background p-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+                    className="mt-2 min-h-24 w-full rounded-xl border border-border bg-background p-3 text-sm transition outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
                     disabled={disabled}
                     id={`override-${platform}`}
                     placeholder={t("composer.inherit")}

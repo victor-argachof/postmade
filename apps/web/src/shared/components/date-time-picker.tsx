@@ -54,10 +54,14 @@ export function DatePicker({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
-  const [month, setMonth] = useState((value || today).slice(0, 7));
-  useEffect(() => {
-    if (value) setMonth(value.slice(0, 7));
-  }, [value]);
+  const [monthState, setMonthState] = useState({
+    value,
+    month: (value || today).slice(0, 7),
+  });
+  const month =
+    monthState.value === value
+      ? monthState.month
+      : (value || today).slice(0, 7);
   useEffect(() => {
     const pointer = (event: PointerEvent) => {
       if (
@@ -99,9 +103,12 @@ export function DatePicker({
     : t("datePicker.placeholder");
   const changeMonth = (amount: number) => {
     const [year = 1970, number = 1] = month.split("-").map(Number);
-    setMonth(
-      new Date(Date.UTC(year, number - 1 + amount, 1)).toISOString().slice(0, 7)
-    );
+    setMonthState({
+      value,
+      month: new Date(Date.UTC(year, number - 1 + amount, 1))
+        .toISOString()
+        .slice(0, 7),
+    });
   };
   return (
     <div className={cn("relative", className)} ref={wrapperRef}>
@@ -252,7 +259,7 @@ export function DateTimePicker({
       date === minimumDate &&
       `${hour}:${minute}` < `${minimumHour}:${minimumMinute}`
     ) {
-      update(date, minimumHour, minimumMinute);
+      onChange(`${date}T${minimumHour}:${minimumMinute}`);
     }
   }, [
     date,
@@ -263,6 +270,7 @@ export function DateTimePicker({
     minimumHour,
     minimumMinute,
     minute,
+    onChange,
   ]);
   return (
     <div

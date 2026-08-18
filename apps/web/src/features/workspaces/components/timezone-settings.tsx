@@ -1,5 +1,5 @@
 import { Clock3 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
@@ -63,11 +63,7 @@ export function TimezoneSettings({
   const dispatch = useAppDispatch();
   const [timezone, setTimezone] = useState(workspace.timezone);
   const [confirming, setConfirming] = useState(false);
-  const timezones = useMemo(getTimezones, []);
-  useEffect(
-    () => setTimezone(workspace.timezone),
-    [workspace.id, workspace.timezone]
-  );
+  const timezones = useMemo(() => getTimezones(), []);
   const valid =
     timezones.includes(timezone) ||
     (() => {

@@ -9,7 +9,7 @@ import {
   UserRoundCog,
   Users,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -50,6 +50,13 @@ const roles: Array<Exclude<WorkspaceRole, "owner">> = [
 ];
 
 export function WorkspaceSettings() {
+  const workspaceId = useAppSelector(
+    (state) => state.workspaces.activeWorkspaceId
+  );
+  return <WorkspaceSettingsContent key={workspaceId ?? "no-workspace"} />;
+}
+
+function WorkspaceSettingsContent() {
   const { t } = useTranslation("workspaces");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -63,10 +70,6 @@ export function WorkspaceSettings() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Exclude<WorkspaceRole, "owner">>("editor");
 
-  useEffect(
-    () => setName(workspace?.name ?? ""),
-    [workspace?.id, workspace?.name]
-  );
   if (!workspace || !user) return null;
 
   const currentMember = workspace.members.find(
@@ -145,6 +148,7 @@ export function WorkspaceSettings() {
       </SectionCard>
 
       <TimezoneSettings
+        key={workspace.id}
         actorId={user.id}
         canManage={canManage}
         workspace={workspace}

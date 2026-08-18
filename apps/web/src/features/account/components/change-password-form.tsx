@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -30,7 +30,7 @@ export function ChangePasswordForm() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     formState: { errors },
   } = useForm<ChangePasswordFormValues>({
@@ -39,7 +39,7 @@ export function ChangePasswordForm() {
     mode: "onTouched",
     reValidateMode: "onChange",
   });
-  const newPassword = watch("newPassword") ?? "";
+  const newPassword = useWatch({ control, name: "newPassword" }) ?? "";
 
   if (provider === "google") {
     return (

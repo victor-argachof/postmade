@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 type PasswordRequirementKey =
   "minLength" | "uppercase" | "lowercase" | "number" | "specialCharacter";
 
-export function getPasswordRequirements(
+function getPasswordRequirements(
   password: string
 ): Array<{ key: PasswordRequirementKey; isMet: boolean }> {
   return [

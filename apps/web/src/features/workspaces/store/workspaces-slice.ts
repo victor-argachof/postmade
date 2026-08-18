@@ -324,8 +324,7 @@ const workspacesSlice = createSlice({
           id: "development-publication:published",
           createdBy: action.payload.userId,
           status: "published",
-          content:
-            "Centralize suas publicações e ganhe mais tempo para criar.",
+          content: "Centralize suas publicações e ganhe mais tempo para criar.",
           media: [image],
           targets: [
             target(instagram, "published", {

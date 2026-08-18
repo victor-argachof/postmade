@@ -69,7 +69,7 @@ export function MediaUploader({
       <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-muted/40 p-8 text-center text-sm font-semibold transition-colors hover:bg-muted">
         <ImagePlus className="size-5" />
         {t("composer.addMedia")}
-        <span className="max-w-md text-xs font-normal leading-5 text-muted-foreground">
+        <span className="max-w-md text-xs leading-5 font-normal text-muted-foreground">
           {t("composer.mediaGuidance.summary", {
             count: constraints.maxMedia,
             formats: [

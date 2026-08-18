@@ -1,6 +1,6 @@
 import type { SocialChannel } from "@postmade/types";
 import { Radio, SearchX } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/shared/components/ui/button";
@@ -12,12 +12,10 @@ export function ConnectedChannels({
   channels,
   canManage,
   onDisconnect,
-  workspaceId,
 }: {
   channels: SocialChannel[];
   canManage: boolean;
   onDisconnect: (channel: SocialChannel) => void;
-  workspaceId?: string;
 }) {
   const { t } = useTranslation("channels");
   const [query, setQuery] = useState("");
@@ -40,10 +38,6 @@ export function ConnectedChannels({
     setQuery("");
     setPlatform("all");
   };
-
-  useEffect(() => {
-    clearFilters();
-  }, [workspaceId]);
 
   return (
     <section className="mt-12" aria-labelledby="connected-channels-title">
@@ -96,10 +90,10 @@ export function ConnectedChannels({
             </div>
           ) : (
             <ChannelsDataTable
+              key={`${normalizedQuery}:${platform}`}
               channels={filteredChannels}
               canManage={canManage}
               onDisconnect={onDisconnect}
-              resetKey={`${normalizedQuery}:${platform}`}
             />
           )}
         </>

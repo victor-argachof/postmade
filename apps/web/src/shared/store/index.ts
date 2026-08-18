@@ -87,9 +87,8 @@ function loadPersistedWorkspaces() {
     }
     persisted.items.forEach((workspace) => {
       workspace.resources.posts.forEach((publication) => {
-        delete (
-          publication as typeof publication & { recurrence?: unknown }
-        ).recurrence;
+        delete (publication as typeof publication & { recurrence?: unknown })
+          .recurrence;
       });
     });
     const isValid = persisted.items.every((workspace) => {

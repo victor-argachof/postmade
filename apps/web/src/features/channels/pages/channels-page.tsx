@@ -1,6 +1,6 @@
 import type { SocialChannel, SocialPlatform } from "@postmade/types";
 import { LockKeyhole, TriangleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -27,6 +27,13 @@ const emptyCounts: Record<SocialPlatform, number> = {
 };
 
 export function ChannelsPage() {
+  const workspaceId = useAppSelector(
+    (state) => state.workspaces.activeWorkspaceId
+  );
+  return <ChannelsPageContent key={workspaceId ?? "no-workspace"} />;
+}
+
+function ChannelsPageContent() {
   const { t } = useTranslation("channels");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -42,11 +49,6 @@ export function ChannelsPage() {
   >(new Set());
   const [channelToDisconnect, setChannelToDisconnect] =
     useState<SocialChannel | null>(null);
-
-  useEffect(() => {
-    setChannelToDisconnect(null);
-    setConnectingPlatforms(new Set());
-  }, [workspace?.id]);
 
   const channels =
     workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
@@ -155,10 +157,10 @@ export function ChannelsPage() {
         onConnect={(platform) => void connect(platform)}
       />
       <ConnectedChannels
+        key={workspace?.id}
         channels={channels}
         canManage={canManage}
         onDisconnect={setChannelToDisconnect}
-        workspaceId={workspace?.id}
       />
       <DisconnectChannelModal
         channel={channelToDisconnect}

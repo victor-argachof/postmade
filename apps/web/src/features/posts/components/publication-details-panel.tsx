@@ -30,18 +30,17 @@ export function PublicationDetailsPanel({
     let timeout: ReturnType<typeof setTimeout> | undefined;
 
     if (publication) {
-      setRenderedPublication(publication);
       mountFrame = window.requestAnimationFrame(() => {
+        setRenderedPublication(publication);
         transitionFrame = window.requestAnimationFrame(() => setVisible(true));
       });
     } else {
-      setVisible(false);
+      mountFrame = window.requestAnimationFrame(() => setVisible(false));
       timeout = setTimeout(() => setRenderedPublication(null), 300);
     }
 
     return () => {
-      if (mountFrame !== undefined)
-        window.cancelAnimationFrame(mountFrame);
+      if (mountFrame !== undefined) window.cancelAnimationFrame(mountFrame);
       if (transitionFrame !== undefined)
         window.cancelAnimationFrame(transitionFrame);
       if (timeout) clearTimeout(timeout);

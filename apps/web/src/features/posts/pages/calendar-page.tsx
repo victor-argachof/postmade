@@ -1,14 +1,14 @@
 import type { ScheduledPublication } from "@postmade/types";
 import { Plus } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { PostsViewSwitcher } from "@/features/posts/components/posts-view-switcher";
 import {
   groupPublicationsByLocalDay,
   selectActiveWorkspace,
 } from "@/features/posts/lib/selectors";
-import { PostsViewSwitcher } from "@/features/posts/components/posts-view-switcher";
 import { ROUTES } from "@/routes/route-paths";
 import { DatePicker } from "@/shared/components/date-time-picker";
 import { PageHeader } from "@/shared/components/page-header";
@@ -30,6 +30,13 @@ const initialFilters: CalendarFilters = {
 };
 
 export function CalendarPage() {
+  const workspaceId = useAppSelector(
+    (state) => state.workspaces.activeWorkspaceId
+  );
+  return <CalendarPageContent key={workspaceId ?? "no-workspace"} />;
+}
+
+function CalendarPageContent() {
   const { t, i18n } = useTranslation("posts", { keyPrefix: "calendar" });
   const { t: tPosts } = useTranslation("posts");
   const navigate = useNavigate();
@@ -45,7 +52,6 @@ export function CalendarPage() {
     : today;
   const [filters, setFilters] = useState(initialFilters);
   const [detail, setDetail] = useState<ScheduledPublication | null>(null);
-  useEffect(() => setDetail(null), [workspace?.id]);
   const publications = useMemo(
     () =>
       (workspace?.resources.posts ?? []).filter(
