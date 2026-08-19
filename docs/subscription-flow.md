@@ -126,6 +126,19 @@ rejeitada. As cotas persistidas só mudam após webhook válido. Assinaturas
 `past_due` devem regularizar o pagamento no portal Stripe antes de solicitar
 alterações. O portal permanece responsável por pagamento, faturas e cancelamento.
 
+## Exclusão de conta
+
+A exclusão considera somente as assinaturas dos workspaces pertencentes ao
+usuário. Uma assinatura `active` que ainda pode renovar bloqueia a operação e
+deve ser cancelada primeiro no portal Stripe. Assinaturas `past_due` também
+bloqueiam a exclusão até sua regularização ou seu encerramento.
+
+Uma assinatura `active` com `cancelAtPeriodEnd: true` não bloqueia a exclusão,
+pois sua renovação já está desativada. A interface informa que a exclusão remove
+o acesso imediatamente, abre mão do período pago restante e não gera reembolso
+automático. Ao concluir a operação, o back-end deve encerrar a assinatura no
+provedor para não mantê-la vinculada a uma conta ou workspace inexistente.
+
 ## Perguntas frequentes
 
 A página de assinatura encerra com uma seção de perguntas frequentes em

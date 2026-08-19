@@ -74,9 +74,20 @@ const authSlice = createSlice({
       state.user = null;
       state.accounts = [];
     },
+    deleteAccount: (state, action: PayloadAction<{ userId: string }>) => {
+      state.accounts = state.accounts.filter(
+        (account) => account.id !== action.payload.userId
+      );
+      if (state.user?.id === action.payload.userId) state.user = null;
+    },
   },
 });
 
-export const { setSession, updateProfile, clearSession, clearKnownAccounts } =
-  authSlice.actions;
+export const {
+  setSession,
+  updateProfile,
+  clearSession,
+  clearKnownAccounts,
+  deleteAccount,
+} = authSlice.actions;
 export default authSlice.reducer;

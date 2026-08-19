@@ -959,6 +959,31 @@ const workspacesSlice = createSlice({
     clearWorkspaceSession: (state) => {
       state.activeWorkspaceId = null;
     },
+    deleteAccountWorkspaces: (
+      state,
+      action: PayloadAction<{ userId: string; userEmail: string }>
+    ) => {
+      state.items = state.items
+        .filter((workspace) => workspace.ownerId !== action.payload.userId)
+        .map((workspace) => ({
+          ...workspace,
+          members: workspace.members.filter(
+            (member) => member.id !== action.payload.userId
+          ),
+          invitations: workspace.invitations.filter(
+            (invitation) =>
+              invitation.email.toLowerCase() !==
+              action.payload.userEmail.toLowerCase()
+          ),
+        }));
+
+      const activeWorkspaceStillExists = state.items.some(
+        (workspace) => workspace.id === state.activeWorkspaceId
+      );
+      state.activeWorkspaceId = activeWorkspaceStillExists
+        ? state.activeWorkspaceId
+        : null;
+    },
   },
 });
 
@@ -993,6 +1018,7 @@ export const {
   createWorkspaceTagGroup,
   updateWorkspaceTagGroup,
   deleteWorkspaceTagGroup,
+  deleteAccountWorkspaces,
   disconnectWorkspaceChannel,
   inviteMember,
   removeMember,

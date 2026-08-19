@@ -12,6 +12,7 @@ interface SectionCardProps {
   className?: string;
   contentClassName?: string;
   titleClassName?: string;
+  iconClassName?: string;
   id?: string;
 }
 
@@ -24,6 +25,7 @@ export function SectionCard({
   className,
   contentClassName,
   titleClassName,
+  iconClassName,
   id,
 }: SectionCardProps) {
   const titleId = useId();
@@ -40,7 +42,12 @@ export function SectionCard({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
           {Icon && (
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span
+              className={cn(
+                "flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary",
+                iconClassName
+              )}
+            >
               <Icon className="size-5" aria-hidden="true" />
             </span>
           )}
