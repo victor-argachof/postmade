@@ -17,11 +17,13 @@ export function EmailVerificationForm({
   email,
   onBack,
   onVerified,
+  onResend,
   showBackAction = true,
 }: {
   email: string;
   onBack: () => void;
-  onVerified: () => void;
+  onVerified: (values: VerificationCodeFormValues) => void | Promise<void>;
+  onResend?: () => void | Promise<void>;
   showBackAction?: boolean;
 }) {
   const { t } = useTranslation("auth");
@@ -51,7 +53,8 @@ export function EmailVerificationForm({
     return () => window.clearTimeout(timeout);
   }, [resendSeconds]);
 
-  const handleResendCode = () => {
+  const handleResendCode = async () => {
+    await onResend?.();
     setCodeResent(true);
     setResendSeconds(60);
   };

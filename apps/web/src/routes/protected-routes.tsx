@@ -8,14 +8,14 @@ import { CalendarPage, PostsPage } from "@/features/posts";
 import { SubscriptionPage } from "@/features/subscription";
 import { TagsPage } from "@/features/tags";
 import { WorkspaceSettingsPage } from "@/features/workspaces";
-import { AppShell } from "@/shared/layouts/app-shell";
 
+import { AuthenticatedShell } from "./authenticated-shell";
 import { ROUTES } from "./route-paths";
 
 // This route group defines the authenticated application surface. A real
 // session guard will wrap this group when backend authentication is available.
 export const protectedRoutes: RouteObject = {
-  element: <AppShell />,
+  element: <AuthenticatedShell />,
   children: [
     { path: ROUTES.dashboard, element: <DashboardPage /> },
     { path: ROUTES.posts, element: <PostsPage /> },

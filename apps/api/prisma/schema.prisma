@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum IdentityProvider {
+  password
+}
+
+enum ChallengePurpose {
+  register
+  login
+  password_reset
+}
+
+enum WorkspaceRole {
+  owner
+  admin
+  editor
+  viewer
+}
+
+enum SubscriptionStatus {
+  trialing
+  active
+  past_due
+  canceled
+  expired
+}
+
+model User {
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  identities      Identity[]
+  sessions        Session[]
+  memberships     WorkspaceMember[]
+  challenges      EmailChallenge[]
+  ownedWorkspaces Workspace[]      @relation("WorkspaceOwner")
+}
+
+model Identity {
+  id              String              @id @default(uuid())
+  userId          String
+  provider        IdentityProvider
+  providerSubject String
+  emailVerified   Boolean             @default(false)
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credential      PasswordCredential?
+
+  @@unique([provider, providerSubject])
+  @@unique([userId, provider])
+}
+
+model PasswordCredential {
+  identityId   String   @id
+  passwordHash String
+  updatedAt    DateTime @updatedAt
+  identity     Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+}
+
+model EmailChallenge {
+  id              String           @id @default(uuid())
+  purpose         ChallengePurpose
+  email           String
+  codeHash        String
+  attempts        Int              @default(0)
+  expiresAt       DateTime
+  consumedAt      DateTime?
+  lastSentAt      DateTime         @default(now())
+  pendingName     String?
+  pendingPassword String?
+  pendingTimezone String?
+  userId          String?
+  user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime         @default(now())
+
+  @@index([email, purpose])
+}
+
+model Session {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Workspace {
+  id                   String             @id @default(uuid())
+  name                 String
+  ownerId              String
+  timezone             String
+  subscriptionStatus   SubscriptionStatus @default(trialing)
+  subscriptionChannels Int                @default(3)
+  subscriptionMembers  Int                @default(1)
+  trialStartedAt       DateTime           @default(now())
+  trialEndsAt          DateTime
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  owner                User               @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Restrict)
+  members              WorkspaceMember[]
+
+  @@index([ownerId])
+}
+
+model WorkspaceMember {
+  workspaceId String
+  userId      String
+  role        WorkspaceRole
+  joinedAt    DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([workspaceId, userId])
+  @@index([userId])
+}

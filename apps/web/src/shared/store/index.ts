@@ -3,123 +3,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "@/features/auth/store/auth-slice";
 import calendarReducer from "@/features/posts/store/calendar-slice";
 import postsReducer from "@/features/posts/store/posts-slice";
-import {
-  SUBSCRIPTION_INCLUDED_QUANTITIES,
-  SUBSCRIPTION_MAX_QUANTITIES,
-} from "@/features/workspaces/lib/subscription-pricing";
-import workspacesReducer, {
-  createActiveWorkspaceMock,
-  createConnectedChannelMock,
-  createPublicationsMock,
-  updateMemberIdentity,
-} from "@/features/workspaces/store/workspaces-slice";
+import workspacesReducer from "@/features/workspaces/store/workspaces-slice";
 import { api } from "@/shared/api/api";
 
-const LEGACY_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v1";
-const PREVIOUS_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v2";
-const V3_WORKSPACES_STORAGE_KEY = "postmade.workspaces.v3";
-const WORKSPACES_STORAGE_KEY = "postmade.workspaces.v4";
-const AUTH_STORAGE_KEY = "postmade.auth-session.v1";
-const LEGACY_DEVELOPMENT_USER_NAME = "Creator";
-const DEVELOPMENT_USER_NAME = "Victor Argachof";
-
-function loadPersistedAuth() {
-  try {
-    const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
-    if (!raw) return undefined;
-    const parsed = JSON.parse(raw) as ReturnType<typeof authReducer>;
-    const user = parsed?.user;
-    const isValidUser = (value: typeof user) =>
-      Boolean(
-        value &&
-        typeof value.id === "string" &&
-        typeof value.name === "string" &&
-        typeof value.email === "string" &&
-        value.identity &&
-        typeof value.identity.providerSubject === "string"
-      );
-    if (
-      !parsed ||
-      !Array.isArray(parsed.accounts) ||
-      parsed.accounts.some((account) => !isValidUser(account)) ||
-      (user !== null && !isValidUser(user))
-    ) {
-      return undefined;
-    }
-    if (
-      import.meta.env.MODE === "development" &&
-      parsed.user?.name === LEGACY_DEVELOPMENT_USER_NAME
-    ) {
-      parsed.user.name = DEVELOPMENT_USER_NAME;
-      const account = parsed.accounts.find(
-        (item) => item.id === parsed.user?.id
-      );
-      if (account) account.name = DEVELOPMENT_USER_NAME;
-    }
-    return parsed;
-  } catch {
-    return undefined;
-  }
-}
-
-function loadPersistedWorkspaces() {
-  try {
-    const currentRaw = window.localStorage.getItem(WORKSPACES_STORAGE_KEY);
-    const v3Raw = window.localStorage.getItem(V3_WORKSPACES_STORAGE_KEY);
-    const raw = currentRaw ?? v3Raw;
-    if (!raw) return undefined;
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      !parsed ||
-      typeof parsed !== "object" ||
-      !("items" in parsed) ||
-      !Array.isArray(parsed.items)
-    )
-      return undefined;
-    const persisted = parsed as ReturnType<typeof workspacesReducer>;
-    if (!currentRaw && v3Raw) {
-      persisted.items.forEach((workspace) => {
-        workspace.resources.tagGroups = [];
-        workspace.resources.posts.forEach((publication) => {
-          publication.tagGroupSnapshots ??= [];
-        });
-      });
-    }
-    persisted.items.forEach((workspace) => {
-      workspace.resources.posts.forEach((publication) => {
-        delete (publication as typeof publication & { recurrence?: unknown })
-          .recurrence;
-      });
-    });
-    const isValid = persisted.items.every((workspace) => {
-      const configuration = workspace.subscriptionConfiguration;
-      return (
-        configuration &&
-        typeof workspace.timezone === "string" &&
-        Array.isArray(workspace.resources?.posts) &&
-        Array.isArray(workspace.resources?.tagGroups) &&
-        Number.isInteger(configuration.channels) &&
-        configuration.channels >= SUBSCRIPTION_INCLUDED_QUANTITIES.channels &&
-        configuration.channels <= SUBSCRIPTION_MAX_QUANTITIES.channels &&
-        Number.isInteger(configuration.members) &&
-        configuration.members >= SUBSCRIPTION_INCLUDED_QUANTITIES.members &&
-        configuration.members <= SUBSCRIPTION_MAX_QUANTITIES.members
-      );
-    });
-    return isValid ? persisted : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-const persistedWorkspaces = loadPersistedWorkspaces();
-window.localStorage.removeItem(LEGACY_WORKSPACES_STORAGE_KEY);
-window.localStorage.removeItem(PREVIOUS_WORKSPACES_STORAGE_KEY);
-window.localStorage.removeItem(V3_WORKSPACES_STORAGE_KEY);
-const persistedAuth = loadPersistedAuth();
-const initialAuthState = authReducer(undefined, { type: "@@INIT" });
-const initialWorkspacesState = workspacesReducer(undefined, { type: "@@INIT" });
-
+for (const key of [
+  "postmade.auth-session.v1",
+  "postmade.workspaces.v1",
+  "postmade.workspaces.v2",
+  "postmade.workspaces.v3",
+  "postmade.workspaces.v4",
+])
+  window.localStorage.removeItem(key);
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -130,38 +24,6 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
-  preloadedState: {
-    auth: persistedAuth ?? initialAuthState,
-    workspaces: persistedWorkspaces ?? initialWorkspacesState,
-  },
 });
-
-if (import.meta.env.MODE === "development" && store.getState().auth.user) {
-  const user = store.getState().auth.user!;
-  store.dispatch(updateMemberIdentity({ userId: user.id, name: user.name }));
-  store.dispatch(
-    createActiveWorkspaceMock({
-      userId: user.id,
-      userName: user.name,
-      userEmail: user.email,
-    })
-  );
-  store.dispatch(createConnectedChannelMock({ userId: user.id }));
-  store.dispatch(createPublicationsMock({ userId: user.id }));
-}
-
-store.subscribe(() => {
-  const state = store.getState();
-  window.localStorage.setItem(
-    WORKSPACES_STORAGE_KEY,
-    JSON.stringify(state.workspaces)
-  );
-  if (state.auth.user || state.auth.accounts.length > 0) {
-    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state.auth));
-  } else {
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-  }
-});
-
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

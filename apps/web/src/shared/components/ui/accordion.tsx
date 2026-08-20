@@ -4,7 +4,11 @@ import * as React from "react";
 
 import { cn } from "@/shared/lib/utils";
 
-export const Accordion = AccordionPrimitive.Root;
+export function Accordion(
+  props: React.ComponentProps<typeof AccordionPrimitive.Root>
+) {
+  return <AccordionPrimitive.Root {...props} />;
+}
 
 export const AccordionItem = React.forwardRef<
   React.ComponentRef<typeof AccordionPrimitive.Item>,

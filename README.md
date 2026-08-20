@@ -24,10 +24,10 @@ TikTok e YouTube. Entre os principais recursos previstos estão:
 
 ## Escopo atual
 
-Esta fase concentra-se somente no front-end do MVP: autenticação, dashboard
-operacional do workspace, conta do usuário, assinatura, canais e os fluxos locais de criação,
-gestão e agendamento de publicações, além de grupos reutilizáveis de tags. Os dados e a sessão ainda são locais; integrações
-OAuth, pagamentos e publicação real dependerão do futuro back-end.
+O monorepo contém o front-end do MVP e a primeira fatia vertical do back-end:
+autenticação nativa com verificação por e-mail, sessões seguras e workspaces
+persistidos. Canais, publicações, tags e assinatura ainda possuem fluxos locais;
+OAuth, pagamentos e publicação real serão conectados em incrementos futuros.
 
 O projeto foi organizado para evoluir para uma arquitetura com NestJS,
 PostgreSQL, Prisma, Redis/BullMQ e Stripe, sem acoplar o front-end atual a uma
@@ -44,7 +44,7 @@ implementação prematura desses serviços.
 
 ## Requisitos
 
-- Node.js 20.19 ou superior
+- Node.js 22.12 ou superior
 - pnpm 10 ou superior (`corepack enable` instala o gerenciador indicado no projeto)
 
 ## Desenvolvimento
@@ -68,6 +68,7 @@ pnpm build
 ## Estrutura
 
 - `apps/web`: aplicação React/Vite.
+- `apps/api`: API NestJS/Prisma documentada com Swagger.
 - `packages/types`: contratos TypeScript compartilháveis entre aplicações.
 - `apps/web/src/features`: módulos de negócio isolados.
 - `apps/web/src/shared`: infraestrutura e componentes genéricos.
@@ -75,3 +76,29 @@ pnpm build
 - `docs`: decisões e convenções de arquitetura do projeto.
 
 As convenções adotas para este projeto podem ser encontradas em [`docs/`](docs/). Leia atentamente antes de realizar alterações no código ou implementar novas features.
+
+## Back-end local
+
+```bash
+docker compose up -d --build
+pnpm db:deploy
+```
+
+- API: `http://localhost:3000/api/v1`
+- Swagger: `http://localhost:3000/docs`
+- Mailpit: `http://localhost:8025`
+
+Copie `.env.example` para `apps/api/.env` ao executar a API fora do Docker. O comando
+`pnpm db:seed` cria somente a conta demonstrativa local.
+
+### Prisma Studio
+
+Para visualizar e editar os dados do banco local por uma interface web:
+
+```bash
+pnpm db:studio
+```
+
+Com o comando em execução, acesse `http://localhost:5555`. O Prisma Studio deve
+ser utilizado somente no ambiente de desenvolvimento e não deve ser exposto em
+produção.

@@ -30,6 +30,7 @@ module.exports = {
     "", // Linha vazia
     "^[.]", // Relative imports
   ],
+  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
 
   // Configuração TailwindCSS
   tailwindStylesheet: "./apps/web/src/styles/globals.css", // Caminho para o CSS principal do Tailwind v4

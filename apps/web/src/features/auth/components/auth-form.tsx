@@ -5,18 +5,20 @@ import { useForm, useWatch } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import {
-  acceptInvitation,
-  createActiveWorkspaceMock,
-  createConnectedChannelMock,
-  createInitialWorkspace,
-} from "@/features/workspaces/store/workspaces-slice";
 import { ROUTES } from "@/routes/route-paths";
+import { api } from "@/shared/api/api";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { useAppDispatch } from "@/shared/hooks/store-hooks";
 
 import { createAuthSchema, type AuthFormValues } from "../schemas/auth-schemas";
+import {
+  useLoginStartMutation,
+  useLoginVerifyMutation,
+  useRegisterStartMutation,
+  useRegisterVerifyMutation,
+  useResendCodeMutation,
+} from "../services/auth-api";
 import { setSession } from "../store/auth-slice";
 import { compactFieldActionClassName } from "./auth-action-styles";
 import { EmailVerificationForm } from "./email-verification-form";
@@ -57,24 +59,15 @@ export function AuthForm({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const invitationToken = searchParams.get("invite");
-  const invitation = useAppSelector((state) =>
-    state.workspaces.items
-      .flatMap((workspace) => workspace.invitations)
-      .find(
-        (item) => item.token === invitationToken && item.status === "pending"
-      )
-  );
-  const knownMember = useAppSelector((state) =>
-    state.workspaces.items
-      .flatMap((workspace) => workspace.members)
-      .find(
-        (member) => member.email === (invitation?.email ?? "").toLowerCase()
-      )
-  );
-  const knownAccounts = useAppSelector((state) => state.auth.accounts);
   const [showPassword, setShowPassword] = useState(false);
   const [pendingCredentials, setPendingCredentials] =
     useState<AuthFormValues | null>(null);
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+  const [registerStart] = useRegisterStartMutation();
+  const [registerVerify] = useRegisterVerifyMutation();
+  const [loginStart] = useLoginStartMutation();
+  const [loginVerify] = useLoginVerifyMutation();
+  const [resendCode] = useResendCodeMutation();
   const [authenticationError, setAuthenticationError] = useState<string | null>(
     null
   );
@@ -87,136 +80,69 @@ export function AuthForm({
     register,
     handleSubmit,
     control,
-    getValues,
     formState: { errors },
   } = useForm<AuthFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: invitation?.email ?? "", password: "" },
+    defaultValues: { name: "", email: "", password: "" },
     mode: "onTouched",
     reValidateMode: "onChange",
   });
   const password = useWatch({ control, name: "password" }) ?? "";
 
-  const submitCredentials = (values: AuthFormValues) => {
-    const normalizedEmail = values.email.trim().toLowerCase();
-    const existingAccount = knownAccounts.find(
-      (account) => account.email === normalizedEmail
-    );
-
-    if (existingAccount?.identity.provider === "google") {
-      setAuthenticationError(t("accountUsesGoogle"));
-      return;
+  const submitCredentials = async (values: AuthFormValues) => {
+    try {
+      const challenge = isRegister
+        ? await registerStart({
+            name: values.name ?? "",
+            email: values.email,
+            password: values.password,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }).unwrap()
+        : await loginStart({
+            email: values.email,
+            password: values.password,
+          }).unwrap();
+      setAuthenticationError(null);
+      setPendingCredentials(values);
+      setChallengeId(challenge.challengeId);
+      onVerificationChange?.(true);
+    } catch {
+      setAuthenticationError(
+        t(isRegister ? "emailAlreadyRegistered" : "invalidCredentials", {
+          defaultValue: "Não foi possível autenticar com essas credenciais.",
+        })
+      );
     }
-    if (isRegister && existingAccount) {
-      setAuthenticationError(t("emailAlreadyRegistered"));
-      return;
-    }
-
-    setAuthenticationError(null);
-    setPendingCredentials(values);
-    onVerificationChange?.(true);
   };
 
-  const completeEmailAuthentication = () => {
-    if (!pendingCredentials) return;
-
-    const normalizedEmail = pendingCredentials.email.trim().toLowerCase();
-    const existingAccount = knownAccounts.find(
-      (account) => account.email === normalizedEmail
-    );
-    const userName =
-      existingAccount?.name ??
-      (isRegister
-        ? (pendingCredentials.name ?? "")
-        : (knownMember?.name ?? "User"));
-    const sessionAction = setSession(
-      existingAccount ?? {
-        name: userName,
-        email: normalizedEmail,
-        identity: { provider: "password", emailVerified: true },
-      }
-    );
-    const userId = sessionAction.payload.id;
-    dispatch(sessionAction);
-    if (invitationToken) {
+  const completeEmailAuthentication = async ({ code }: { code: string }) => {
+    if (!challengeId) return;
+    try {
+      const user = isRegister
+        ? await registerVerify({ challengeId, code }).unwrap()
+        : await loginVerify({ challengeId, code }).unwrap();
       dispatch(
-        acceptInvitation({
-          token: invitationToken,
-          userId,
-          userName,
-          userEmail: pendingCredentials.email,
-          acceptedAt: new Date().toISOString(),
+        setSession({
+          ...user,
+          identity: { ...user.identity, providerSubject: user.id },
         })
       );
-    } else {
-      dispatch(
-        createInitialWorkspace({
-          userId,
-          userName,
-          userEmail: pendingCredentials.email,
-        })
+      dispatch(api.util.invalidateTags([]));
+      navigate(ROUTES.dashboard);
+    } catch {
+      setAuthenticationError(
+        t("invalidCode", { defaultValue: "Código inválido ou expirado." })
       );
-      if (import.meta.env.MODE === "development") {
-        dispatch(
-          createActiveWorkspaceMock({
-            userId,
-            userName,
-            userEmail: pendingCredentials.email,
-          })
-        );
-        dispatch(createConnectedChannelMock({ userId }));
-      }
     }
-    navigate(ROUTES.dashboard);
   };
 
   const handleGoogleSignIn = () => {
-    const userName = getValues("name") || t("googleUser");
-    const userEmail = (
-      invitation?.email ||
-      getValues("email") ||
-      "google-user@postmade.app"
-    )
-      .trim()
-      .toLowerCase();
-    const existingAccount = knownAccounts.find(
-      (account) => account.email === userEmail
+    setAuthenticationError(
+      t("googleUnavailable", {
+        defaultValue:
+          "O login com Google estará disponível em uma próxima etapa.",
+      })
     );
-
-    if (existingAccount?.identity.provider === "password") {
-      setAuthenticationError(t("accountUsesPassword"));
-      return;
-    }
-
-    setAuthenticationError(null);
-    const sessionAction = setSession(
-      existingAccount ?? {
-        name: userName,
-        email: userEmail,
-        // A integração real deve fornecer aqui o claim OIDC `sub` validado pelo backend.
-        identity: { provider: "google", emailVerified: true },
-      }
-    );
-    const userId = sessionAction.payload.id;
-    dispatch(sessionAction);
-    if (invitationToken) {
-      dispatch(
-        acceptInvitation({
-          token: invitationToken,
-          userId,
-          userName,
-          userEmail,
-          acceptedAt: new Date().toISOString(),
-        })
-      );
-    } else {
-      dispatch(createInitialWorkspace({ userId, userName, userEmail }));
-      if (import.meta.env.MODE === "development") {
-        dispatch(createActiveWorkspaceMock({ userId, userName, userEmail }));
-        dispatch(createConnectedChannelMock({ userId }));
-      }
-    }
-    navigate(ROUTES.dashboard);
   };
 
   if (pendingCredentials) {
@@ -228,6 +154,13 @@ export function AuthForm({
           onVerificationChange?.(false);
         }}
         onVerified={completeEmailAuthentication}
+        onResend={() =>
+          challengeId
+            ? resendCode({ challengeId })
+                .unwrap()
+                .then(() => undefined)
+            : undefined
+        }
       />
     );
   }
@@ -299,7 +232,6 @@ export function AuthForm({
           id="auth-email"
           type="email"
           autoComplete="email"
-          readOnly={Boolean(invitation)}
           {...register("email")}
         />
         {errors.email && (

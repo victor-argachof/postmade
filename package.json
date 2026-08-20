@@ -4,10 +4,11 @@
   "private": true,
   "packageManager": "pnpm@10.13.1",
   "engines": {
-    "node": ">=20.19.0",
+    "node": ">=22.12.0",
     "pnpm": ">=10.0.0"
   },
   "scripts": {
+    "postinstall": "pnpm --filter @postmade/api prisma:generate",
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
@@ -16,13 +17,29 @@
     "typecheck": "turbo typecheck",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f api",
+    "db:migrate": "docker compose exec api pnpm --filter @postmade/api prisma:migrate",
+    "db:deploy": "docker compose exec -T api pnpm --filter @postmade/api prisma:deploy",
+    "db:seed": "docker compose exec -T api pnpm --filter @postmade/api prisma:seed",
+    "db:studio": "docker compose exec api pnpm --filter @postmade/api prisma:studio --browser none"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "turbo": "^2.5.5",
+    "turbo": "^2.10.11",
     "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@>=2.0.0 <3.0.0": "2.1.4",
+      "brace-expansion@>=4.0.0 <6.0.0": "5.0.9",
+      "deepmerge-ts@<8.0.0": "8.0.0",
+      "nanoid@<3.3.18": "3.3.18",
+      "postcss@<=8.5.22": "8.5.23"
+    }
   }
 }

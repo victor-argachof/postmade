@@ -2,6 +2,7 @@ import { LogOut, UserRound, UserRoundCog } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { useLogoutMutation } from "@/features/auth/services/auth-api";
 import { clearSession } from "@/features/auth/store/auth-slice";
 import { clearWorkspaceSession } from "@/features/workspaces/store/workspaces-slice";
 import { ROUTES } from "@/routes/route-paths";
@@ -29,12 +30,18 @@ export function UserMenu() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
+  const [logout] = useLogoutMutation();
   const name = user?.name ?? t("fallbackName");
   const abbreviatedName = abbreviateName(name);
   const email = user?.email ?? "user@postmade.app";
 
-  const signOut = () => {
+  const signOut = async () => {
     menuRef.current?.removeAttribute("open");
+    try {
+      await logout().unwrap();
+    } catch {
+      /* Clear stale local state even if the session already expired. */
+    }
     dispatch(clearSession());
     dispatch(clearWorkspaceSession());
     navigate(ROUTES.login);
@@ -80,7 +87,7 @@ export function UserMenu() {
         </button>
         <button
           type="button"
-          onClick={signOut}
+          onClick={() => void signOut()}
           className="mt-1 flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
         >
           <LogOut className="size-4" aria-hidden="true" />

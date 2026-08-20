@@ -1,9 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll, vi } from "vitest";
 
 import i18n from "@/shared/i18n";
+import { store } from "@/shared/store";
 
 import { ForgotPasswordPage } from "../forgot-password-page";
 
@@ -19,11 +21,27 @@ afterAll(async () => {
 
 describe("ForgotPasswordPage", () => {
   it("accepts an email and confirms the reset request", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              challengeId: "challenge",
+              expiresAt: new Date().toISOString(),
+              resendAvailableAt: new Date().toISOString(),
+            }),
+            { status: 200, headers: { "content-type": "application/json" } }
+          )
+      )
+    );
     const user = userEvent.setup();
     render(
-      <MemoryRouter>
-        <ForgotPasswordPage />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <ForgotPasswordPage />
+        </MemoryRouter>
+      </Provider>
     );
 
     const email = screen.getByLabelText("E-mail");
@@ -43,9 +61,10 @@ describe("ForgotPasswordPage", () => {
     await user.type(email, "user@postmade.app");
     await user.click(submitButton);
 
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Solicitação recebida"
-    );
+    expect(
+      await screen.findByLabelText("Código de verificação")
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Nova senha")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /voltar para o login/i })
     ).toHaveAttribute("href", "/login");

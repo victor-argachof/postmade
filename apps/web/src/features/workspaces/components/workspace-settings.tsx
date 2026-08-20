@@ -33,6 +33,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { getWorkspaceMemberLimit } from "../lib/workspace-limits";
+import { useUpdateWorkspaceMutation } from "../services/workspaces-api";
 import {
   changeMemberRole,
   inviteMember,
@@ -59,6 +60,7 @@ export function WorkspaceSettings() {
 function WorkspaceSettingsContent() {
   const { t } = useTranslation("workspaces");
   const dispatch = useAppDispatch();
+  const [updateWorkspace] = useUpdateWorkspaceMutation();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const workspace = useAppSelector((state) =>
@@ -93,6 +95,9 @@ function WorkspaceSettingsContent() {
     dispatch(
       renameWorkspace({ workspaceId: workspace.id, name, actorId: user.id })
     );
+    void updateWorkspace({ workspaceId: workspace.id, name })
+      .unwrap()
+      .catch(() => undefined);
     toast.success(t("nameSaved"));
   };
 

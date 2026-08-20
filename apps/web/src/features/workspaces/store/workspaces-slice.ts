@@ -67,6 +67,38 @@ const workspacesSlice = createSlice({
   name: "workspaces",
   initialState,
   reducers: {
+    hydrateWorkspaces: (
+      state,
+      action: PayloadAction<
+        Array<{
+          id: string;
+          name: string;
+          ownerId: string;
+          timezone: string;
+          role: WorkspaceRole;
+          subscriptionStatus: Workspace["subscriptionStatus"];
+          subscriptionConfiguration: Workspace["subscriptionConfiguration"];
+          trialStartedAt: string;
+          trialEndsAt: string;
+          createdAt: string;
+          user: { id: string; name: string; email: string };
+        }>
+      >
+    ) => {
+      state.items = action.payload.map(({ user, role, ...workspace }) => ({
+        ...workspace,
+        members: [{ ...user, role, joinedAt: workspace.createdAt }],
+        invitations: [],
+        resources: {
+          channels: [],
+          posts: [],
+          tagGroups: [],
+          selectedCalendarDate: null,
+        },
+      }));
+      if (!state.items.some((item) => item.id === state.activeWorkspaceId))
+        state.activeWorkspaceId = state.items[0]?.id ?? null;
+    },
     createInitialWorkspace: {
       reducer: (
         state,
@@ -1004,6 +1036,7 @@ export const {
   acceptInvitation,
   changeMemberRole,
   clearWorkspaceSession,
+  hydrateWorkspaces,
   createInitialWorkspace,
   createActiveWorkspaceMock,
   createConnectedChannelMock,

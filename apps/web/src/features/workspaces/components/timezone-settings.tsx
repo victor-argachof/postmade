@@ -15,6 +15,7 @@ import {
 } from "@/shared/components/ui/select";
 import { useAppDispatch } from "@/shared/hooks/store-hooks";
 
+import { useUpdateWorkspaceMutation } from "../services/workspaces-api";
 import { updateWorkspaceTimezone } from "../store/workspaces-slice";
 import type { Workspace } from "../types";
 
@@ -61,6 +62,7 @@ export function TimezoneSettings({
 }) {
   const { t, i18n } = useTranslation("workspaces");
   const dispatch = useAppDispatch();
+  const [updateWorkspace] = useUpdateWorkspaceMutation();
   const [timezone, setTimezone] = useState(workspace.timezone);
   const [confirming, setConfirming] = useState(false);
   const timezones = useMemo(() => getTimezones(), []);
@@ -84,6 +86,9 @@ export function TimezoneSettings({
     dispatch(
       updateWorkspaceTimezone({ workspaceId: workspace.id, actorId, timezone })
     );
+    void updateWorkspace({ workspaceId: workspace.id, timezone })
+      .unwrap()
+      .catch(() => undefined);
     setConfirming(false);
     toast.success(t("timezone.saved"));
   };
