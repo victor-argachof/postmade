@@ -7,6 +7,7 @@ import {
 } from "@nestjs/common";
 import type { Request } from "express";
 
+import { apiError } from "../common/api-error.js";
 import { AuthService, type SafeUser } from "./auth.service.js";
 
 export interface AuthenticatedRequest extends Request {
@@ -22,10 +23,9 @@ export class SessionGuard implements CanActivate {
       request.cookies?.postmade_session
     );
     if (!result)
-      throw new UnauthorizedException({
-        code: "UNAUTHENTICATED",
-        message: "Authentication required",
-      });
+      throw new UnauthorizedException(
+        apiError("UNAUTHENTICATED", "Authentication required")
+      );
     request.user = result.user;
     request.sessionId = result.sessionId;
     return true;

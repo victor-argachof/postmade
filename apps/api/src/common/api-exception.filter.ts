@@ -5,7 +5,11 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
+import type { ApiErrorCode } from "@postmade/types";
 import type { Response } from "express";
+
+const INTERNAL_ERROR = "INTERNAL_ERROR" satisfies ApiErrorCode;
+const VALIDATION_ERROR = "VALIDATION_ERROR" satisfies ApiErrorCode;
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
@@ -26,21 +30,22 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const validation = Array.isArray(rawMessage)
       ? rawMessage.map((message) => ({
           field: String(message).split(" ")[0],
-          message: String(message),
+          code: "INVALID_VALUE",
         }))
       : undefined;
+    const details = Array.isArray(object.details) ? object.details : validation;
     response.status(status).json({
       statusCode: status,
       code:
         typeof object.code === "string"
           ? object.code
           : validation
-            ? "VALIDATION_ERROR"
+            ? VALIDATION_ERROR
             : status === 500
-              ? "INTERNAL_ERROR"
+              ? INTERNAL_ERROR
               : `HTTP_${status}`,
       message: validation ? "Request validation failed" : String(rawMessage),
-      ...(validation ? { details: validation } : {}),
+      ...(details ? { details } : {}),
     });
   }
 }

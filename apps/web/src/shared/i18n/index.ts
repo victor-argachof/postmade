@@ -20,8 +20,10 @@ import tagsPtBR from "@/features/tags/i18n/pt-BR.json";
 import workspacesEn from "@/features/workspaces/i18n/en.json";
 import workspacesPtBR from "@/features/workspaces/i18n/pt-BR.json";
 
+import apiErrorsEn from "./locales/en/api-errors.json";
 import commonEn from "./locales/en/common.json";
 import navigationEn from "./locales/en/navigation.json";
+import apiErrorsPtBR from "./locales/pt-BR/api-errors.json";
 import commonPtBR from "./locales/pt-BR/common.json";
 import navigationPtBR from "./locales/pt-BR/navigation.json";
 
@@ -32,6 +34,7 @@ const browserLanguage = navigator.language.toLowerCase().startsWith("pt")
 
 export const resources = {
   en: {
+    apiErrors: apiErrorsEn,
     common: commonEn,
     navigation: navigationEn,
     account: accountEn,
@@ -45,6 +48,7 @@ export const resources = {
     tags: tagsEn,
   },
   "pt-BR": {
+    apiErrors: apiErrorsPtBR,
     common: commonPtBR,
     navigation: navigationPtBR,
     account: accountPtBR,
@@ -66,6 +70,7 @@ void i18n.use(initReactI18next).init({
   supportedLngs: ["en", "pt-BR"],
   defaultNS: "common",
   ns: [
+    "apiErrors",
     "common",
     "navigation",
     "account",

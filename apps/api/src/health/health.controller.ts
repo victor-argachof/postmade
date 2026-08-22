@@ -1,6 +1,7 @@
 import { Controller, Get, ServiceUnavailableException } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+import { apiError } from "../common/api-error.js";
 import { PrismaService } from "../infrastructure/prisma.service.js";
 import { RedisService } from "../infrastructure/redis.service.js";
 
@@ -28,10 +29,9 @@ export class HealthController {
       ]);
       return { status: "ok", services: { database: "up", redis: "up" } };
     } catch {
-      throw new ServiceUnavailableException({
-        code: "NOT_READY",
-        message: "A required service is unavailable",
-      });
+      throw new ServiceUnavailableException(
+        apiError("NOT_READY", "A required service is unavailable")
+      );
     }
   }
 }

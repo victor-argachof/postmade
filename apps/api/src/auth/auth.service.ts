@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import * as argon2 from "argon2";
 
+import { apiError } from "../common/api-error.js";
 import type { User } from "../generated/prisma/client.js";
 import { MailService } from "../infrastructure/mail.service.js";
 import { PrismaService } from "../infrastructure/prisma.service.js";
@@ -36,7 +37,7 @@ export class AuthService {
   private async enforce(scope: string, identifier: string) {
     if (!(await this.redis.assertLimit(scope, identifier, 5, 60)))
       throw new HttpException(
-        { code: "RATE_LIMITED", message: "Too many attempts; try again later" },
+        apiError("RATE_LIMITED", "Too many attempts; try again later"),
         HttpStatus.TOO_MANY_REQUESTS
       );
   }
@@ -84,10 +85,9 @@ export class AuthService {
     const email = this.normalizeEmail(rawEmail);
     await this.enforce("register", email);
     if (await this.prisma.user.findUnique({ where: { email } }))
-      throw new BadRequestException({
-        code: "EMAIL_ALREADY_REGISTERED",
-        message: "Email is already registered",
-      });
+      throw new BadRequestException(
+        apiError("EMAIL_ALREADY_REGISTERED", "Email is already registered")
+      );
     try {
       new Intl.DateTimeFormat("en", { timeZone: timezone });
     } catch {
@@ -120,10 +120,9 @@ export class AuthService {
       !credential ||
       !(await argon2.verify(credential.passwordHash, password))
     )
-      throw new UnauthorizedException({
-        code: "INVALID_CREDENTIALS",
-        message: "Invalid email or password",
-      });
+      throw new UnauthorizedException(
+        apiError("INVALID_CREDENTIALS", "Invalid email or password")
+      );
     return this.issueChallenge({ purpose: "login", email, userId: user.id });
   }
   async forgotPassword(rawEmail: string) {
@@ -152,29 +151,26 @@ export class AuthService {
       challenge.expiresAt <= new Date() ||
       challenge.attempts >= MAX_ATTEMPTS
     )
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid or expired",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid or expired")
+      );
     if (challenge.codeHash !== this.digest(`${id}:${code}`)) {
       await this.prisma.emailChallenge.update({
         where: { id },
         data: { attempts: challenge.attempts + 1 },
       });
-      throw new BadRequestException({
-        code: "INVALID_CODE",
-        message: "Verification code is invalid",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CODE", "Verification code is invalid")
+      );
     }
     return challenge;
   }
   async verifyRegistration(id: string, code: string) {
     const challenge = await this.validateChallenge(id, code, "register");
     if (!challenge.pendingName || !challenge.pendingPassword)
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid")
+      );
     const now = new Date();
     const trialEndsAt = new Date(now.getTime() + 15 * 24 * 60 * 60_000);
     const user = await this.prisma.$transaction(async (tx) => {
@@ -228,10 +224,9 @@ export class AuthService {
       ? await this.prisma.user.findUnique({ where: { id: challenge.userId } })
       : null;
     if (!user)
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid")
+      );
     await this.prisma.emailChallenge.update({
       where: { id },
       data: { consumedAt: new Date() },
@@ -241,20 +236,18 @@ export class AuthService {
   async resetPassword(id: string, code: string, password: string) {
     const challenge = await this.validateChallenge(id, code, "password_reset");
     if (!challenge.userId)
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid")
+      );
     const identity = await this.prisma.identity.findUnique({
       where: {
         userId_provider: { userId: challenge.userId, provider: "password" },
       },
     });
     if (!identity)
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid")
+      );
     const passwordHash = await argon2.hash(password);
     const now = new Date();
     await this.prisma.$transaction(async (tx) => {
@@ -278,16 +271,12 @@ export class AuthService {
     });
     const now = new Date();
     if (!challenge || challenge.consumedAt || challenge.expiresAt <= now)
-      throw new BadRequestException({
-        code: "INVALID_CHALLENGE",
-        message: "Challenge is invalid or expired",
-      });
+      throw new BadRequestException(
+        apiError("INVALID_CHALLENGE", "Challenge is invalid or expired")
+      );
     if (challenge.lastSentAt.getTime() + RESEND_MS > now.getTime())
       throw new HttpException(
-        {
-          code: "RESEND_COOLDOWN",
-          message: "Wait before requesting another code",
-        },
+        apiError("RESEND_COOLDOWN", "Wait before requesting another code"),
         HttpStatus.TOO_MANY_REQUESTS
       );
     const code = randomInt(0, 1_000_000).toString().padStart(6, "0");

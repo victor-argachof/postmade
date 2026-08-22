@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 
 import { PrismaService } from "../infrastructure/prisma.service.js";
+import { apiError } from "../common/api-error.js";
 import { UpdateWorkspaceDto } from "./workspaces.dto.js";
 
 @Injectable()
@@ -12,10 +13,9 @@ export class WorkspacesService {
   constructor(private readonly prisma: PrismaService) {}
   private shape(member: Awaited<ReturnType<WorkspacesService["membership"]>>) {
     if (!member)
-      throw new NotFoundException({
-        code: "WORKSPACE_NOT_FOUND",
-        message: "Workspace not found",
-      });
+      throw new NotFoundException(
+        apiError("WORKSPACE_NOT_FOUND", "Workspace not found")
+      );
     const w = member.workspace;
     return {
       id: w.id,
@@ -53,23 +53,20 @@ export class WorkspacesService {
   async update(userId: string, id: string, input: UpdateWorkspaceDto) {
     const member = await this.membership(userId, id);
     if (!member)
-      throw new NotFoundException({
-        code: "WORKSPACE_NOT_FOUND",
-        message: "Workspace not found",
-      });
+      throw new NotFoundException(
+        apiError("WORKSPACE_NOT_FOUND", "Workspace not found")
+      );
     if (member.role !== "owner" && member.role !== "admin")
-      throw new ForbiddenException({
-        code: "WORKSPACE_FORBIDDEN",
-        message: "Insufficient workspace permission",
-      });
+      throw new ForbiddenException(
+        apiError("WORKSPACE_FORBIDDEN", "Insufficient workspace permission")
+      );
     if (input.timezone) {
       try {
         new Intl.DateTimeFormat("en", { timeZone: input.timezone });
       } catch {
-        throw new ForbiddenException({
-          code: "INVALID_TIMEZONE",
-          message: "Timezone must be a valid IANA timezone",
-        });
+        throw new ForbiddenException(
+          apiError("INVALID_TIMEZONE", "Timezone must be a valid IANA timezone")
+        );
       }
     }
     await this.prisma.workspace.update({

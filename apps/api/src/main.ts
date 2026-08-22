@@ -8,7 +8,9 @@ import cookieParser from "cookie-parser";
 import type { NextFunction, Request, Response } from "express";
 
 import { AppModule } from "./app.module.js";
+import { apiError } from "./common/api-error.js";
 import { ApiExceptionFilter } from "./common/api-exception.filter.js";
+import { validationException } from "./common/validation-error.js";
 import { createOpenApiDocument } from "./swagger.js";
 
 async function bootstrap() {
@@ -22,6 +24,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: validationException,
     })
   );
   app.useGlobalFilters(new ApiExceptionFilter());
@@ -39,8 +42,7 @@ async function bootstrap() {
     )
       return response.status(403).json({
         statusCode: 403,
-        code: "ORIGIN_FORBIDDEN",
-        message: "Request origin is not allowed",
+        ...apiError("ORIGIN_FORBIDDEN", "Request origin is not allowed"),
       });
     next();
   });

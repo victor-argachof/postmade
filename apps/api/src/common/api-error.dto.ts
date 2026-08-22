@@ -2,7 +2,13 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class ApiErrorDetailDto {
   @ApiProperty({ type: String, example: "email" }) field!: string;
-  @ApiProperty({ type: String, example: "must be an email" }) message!: string;
+  @ApiProperty({ type: String, example: "IS_EMAIL" }) code!: string;
+  @ApiPropertyOptional({
+    type: Object,
+    example: { min: 8 },
+    additionalProperties: true,
+  })
+  params?: Record<string, string | number | boolean>;
 }
 
 export class ApiErrorDto {

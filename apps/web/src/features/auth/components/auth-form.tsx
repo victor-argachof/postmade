@@ -7,6 +7,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { ROUTES } from "@/routes/route-paths";
 import { api } from "@/shared/api/api";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch } from "@/shared/hooks/store-hooks";
@@ -55,6 +56,7 @@ export function AuthForm({
   onVerificationChange?: (isVerifying: boolean) => void;
 }) {
   const { t } = useTranslation("auth");
+  const { t: tApiError } = useTranslation("apiErrors");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -106,12 +108,8 @@ export function AuthForm({
       setPendingCredentials(values);
       setChallengeId(challenge.challengeId);
       onVerificationChange?.(true);
-    } catch {
-      setAuthenticationError(
-        t(isRegister ? "emailAlreadyRegistered" : "invalidCredentials", {
-          defaultValue: "Não foi possível autenticar com essas credenciais.",
-        })
-      );
+    } catch (error) {
+      setAuthenticationError(tApiError(getApiErrorTranslationKey(error)));
     }
   };
 
@@ -129,10 +127,8 @@ export function AuthForm({
       );
       dispatch(api.util.invalidateTags([]));
       navigate(ROUTES.dashboard);
-    } catch {
-      setAuthenticationError(
-        t("invalidCode", { defaultValue: "Código inválido ou expirado." })
-      );
+    } catch (error) {
+      setAuthenticationError(tApiError(getApiErrorTranslationKey(error)));
     }
   };
 

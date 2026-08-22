@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 
@@ -27,7 +28,9 @@ export function EmailVerificationForm({
   showBackAction?: boolean;
 }) {
   const { t } = useTranslation("auth");
+  const { t: tApiError } = useTranslation("apiErrors");
   const [codeResent, setCodeResent] = useState(false);
+  const [resendError, setResendError] = useState<string | null>(null);
   const [resendSeconds, setResendSeconds] = useState(60);
   const schema = useMemo(() => createVerificationCodeSchema(t), [t]);
   const {
@@ -54,9 +57,15 @@ export function EmailVerificationForm({
   }, [resendSeconds]);
 
   const handleResendCode = async () => {
-    await onResend?.();
-    setCodeResent(true);
-    setResendSeconds(60);
+    try {
+      await onResend?.();
+      setResendError(null);
+      setCodeResent(true);
+      setResendSeconds(60);
+    } catch (error) {
+      setCodeResent(false);
+      setResendError(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
 
   return (
@@ -129,6 +138,12 @@ export function EmailVerificationForm({
             role="status"
           >
             {t("codeResent")}
+          </p>
+        )}
+
+        {resendError && (
+          <p className="text-center text-xs font-medium text-red-600" role="alert">
+            {resendError}
           </p>
         )}
 
