@@ -1,5 +1,6 @@
 import reducer, {
   acceptInvitation,
+  clearWorkspaceSession,
   createActiveWorkspaceMock,
   createConnectedChannelMock,
   createInitialWorkspace,
@@ -17,6 +18,17 @@ const owner = {
 };
 
 describe("workspacesSlice", () => {
+  it("removes all workspace data when the session ends", () => {
+    const authenticatedState = reducer(
+      undefined,
+      createInitialWorkspace(owner)
+    );
+    const state = reducer(authenticatedState, clearWorkspaceSession());
+
+    expect(state.items).toEqual([]);
+    expect(state.activeWorkspaceId).toBeNull();
+  });
+
   it("creates the initial workspace with the trial configuration", () => {
     const state = reducer(undefined, createInitialWorkspace(owner));
     const workspace = state.items[0]!;

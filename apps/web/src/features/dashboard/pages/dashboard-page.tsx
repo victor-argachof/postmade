@@ -8,7 +8,6 @@ import { PageHeader } from "@/shared/components/page-header";
 import { Button } from "@/shared/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
-import { DashboardEmptyNotices } from "../components/dashboard-empty-notices";
 import { DashboardMetrics } from "../components/dashboard-metrics";
 import { UpcomingPublications } from "../components/upcoming-publications";
 import { getDashboardSummary, getUpcomingPublications } from "../lib/selectors";
@@ -30,7 +29,6 @@ export function DashboardPage() {
   const summary = getDashboardSummary(workspace);
   const upcoming = getUpcomingPublications(workspace);
   const channels = workspace?.resources.channels ?? [];
-  const publications = workspace?.resources.posts ?? [];
   const firstName = user?.name.trim().split(/\s+/)[0];
 
   const selectMetric = (
@@ -75,11 +73,6 @@ export function DashboardPage() {
         )}
       </div>
       <DashboardMetrics summary={summary} onSelect={selectMetric} />
-      <DashboardEmptyNotices
-        canManage={canManage}
-        hasChannels={summary.connectedChannels > 0}
-        hasPublications={publications.length > 0}
-      />
       <div className="mt-5">
         <UpcomingPublications
           channels={channels}

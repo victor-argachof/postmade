@@ -16,12 +16,16 @@ import { centeredBackActionClassName } from "./auth-action-styles";
 
 export function EmailVerificationForm({
   email,
+  error,
+  onErrorDismiss,
   onBack,
   onVerified,
   onResend,
   showBackAction = true,
 }: {
   email: string;
+  error?: string | null;
+  onErrorDismiss?: () => void;
   onBack: () => void;
   onVerified: (values: VerificationCodeFormValues) => void | Promise<void>;
   onResend?: () => void | Promise<void>;
@@ -89,15 +93,21 @@ export function EmailVerificationForm({
           <Input
             {...codeField}
             aria-describedby={
-              errors.code ? "verification-code-error" : undefined
+              [
+                errors.code ? "verification-code-error" : null,
+                error ? "verification-api-error" : null,
+              ]
+                .filter(Boolean)
+                .join(" ") || undefined
             }
-            aria-invalid={Boolean(errors.code)}
+            aria-invalid={Boolean(errors.code || error)}
             autoComplete="one-time-code"
             className={`mt-2 text-center text-2xl font-bold tracking-[0.45em] ${errors.code ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
             id="verification-code"
             inputMode="numeric"
             maxLength={6}
             onChange={(event) => {
+              onErrorDismiss?.();
               event.target.value = event.target.value
                 .replace(/\D/g, "")
                 .slice(0, 6);
@@ -111,6 +121,15 @@ export function EmailVerificationForm({
               role="alert"
             >
               {errors.code.message}
+            </p>
+          )}
+          {error && (
+            <p
+              className="mt-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-700"
+              id="verification-api-error"
+              role="alert"
+            >
+              {error}
             </p>
           )}
         </div>

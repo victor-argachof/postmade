@@ -989,6 +989,7 @@ const workspacesSlice = createSlice({
       );
     },
     clearWorkspaceSession: (state) => {
+      state.items = [];
       state.activeWorkspaceId = null;
     },
     deleteAccountWorkspaces: (

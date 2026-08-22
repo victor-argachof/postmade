@@ -29,13 +29,5 @@
     },
     "emptyTitle": "Nenhuma publicação agendada",
     "emptyDescription": "Os próximos agendamentos aparecerão aqui."
-  },
-  "empty": {
-    "channelsTitle": "Conecte seu primeiro canal",
-    "channelsDescription": "Adicione uma conta social para começar a distribuir suas publicações.",
-    "channelsAction": "Gerenciar canais",
-    "postsTitle": "Crie sua primeira publicação",
-    "postsDescription": "Prepare um rascunho, publique agora ou programe para outra data.",
-    "postsAction": "Criar publicação"
   }
 }

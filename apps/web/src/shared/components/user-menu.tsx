@@ -6,6 +6,7 @@ import { useLogoutMutation } from "@/features/auth/services/auth-api";
 import { clearSession } from "@/features/auth/store/auth-slice";
 import { clearWorkspaceSession } from "@/features/workspaces/store/workspaces-slice";
 import { ROUTES } from "@/routes/route-paths";
+import { api } from "@/shared/api/api";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 import { useDismissibleDetails } from "@/shared/hooks/use-dismissible-details";
 
@@ -44,7 +45,8 @@ export function UserMenu() {
     }
     dispatch(clearSession());
     dispatch(clearWorkspaceSession());
-    navigate(ROUTES.login);
+    dispatch(api.util.resetApiState());
+    navigate(ROUTES.login, { replace: true });
   };
 
   const openAccount = () => {

@@ -15,6 +15,10 @@ export type VerificationCodeFormValues = {
   code: string;
 };
 
+export type ResetPasswordFormValues = VerificationCodeFormValues & {
+  password: string;
+};
+
 const emailSchema = (t: TFunction<"auth">) =>
   z
     .string()
@@ -22,16 +26,19 @@ const emailSchema = (t: TFunction<"auth">) =>
     .min(1, t("validation.emailRequired"))
     .email(t("validation.emailInvalid"));
 
+const strongPasswordSchema = (t: TFunction<"auth">) =>
+  z
+    .string()
+    .min(1, t("validation.passwordRequired"))
+    .min(8, t("validation.passwordMinLength"))
+    .regex(/[A-Z]/, t("validation.passwordUppercase"))
+    .regex(/[a-z]/, t("validation.passwordLowercase"))
+    .regex(/\d/, t("validation.passwordNumber"))
+    .regex(/[^A-Za-z0-9]/, t("validation.passwordSpecialCharacter"));
+
 export function createAuthSchema(t: TFunction<"auth">, isRegister: boolean) {
   const passwordSchema = isRegister
-    ? z
-        .string()
-        .min(1, t("validation.passwordRequired"))
-        .min(8, t("validation.passwordMinLength"))
-        .regex(/[A-Z]/, t("validation.passwordUppercase"))
-        .regex(/[a-z]/, t("validation.passwordLowercase"))
-        .regex(/\d/, t("validation.passwordNumber"))
-        .regex(/[^A-Za-z0-9]/, t("validation.passwordSpecialCharacter"))
+    ? strongPasswordSchema(t)
     : z.string().min(1, t("validation.passwordRequired"));
 
   return z
@@ -70,5 +77,11 @@ export function createVerificationCodeSchema(t: TFunction<"auth">) {
       .trim()
       .min(1, t("validation.verificationCodeRequired"))
       .regex(/^\d{6}$/, t("validation.verificationCodeFormat")),
+  });
+}
+
+export function createResetPasswordSchema(t: TFunction<"auth">) {
+  return createVerificationCodeSchema(t).extend({
+    password: strongPasswordSchema(t),
   });
 }

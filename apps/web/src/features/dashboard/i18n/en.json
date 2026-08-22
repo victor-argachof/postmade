@@ -29,13 +29,5 @@
     },
     "emptyTitle": "No scheduled publications",
     "emptyDescription": "Your upcoming scheduled publications will appear here."
-  },
-  "empty": {
-    "channelsTitle": "Connect your first channel",
-    "channelsDescription": "Add a social account to start distributing your publications.",
-    "channelsAction": "Manage channels",
-    "postsTitle": "Create your first publication",
-    "postsDescription": "Prepare a draft, publish now, or schedule it for later.",
-    "postsAction": "Create publication"
   }
 }

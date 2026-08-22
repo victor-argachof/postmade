@@ -145,7 +145,10 @@ export function AuthForm({
     return (
       <EmailVerificationForm
         email={pendingCredentials.email}
+        error={authenticationError}
+        onErrorDismiss={() => setAuthenticationError(null)}
         onBack={() => {
+          setAuthenticationError(null);
           setPendingCredentials(null);
           onVerificationChange?.(false);
         }}

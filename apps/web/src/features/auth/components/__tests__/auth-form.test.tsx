@@ -78,6 +78,42 @@ describe("AuthForm", () => {
     await user.click(screen.getByRole("button", { name: /^validar$/i }));
     expect(await screen.findByText("Dashboard carregado")).toBeInTheDocument();
   });
+  it("shows the translated API error when the verification code is rejected", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = input instanceof Request ? input.url : String(input);
+        if (url.includes("/verify"))
+          return new Response(
+            JSON.stringify({
+              statusCode: 400,
+              code: "INVALID_CODE",
+              message: "Verification code is invalid",
+            }),
+            { status: 400, headers: { "content-type": "application/json" } }
+          );
+        return new Response(
+          JSON.stringify({
+            challengeId: "challenge-1",
+            expiresAt: new Date(Date.now() + 600000).toISOString(),
+            resendAvailableAt: new Date(Date.now() + 60000).toISOString(),
+          }),
+          { status: 200, headers: { "content-type": "application/json" } }
+        );
+      })
+    );
+    const user = userEvent.setup();
+    renderForm("login");
+    await user.type(screen.getByLabelText("E-mail"), "user@postmade.app");
+    await user.type(screen.getByLabelText("Senha"), "minha-senha");
+    await user.click(screen.getByRole("button", { name: /^entrar$/i }));
+    await user.type(screen.getByLabelText("Código de verificação"), "000000");
+    await user.click(screen.getByRole("button", { name: /^validar$/i }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "O código de verificação é inválido."
+    );
+  });
   it("starts registration after valid data", async () => {
     const user = userEvent.setup();
     renderForm("register");
