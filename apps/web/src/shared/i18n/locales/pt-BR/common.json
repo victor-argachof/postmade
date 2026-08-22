@@ -7,6 +7,9 @@
   "selectLanguage": "Selecionar idioma",
   "useLightTheme": "Usar tema claro",
   "useDarkTheme": "Usar tema escuro",
+  "dataTable": {
+    "retry": "Tentar novamente"
+  },
   "datePicker": {
     "placeholder": "Selecione uma data",
     "calendar": "Calendário",

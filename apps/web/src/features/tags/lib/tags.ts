@@ -20,7 +20,7 @@ export function normalizeTags(values: string[]) {
 
 export function isValidTag(value: string) {
   const tag = normalizeTag(value);
-  return Boolean(tag && TAG_PATTERN.test(tag));
+  return Boolean(tag && tag.length <= 50 && TAG_PATTERN.test(tag));
 }
 
 export function createTagGroupSnapshot(

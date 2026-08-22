@@ -1,7 +1,6 @@
 import type {
   PublicationTagGroupSnapshot,
   SocialPlatform,
-  TagGroup,
 } from "@postmade/types";
 import { useTranslation } from "react-i18next";
 
@@ -23,9 +22,9 @@ export function PersonalizationStep({
   onTagGroupOverridesChange,
   overrides,
   platforms,
-  tagGroups,
   tagGroupOverrides,
   tagGroupSnapshots,
+  workspaceId,
 }: {
   content: string;
   disabled: boolean;
@@ -41,11 +40,11 @@ export function PersonalizationStep({
   ) => void;
   overrides: Partial<Record<SocialPlatform, string>>;
   platforms: SocialPlatform[];
-  tagGroups: TagGroup[];
   tagGroupOverrides: Partial<
     Record<SocialPlatform, PublicationTagGroupSnapshot[]>
   >;
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
+  workspaceId: string;
 }) {
   const { t } = useTranslation("createPost");
 
@@ -139,7 +138,7 @@ export function PersonalizationStep({
                     </div>
                     <PostTagGroupsSelector
                       disabled={disabled}
-                      groups={tagGroups}
+                      workspaceId={workspaceId}
                       value={tagGroupOverrides[platform] ?? tagGroupSnapshots}
                       onChange={(snapshots) =>
                         onTagGroupOverridesChange({

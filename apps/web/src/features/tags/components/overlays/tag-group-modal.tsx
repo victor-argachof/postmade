@@ -14,12 +14,14 @@ export function TagGroupModal({
   onClose,
   onSubmit,
   open,
+  submitting = false,
 }: {
   existingNames: string[];
   group: TagGroup | null;
   onClose: () => void;
-  onSubmit: (value: { name: string; tags: string[] }) => void;
+  onSubmit: (value: { name: string; tags: string[] }) => void | Promise<void>;
   open: boolean;
+  submitting?: boolean;
 }) {
   const { t } = useTranslation("tags");
   const [name, setName] = useState(group?.name ?? "");
@@ -71,6 +73,7 @@ export function TagGroupModal({
                 : undefined
             }
             id="tag-group-name"
+            maxLength={80}
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
@@ -92,7 +95,7 @@ export function TagGroupModal({
           <Button type="button" variant="outline" onClick={onClose}>
             {t("modal.cancel")}
           </Button>
-          <Button type="submit">
+          <Button disabled={submitting} type="submit">
             {t(group ? "modal.save" : "modal.create")}
           </Button>
         </div>

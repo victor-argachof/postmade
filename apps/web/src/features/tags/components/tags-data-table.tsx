@@ -1,11 +1,12 @@
 import type { TagGroup } from "@postmade/types";
 import { Edit3, Trash2 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import {
   DataTable,
   type DataTableColumn,
+  type DataTableError,
   type DataTableSorting,
 } from "@/shared/components/data-table";
 import { Pagination } from "@/shared/components/pagination";
@@ -14,35 +15,36 @@ import { Button } from "@/shared/components/ui/button";
 export function TagsDataTable({
   canManage,
   empty,
+  error,
   groups,
   onDelete,
   onEdit,
+  onPageChange,
+  onPageSizeChange,
+  onSortingChange,
+  page,
+  pageSize,
+  sorting,
+  totalResults,
 }: {
   canManage: boolean;
   empty: ReactNode;
+  error?: DataTableError;
   groups: TagGroup[];
   onDelete: (group: TagGroup) => void;
   onEdit: (group: TagGroup) => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  onSortingChange: (sorting: DataTableSorting | undefined) => void;
+  page: number;
+  pageSize: number;
+  sorting: DataTableSorting | undefined;
+  totalResults: number;
 }) {
-  const { t, i18n } = useTranslation("tags");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [sorting, setSorting] = useState<DataTableSorting>();
-  const totalPages = Math.max(1, Math.ceil(groups.length / pageSize));
+  const { t } = useTranslation("tags");
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
   const currentPage = Math.min(page, totalPages);
-  const sorted = sorting
-    ? [...groups].sort((first, second) => {
-        const comparison =
-          sorting.columnId === "tags"
-            ? first.tags.length - second.tags.length
-            : first.name.localeCompare(second.name, i18n.language);
-        return sorting.direction === "asc" ? comparison : -comparison;
-      })
-    : groups;
-  const visible = sorted.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const visible = groups;
   const actions = (group: TagGroup) => (
     <div className="flex justify-end gap-1">
       <Button
@@ -90,6 +92,8 @@ export function TagsDataTable({
     {
       id: "tags",
       header: t("table.tags"),
+      className: "min-w-80",
+      headerClassName: "min-w-80",
       sortable: true,
       sortLabel: t("table.sortByTags"),
       cell: tags,
@@ -102,7 +106,7 @@ export function TagsDataTable({
       cell: actions,
     },
   ];
-  if (!groups.length)
+  if (!groups.length && !error)
     return (
       <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
         {empty}
@@ -110,52 +114,36 @@ export function TagsDataTable({
     );
   return (
     <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-      <div className="hidden md:block">
-        <DataTable
-          columns={columns}
-          data={visible}
-          getRowId={(group) => group.id}
-          header={
-            <p className="text-sm text-muted-foreground">
-              {t("table.results", { count: groups.length })}
-            </p>
-          }
-          label={t("table.label")}
-          sorting={sorting}
-          onSortingChange={(nextSorting) => {
-            setSorting(nextSorting);
-            setPage(1);
-          }}
-        />
-      </div>
-      <div className="divide-y divide-border md:hidden">
-        {visible.map((group) => (
-          <article className="p-5" key={group.id}>
-            <div className="flex items-start justify-between gap-3">
-              <h2 className="font-bold">{group.name}</h2>
-              {actions(group)}
-            </div>
-            <div className="mt-3">{tags(group)}</div>
-          </article>
-        ))}
-      </div>
-      <Pagination
-        labels={{
-          perPage: t("pagination.perPage"),
-          navigation: t("pagination.navigation"),
-          previous: t("pagination.previous"),
-          next: t("pagination.next"),
-          page: (number) => t("pagination.page", { number }),
-        }}
-        onPageChange={setPage}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPage(1);
-        }}
-        page={currentPage}
-        pageSize={pageSize}
-        totalResults={groups.length}
+      <DataTable
+        columns={columns}
+        data={visible}
+        error={error}
+        getRowId={(group) => group.id}
+        header={
+          <p className="text-sm text-muted-foreground">
+            {t("table.results", { count: totalResults })}
+          </p>
+        }
+        label={t("table.label")}
+        sorting={sorting}
+        onSortingChange={onSortingChange}
       />
+      {!error && (
+        <Pagination
+          labels={{
+            perPage: t("pagination.perPage"),
+            navigation: t("pagination.navigation"),
+            previous: t("pagination.previous"),
+            next: t("pagination.next"),
+            page: (number) => t("pagination.page", { number }),
+          }}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          page={currentPage}
+          pageSize={pageSize}
+          totalResults={totalResults}
+        />
+      )}
     </div>
   );
 }

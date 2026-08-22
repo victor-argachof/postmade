@@ -4,21 +4,24 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { updateProfile } from "@/features/auth/store/auth-slice";
-import { updateMemberIdentity } from "@/features/workspaces/store/workspaces-slice";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
+import { syncAccountUser } from "../lib/sync-account-user";
 import {
   createProfileSchema,
   type ProfileFormValues,
 } from "../schemas/profile-schema";
+import { useUpdateProfileMutation } from "../services/account-api";
 
 export function ProfileForm() {
   const { t } = useTranslation("account");
+  const { t: tApiError } = useTranslation("apiErrors");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const schema = useMemo(() => createProfileSchema(t), [t]);
   const fallbackName = user?.name ?? t("fallbackName");
   const {
@@ -37,12 +40,15 @@ export function ProfileForm() {
     reset({ name: fallbackName });
   }, [fallbackName, reset]);
 
-  const saveProfile = (values: ProfileFormValues) => {
-    dispatch(updateProfile({ name: values.name }));
-    if (user)
-      dispatch(updateMemberIdentity({ userId: user.id, name: values.name }));
-    reset(values);
-    toast.success(t("saveSuccess"));
+  const saveProfile = async (values: ProfileFormValues) => {
+    try {
+      const updatedUser = await updateProfile(values).unwrap();
+      syncAccountUser(dispatch, updatedUser);
+      reset({ name: updatedUser.name });
+      toast.success(t("saveSuccess"));
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
 
   return (
@@ -77,7 +83,7 @@ export function ProfileForm() {
       <div>
         <Button
           className="w-full sm:w-auto"
-          disabled={!isDirty || isSubmitting}
+          disabled={!isDirty || isSubmitting || isLoading}
           type="submit"
         >
           {t("save")}

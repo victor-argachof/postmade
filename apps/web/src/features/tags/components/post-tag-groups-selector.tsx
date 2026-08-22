@@ -1,6 +1,6 @@
 import type { PublicationTagGroupSnapshot, TagGroup } from "@postmade/types";
 import { Check, ChevronsUpDown, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/shared/components/ui/button";
@@ -20,24 +20,43 @@ import {
 import { cn } from "@/shared/lib/utils";
 
 import { createTagGroupSnapshot } from "../lib/tags";
+import { useLazyLookupTagGroupsQuery } from "../services/tags-api";
 
 export function PostTagGroupsSelector({
   disabled,
-  groups,
   onChange,
   onManage,
   value,
+  workspaceId,
 }: {
   disabled?: boolean;
-  groups: TagGroup[];
   onChange: (snapshots: PublicationTagGroupSnapshot[]) => void;
   onManage: () => void;
   value: PublicationTagGroupSnapshot[];
+  workspaceId: string;
 }) {
   const { t } = useTranslation("tags");
   const [open, setOpen] = useState(false);
-  const [commandValue, setCommandValue] = useState("");
-  const availableIds = new Set(groups.map((group) => group.id));
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [lookup, { data, isError, isFetching }] = useLazyLookupTagGroupsQuery();
+  const groups = data?.options ?? [];
+  const availableIds = new Set([
+    ...(data?.existingIds ?? []),
+    ...groups.map((group) => group.id),
+  ]);
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setDebouncedSearch(search), 300);
+    return () => window.clearTimeout(timeout);
+  }, [search]);
+  useEffect(() => {
+    if (open && workspaceId)
+      void lookup({
+        workspaceId,
+        query: debouncedSearch,
+        includeIds: value.map((snapshot) => snapshot.groupId),
+      });
+  }, [debouncedSearch, lookup, open, value, workspaceId]);
   const toggle = (group: TagGroup) => {
     if (disabled) return;
     const selected = value.some((snapshot) => snapshot.groupId === group.id);
@@ -55,7 +74,7 @@ export function PostTagGroupsSelector({
         open={open}
         onOpenChange={(nextOpen) => {
           setOpen(nextOpen);
-          if (nextOpen) setCommandValue("");
+          if (nextOpen) setSearch("");
         }}
       >
         <PopoverTrigger asChild>
@@ -81,9 +100,29 @@ export function PostTagGroupsSelector({
           className="w-[var(--radix-popover-trigger-width)] p-0"
           sideOffset={8}
         >
-          <Command value={commandValue} onValueChange={setCommandValue}>
-            <CommandInput placeholder={t("composer.search")} />
+          <Command shouldFilter={false}>
+            <CommandInput
+              value={search}
+              placeholder={t("composer.search")}
+              onValueChange={setSearch}
+            />
             <CommandList>
+              {isFetching && (
+                <p
+                  className="p-4 text-center text-sm text-muted-foreground"
+                  role="status"
+                >
+                  {t("loading")}
+                </p>
+              )}
+              {isError && (
+                <p
+                  className="p-4 text-center text-sm text-red-600"
+                  role="alert"
+                >
+                  {t("composer.lookupError")}
+                </p>
+              )}
               <CommandEmpty>
                 {groups.length ? (
                   t("composer.noResults")
@@ -139,7 +178,8 @@ export function PostTagGroupsSelector({
       {value.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {value.map((snapshot) => {
-            const unavailable = !availableIds.has(snapshot.groupId);
+            const unavailable =
+              Boolean(data) && !availableIds.has(snapshot.groupId);
             return (
               <span
                 className={cn(

@@ -10,7 +10,8 @@
 */
 
 export const IdentityProvider = {
-  password: 'password'
+  password: 'password',
+  google: 'google'
 } as const
 
 export type IdentityProvider = (typeof IdentityProvider)[keyof typeof IdentityProvider]
@@ -19,7 +20,8 @@ export type IdentityProvider = (typeof IdentityProvider)[keyof typeof IdentityPr
 export const ChallengePurpose = {
   register: 'register',
   login: 'login',
-  password_reset: 'password_reset'
+  password_reset: 'password_reset',
+  email_change: 'email_change'
 } as const
 
 export type ChallengePurpose = (typeof ChallengePurpose)[keyof typeof ChallengePurpose]

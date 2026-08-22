@@ -403,6 +403,7 @@ export const ModelName = {
   EmailChallenge: 'EmailChallenge',
   Session: 'Session',
   Workspace: 'Workspace',
+  TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
 } as const
 
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "identity" | "passwordCredential" | "emailChallenge" | "session" | "workspace" | "workspaceMember"
+    modelProps: "user" | "identity" | "passwordCredential" | "emailChallenge" | "session" | "workspace" | "tagGroup" | "workspaceMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -867,6 +868,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TagGroup: {
+      payload: Prisma.$TagGroupPayload<ExtArgs>
+      fields: Prisma.TagGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TagGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TagGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.TagGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TagGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        findMany: {
+          args: Prisma.TagGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>[]
+        }
+        create: {
+          args: Prisma.TagGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        createMany: {
+          args: Prisma.TagGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TagGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.TagGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        update: {
+          args: Prisma.TagGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.TagGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TagGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TagGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.TagGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TagGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.TagGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTagGroup>
+        }
+        groupBy: {
+          args: Prisma.TagGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TagGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TagGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TagGroupCountAggregateOutputType> | number
+        }
+      }
+    }
     WorkspaceMember: {
       payload: Prisma.$WorkspaceMemberPayload<ExtArgs>
       fields: Prisma.WorkspaceMemberFieldRefs
@@ -1057,6 +1132,22 @@ export const WorkspaceScalarFieldEnum = {
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
+
+
+export const TagGroupScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  name: 'name',
+  normalizedName: 'normalizedName',
+  tags: 'tags',
+  tagCount: 'tagCount',
+  searchText: 'searchText',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TagGroupScalarFieldEnum = (typeof TagGroupScalarFieldEnum)[keyof typeof TagGroupScalarFieldEnum]
 
 
 export const WorkspaceMemberScalarFieldEnum = {
@@ -1374,6 +1465,7 @@ export type GlobalOmitConfig = {
   emailChallenge?: Prisma.EmailChallengeOmit
   session?: Prisma.SessionOmit
   workspace?: Prisma.WorkspaceOmit
+  tagGroup?: Prisma.TagGroupOmit
   workspaceMember?: Prisma.WorkspaceMemberOmit
 }
 

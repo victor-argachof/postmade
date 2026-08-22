@@ -2,6 +2,8 @@
   "pageTitle": "Tags",
   "pageDescription": "Crie grupos de hashtags reutilizáveis para suas publicações.",
   "newGroup": "Novo grupo",
+  "loading": "Carregando grupos de tags…",
+  "retry": "Tentar novamente",
   "filters": {
     "search": "Buscar grupos",
     "clear": "Limpar busca",
@@ -72,6 +74,7 @@
     "selectedCount_one": "{{count}} grupo selecionado",
     "selectedCount_other": "{{count}} grupos selecionados",
     "search": "Buscar por nome ou hashtag",
+    "lookupError": "Não foi possível carregar os grupos de tags.",
     "noResults": "Nenhum grupo encontrado.",
     "empty": "Crie grupos na página Tags para reutilizá-los aqui.",
     "emptyAction": "Clique aqui",

@@ -9,12 +9,14 @@ datasource db {
 
 enum IdentityProvider {
   password
+  google
 }
 
 enum ChallengePurpose {
   register
   login
   password_reset
+  email_change
 }
 
 enum WorkspaceRole {
@@ -42,12 +44,13 @@ model User {
   sessions        Session[]
   memberships     WorkspaceMember[]
   challenges      EmailChallenge[]
+  createdTagGroups TagGroup[]      @relation("TagGroupCreator")
   ownedWorkspaces Workspace[]      @relation("WorkspaceOwner")
 }
 
 model Identity {
   id              String              @id @default(uuid())
-  userId          String
+  userId          String              @unique
   provider        IdentityProvider
   providerSubject String
   emailVerified   Boolean             @default(false)
@@ -55,7 +58,6 @@ model Identity {
   credential      PasswordCredential?
 
   @@unique([provider, providerSubject])
-  @@unique([userId, provider])
 }
 
 model PasswordCredential {
@@ -110,8 +112,28 @@ model Workspace {
   updatedAt            DateTime           @updatedAt
   owner                User               @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Restrict)
   members              WorkspaceMember[]
+  tagGroups            TagGroup[]
 
   @@index([ownerId])
+}
+
+model TagGroup {
+  id             String    @id @default(uuid())
+  workspaceId    String
+  name           String
+  normalizedName String
+  tags           String[]
+  tagCount       Int
+  searchText     String
+  createdBy      String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  workspace      Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator        User      @relation("TagGroupCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+
+  @@unique([workspaceId, normalizedName])
+  @@index([workspaceId, name])
+  @@index([workspaceId, createdAt])
 }
 
 model WorkspaceMember {

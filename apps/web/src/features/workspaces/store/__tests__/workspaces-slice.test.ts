@@ -47,7 +47,6 @@ describe("workspacesSlice", () => {
     expect(workspace.resources).toEqual({
       channels: [],
       posts: [],
-      tagGroups: [],
       selectedCalendarDate: null,
     });
     expect(state.activeWorkspaceId).toBe(workspace.id);

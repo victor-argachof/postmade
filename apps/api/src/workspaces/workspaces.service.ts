@@ -1,21 +1,19 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 
-import { PrismaService } from "../infrastructure/prisma.service.js";
 import { apiError } from "../common/api-error.js";
+import { PrismaService } from "../infrastructure/prisma.service.js";
+import { WorkspaceAccessService } from "./workspace-access.service.js";
 import { UpdateWorkspaceDto } from "./workspaces.dto.js";
 
 @Injectable()
 export class WorkspacesService {
-  constructor(private readonly prisma: PrismaService) {}
-  private shape(member: Awaited<ReturnType<WorkspacesService["membership"]>>) {
-    if (!member)
-      throw new NotFoundException(
-        apiError("WORKSPACE_NOT_FOUND", "Workspace not found")
-      );
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly access: WorkspaceAccessService
+  ) {}
+  private shape(
+    member: Awaited<ReturnType<WorkspaceAccessService["requireMembership"]>>
+  ) {
     const w = member.workspace;
     return {
       id: w.id,
@@ -33,12 +31,6 @@ export class WorkspacesService {
       createdAt: w.createdAt.toISOString(),
     };
   }
-  private membership(userId: string, workspaceId: string) {
-    return this.prisma.workspaceMember.findUnique({
-      where: { workspaceId_userId: { workspaceId, userId } },
-      include: { workspace: true },
-    });
-  }
   async list(userId: string) {
     const items = await this.prisma.workspaceMember.findMany({
       where: { userId },
@@ -48,14 +40,10 @@ export class WorkspacesService {
     return items.map((item) => this.shape(item));
   }
   async get(userId: string, id: string) {
-    return this.shape(await this.membership(userId, id));
+    return this.shape(await this.access.requireMembership(userId, id));
   }
   async update(userId: string, id: string, input: UpdateWorkspaceDto) {
-    const member = await this.membership(userId, id);
-    if (!member)
-      throw new NotFoundException(
-        apiError("WORKSPACE_NOT_FOUND", "Workspace not found")
-      );
+    const member = await this.access.requireMembership(userId, id);
     if (member.role !== "owner" && member.role !== "admin")
       throw new ForbiddenException(
         apiError("WORKSPACE_FORBIDDEN", "Insufficient workspace permission")

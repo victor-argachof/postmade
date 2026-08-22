@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { compactFieldActionClassName } from "@/features/auth/components/auth-action-styles";
 import { PasswordStrength } from "@/features/auth/components/password-strength";
 import { ROUTES } from "@/routes/route-paths";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppSelector } from "@/shared/hooks/store-hooks";
@@ -17,15 +18,19 @@ import {
   createChangePasswordSchema,
   type ChangePasswordFormValues,
 } from "../schemas/account-security-schemas";
+import { useChangePasswordMutation } from "../services/account-api";
 
 export function ChangePasswordForm() {
   const { t } = useTranslation("account");
   const { t: tAuth } = useTranslation("auth");
+  const { t: tApiError } = useTranslation("apiErrors");
   const provider = useAppSelector(
     (state) => state.auth.user?.identity.provider ?? "password"
   );
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
   const schema = useMemo(() => createChangePasswordSchema(t), [t]);
   const {
     register,
@@ -58,9 +63,15 @@ export function ChangePasswordForm() {
     );
   }
 
-  const savePassword = () => {
-    reset({ currentPassword: "", newPassword: "" });
-    toast.success(t("passwordChangeSuccess"));
+  const savePassword = async (values: ChangePasswordFormValues) => {
+    try {
+      await changePassword(values).unwrap();
+      setApiError(null);
+      reset({ currentPassword: "", newPassword: "" });
+      toast.success(t("passwordChangeSuccess"));
+    } catch (error) {
+      setApiError(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
 
   return (
@@ -163,8 +174,14 @@ export function ChangePasswordForm() {
 
       <PasswordStrength idPrefix="account-password" password={newPassword} />
 
+      {apiError && (
+        <p className="text-sm text-red-600" role="alert">
+          {apiError}
+        </p>
+      )}
+
       <div>
-        <Button className="w-full sm:w-auto" type="submit">
+        <Button className="w-full sm:w-auto" disabled={isLoading} type="submit">
           {t("updatePassword")}
         </Button>
       </div>

@@ -2,7 +2,6 @@ import type {
   PublicationMedia,
   PublicationTagGroupSnapshot,
   SocialPlatform,
-  TagGroup,
 } from "@postmade/types";
 import { useTranslation } from "react-i18next";
 
@@ -22,8 +21,8 @@ export function ContentStep({
   onMediaChange,
   onTagGroupsChange,
   selectedPlatforms,
-  tagGroups,
   tagGroupSnapshots,
+  workspaceId,
 }: {
   content: string;
   disabled: boolean;
@@ -34,8 +33,8 @@ export function ContentStep({
   onMediaChange: (media: PublicationMedia[]) => void;
   onTagGroupsChange: (snapshots: PublicationTagGroupSnapshot[]) => void;
   selectedPlatforms: SocialPlatform[];
-  tagGroups: TagGroup[];
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
+  workspaceId: string;
 }) {
   const { t } = useTranslation("createPost");
   const { t: tTags } = useTranslation("tags");
@@ -78,7 +77,7 @@ export function ContentStep({
         </div>
         <PostTagGroupsSelector
           disabled={disabled}
-          groups={tagGroups}
+          workspaceId={workspaceId}
           value={tagGroupSnapshots}
           onChange={onTagGroupsChange}
           onManage={onManageTags}

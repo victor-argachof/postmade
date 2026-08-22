@@ -94,11 +94,13 @@ cópia exibida pelo Postmade, mas nunca alteram o `user.id` ou o
 ### Conta nativa
 
 - O nome é editável no Postmade.
-- O e-mail pode ser alterado após reautenticação, verificação do novo endereço e
-  validação de unicidade.
+- O e-mail pode ser alterado com uma sessão válida, verificação por código no
+  novo endereço e validação de unicidade. A senha atual não é solicitada.
 - A senha pode ser alterada após confirmação da senha atual ou por um fluxo
   seguro de recuperação.
 - Alterar o e-mail nunca altera o `user.id` nem o `providerSubject`.
+- Alterações de e-mail e senha revogam as demais sessões e preservam a sessão
+  usada para realizar a operação.
 
 ### Conta Google
 

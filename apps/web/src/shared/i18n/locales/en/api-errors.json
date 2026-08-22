@@ -1,5 +1,7 @@
 {
+  "accountProviderRestricted": "This operation is not available for this account provider.",
   "emailAlreadyRegistered": "An account with this email already exists.",
+  "emailUnchanged": "Enter an email address different from the current one.",
   "forbidden": "You don't have permission to perform this action.",
   "internal": "Something went wrong on our side. Please try again.",
   "invalidChallenge": "This verification request is invalid or has expired.",
@@ -9,8 +11,11 @@
   "network": "We couldn't connect to the server. Check your connection and try again.",
   "notFound": "The requested resource was not found.",
   "notReady": "A required service is temporarily unavailable.",
+  "passwordUnchanged": "The new password must be different from the current password.",
   "rateLimited": "Too many attempts. Wait a moment and try again.",
   "resendCooldown": "Wait before requesting another code.",
+  "tagGroupNameConflict": "A tag group with this name already exists.",
+  "tagGroupNotFound": "This tag group was not found.",
   "unauthenticated": "Your session has expired. Sign in again.",
   "unexpected": "Something went wrong. Please try again.",
   "validation": "Review the provided information and try again."

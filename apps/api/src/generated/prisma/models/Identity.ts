@@ -198,18 +198,17 @@ export type IdentityOrderByWithRelationInput = {
 
 export type IdentityWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId?: string
   provider_providerSubject?: Prisma.IdentityProviderProviderSubjectCompoundUniqueInput
-  userId_provider?: Prisma.IdentityUserIdProviderCompoundUniqueInput
   AND?: Prisma.IdentityWhereInput | Prisma.IdentityWhereInput[]
   OR?: Prisma.IdentityWhereInput[]
   NOT?: Prisma.IdentityWhereInput | Prisma.IdentityWhereInput[]
-  userId?: Prisma.StringFilter<"Identity"> | string
   provider?: Prisma.EnumIdentityProviderFilter<"Identity"> | $Enums.IdentityProvider
   providerSubject?: Prisma.StringFilter<"Identity"> | string
   emailVerified?: Prisma.BoolFilter<"Identity"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   credential?: Prisma.XOR<Prisma.PasswordCredentialNullableScalarRelationFilter, Prisma.PasswordCredentialWhereInput> | null
-}, "id" | "provider_providerSubject" | "userId_provider">
+}, "id" | "userId" | "provider_providerSubject">
 
 export type IdentityOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -305,11 +304,6 @@ export type IdentityOrderByRelationAggregateInput = {
 export type IdentityProviderProviderSubjectCompoundUniqueInput = {
   provider: $Enums.IdentityProvider
   providerSubject: string
-}
-
-export type IdentityUserIdProviderCompoundUniqueInput = {
-  userId: string
-  provider: $Enums.IdentityProvider
 }
 
 export type IdentityCountOrderByAggregateInput = {

@@ -2,6 +2,8 @@
   "pageTitle": "Tags",
   "pageDescription": "Create reusable hashtag groups for your publications.",
   "newGroup": "New group",
+  "loading": "Loading tag groups…",
+  "retry": "Try again",
   "filters": {
     "search": "Search groups",
     "clear": "Clear search",
@@ -69,6 +71,7 @@
     "selectedCount_one": "{{count}} group selected",
     "selectedCount_other": "{{count}} groups selected",
     "search": "Search by name or hashtag",
+    "lookupError": "Could not load tag groups.",
     "noResults": "No groups found.",
     "empty": "Create groups on the Tags page to reuse them here.",
     "emptyAction": "Click here",

@@ -11,9 +11,14 @@ describe("AuthService", () => {
       "victor@example.com"
     );
   });
-  it("never exposes credential fields in the public user shape", () => {
-    const service = new AuthService({} as never, {} as never, {} as never);
-    const user = service.toSafeUser({
+  it("never exposes credential fields in the public user shape", async () => {
+    const prisma = {
+      identity: {
+        findFirst: async () => ({ provider: "google", emailVerified: true }),
+      },
+    };
+    const service = new AuthService(prisma as never, {} as never, {} as never);
+    const user = await service.toSafeUser({
       id: "user-1",
       name: "Victor",
       email: "victor@example.com",
@@ -29,5 +34,6 @@ describe("AuthService", () => {
     ]);
     assert.equal("passwordHash" in user, false);
     assert.equal("token" in user, false);
+    assert.equal(user.identity.provider, "google");
   });
 });

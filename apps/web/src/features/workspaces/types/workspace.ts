@@ -1,8 +1,4 @@
-import type {
-  ScheduledPublication,
-  SocialChannel,
-  TagGroup,
-} from "@postmade/types";
+import type { ScheduledPublication, SocialChannel } from "@postmade/types";
 
 import type {
   SubscriptionStatus,
@@ -47,7 +43,6 @@ export interface Workspace {
   resources: {
     channels: SocialChannel[];
     posts: ScheduledPublication[];
-    tagGroups: TagGroup[];
     selectedCalendarDate: string | null;
   };
 }

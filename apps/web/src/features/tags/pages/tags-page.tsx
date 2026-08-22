@@ -1,22 +1,26 @@
 import type { TagGroup } from "@postmade/types";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
-import {
-  createWorkspaceTagGroup,
-  deleteWorkspaceTagGroup,
-  updateWorkspaceTagGroup,
-} from "@/features/workspaces/store/workspaces-slice";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
+import type { DataTableSorting } from "@/shared/components/data-table";
 import { PageHeader } from "@/shared/components/page-header";
 import { Button } from "@/shared/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { DeleteTagGroupModal } from "../components/overlays/delete-tag-group-modal";
 import { TagGroupModal } from "../components/overlays/tag-group-modal";
 import { TagsDataTable } from "../components/tags-data-table";
 import { TagsFilters } from "../components/tags-filters";
+import {
+  useCreateTagGroupMutation,
+  useDeleteTagGroupMutation,
+  useGetTagGroupsQuery,
+  useUpdateTagGroupMutation,
+} from "../services/tags-api";
 
 export function TagsPage() {
   const workspaceId = useAppSelector(
@@ -27,69 +31,105 @@ export function TagsPage() {
 
 function TagsPageContent() {
   const { t } = useTranslation("tags");
-  const dispatch = useAppDispatch();
+  const { t: tApiError } = useTranslation("apiErrors");
+  const [searchParams, setSearchParams] = useSearchParams();
   const user = useAppSelector((state) => state.auth.user);
   const workspace = useAppSelector((state) =>
     state.workspaces.items.find(
       (item) => item.id === state.workspaces.activeWorkspaceId
     )
   );
-  const [query, setQuery] = useState("");
+  const query = searchParams.get("query") ?? "";
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const rawPageSize = Number(searchParams.get("pageSize"));
+  const pageSize = [10, 25, 50].includes(rawPageSize) ? rawPageSize : 10;
+  const sortParam = searchParams.get("sortBy");
+  const sortBy = ["name", "tagCount", "createdAt", "updatedAt"].includes(
+    sortParam ?? ""
+  )
+    ? sortParam!
+    : "name";
+  const sortDirection =
+    searchParams.get("sortDirection") === "desc" ? "desc" : "asc";
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
   const [editing, setEditing] = useState<TagGroup | null>(null);
   const [creating, setCreating] = useState(false);
   const [deleting, setDeleting] = useState<TagGroup | null>(null);
-  const groups = workspace?.resources.tagGroups ?? [];
-  const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filtered = groups
-    .filter(
-      (group) =>
-        !normalizedQuery ||
-        group.name.toLocaleLowerCase().includes(normalizedQuery) ||
-        group.tags.some((tag) =>
-          tag.toLocaleLowerCase().includes(normalizedQuery)
-        )
-    )
-    .sort((a, b) => a.name.localeCompare(b.name));
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setDebouncedQuery(query), 300);
+    return () => window.clearTimeout(timeout);
+  }, [query]);
+  const { data, error, isError, isFetching, isLoading, refetch } =
+    useGetTagGroupsQuery(
+      {
+        workspaceId: workspace?.id ?? "",
+        page,
+        pageSize: pageSize as 10 | 25 | 50,
+        query: debouncedQuery,
+        sortBy: sortBy as "name" | "tagCount" | "createdAt" | "updatedAt",
+        sortDirection,
+      },
+      { skip: !workspace }
+    );
+  const [createTagGroup, { isLoading: isCreating }] =
+    useCreateTagGroupMutation();
+  const [updateTagGroup, { isLoading: isUpdating }] =
+    useUpdateTagGroupMutation();
+  const [deleteTagGroup, { isLoading: isDeleting }] =
+    useDeleteTagGroupMutation();
+  const groups = data?.items ?? [];
   const role = workspace?.members.find(
     (member) => member.id === user?.id
   )?.role;
   const canManage = Boolean(role && role !== "viewer");
-  const submit = ({ name, tags }: { name: string; tags: string[] }) => {
+  const updateParams = (
+    values: Record<string, string | number | undefined>
+  ) => {
+    const next = new URLSearchParams(searchParams);
+    for (const [key, value] of Object.entries(values))
+      if (value === undefined || value === "") next.delete(key);
+      else next.set(key, String(value));
+    setSearchParams(next, { replace: true });
+  };
+  const submit = async ({ name, tags }: { name: string; tags: string[] }) => {
     if (!workspace || !user || !canManage) return;
-    if (editing)
-      dispatch(
-        updateWorkspaceTagGroup({
+    try {
+      if (editing)
+        await updateTagGroup({
           workspaceId: workspace.id,
-          actorId: user.id,
           tagGroupId: editing.id,
           name,
           tags,
-        })
-      );
-    else
-      dispatch(
-        createWorkspaceTagGroup({
+        }).unwrap();
+      else
+        await createTagGroup({
           workspaceId: workspace.id,
-          actorId: user.id,
           name,
           tags,
-        })
-      );
-    toast.success(t(editing ? "feedback.updated" : "feedback.created"));
-    setEditing(null);
-    setCreating(false);
+        }).unwrap();
+      toast.success(t(editing ? "feedback.updated" : "feedback.created"));
+      setEditing(null);
+      setCreating(false);
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!workspace || !user || !deleting || !canManage) return;
-    dispatch(
-      deleteWorkspaceTagGroup({
+    try {
+      await deleteTagGroup({
         workspaceId: workspace.id,
-        actorId: user.id,
         tagGroupId: deleting.id,
-      })
-    );
-    toast.success(t("feedback.deleted"));
-    setDeleting(null);
+      }).unwrap();
+      toast.success(t("feedback.deleted"));
+      setDeleting(null);
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
+  };
+  const sorting: DataTableSorting = {
+    columnId: sortBy === "tagCount" ? "tags" : "name",
+    direction: sortDirection,
   };
   return (
     <section className="mx-auto max-w-6xl">
@@ -102,24 +142,59 @@ function TagsPageContent() {
           </Button>
         )}
       </div>
-      <TagsFilters query={query} onQueryChange={setQuery} />
-      <TagsDataTable
-        key={`${workspace?.id}-${query}`}
-        canManage={canManage}
-        empty={
-          <div className="p-12 text-center">
-            <p className="font-bold">
-              {groups.length ? t("empty.filtered") : t("empty.title")}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("empty.description")}
-            </p>
-          </div>
-        }
-        groups={filtered}
-        onDelete={setDeleting}
-        onEdit={setEditing}
+      <TagsFilters
+        query={query}
+        onQueryChange={(value) => updateParams({ query: value, page: 1 })}
       />
+      {isLoading ? (
+        <p className="mt-6 text-sm text-muted-foreground" role="status">
+          {t("loading")}
+        </p>
+      ) : (
+        <TagsDataTable
+          key={`${workspace?.id}-${query}`}
+          canManage={canManage}
+          error={
+            isError
+              ? {
+                  message: tApiError(getApiErrorTranslationKey(error)),
+                  onRetry: () => void refetch(),
+                }
+              : undefined
+          }
+          empty={
+            <div className="p-12 text-center">
+              <p className="font-bold">
+                {query ? t("empty.filtered") : t("empty.title")}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {t("empty.description")}
+              </p>
+            </div>
+          }
+          groups={groups}
+          page={data?.page ?? page}
+          pageSize={data?.pageSize ?? pageSize}
+          totalResults={data?.total ?? 0}
+          sorting={sorting}
+          onPageChange={(nextPage) => updateParams({ page: nextPage })}
+          onPageSizeChange={(size) => updateParams({ pageSize: size, page: 1 })}
+          onSortingChange={(next) =>
+            updateParams({
+              sortBy: next?.columnId === "tags" ? "tagCount" : "name",
+              sortDirection: next?.direction ?? "asc",
+              page: 1,
+            })
+          }
+          onDelete={setDeleting}
+          onEdit={setEditing}
+        />
+      )}
+      {isFetching && !isLoading && (
+        <span className="sr-only" role="status">
+          {t("loading")}
+        </span>
+      )}
       <TagGroupModal
         key={editing?.id ?? (creating ? "new" : "closed")}
         existingNames={groups.map((group) => group.name)}
@@ -129,12 +204,14 @@ function TagsPageContent() {
           setCreating(false);
         }}
         onSubmit={submit}
+        submitting={isCreating || isUpdating}
         open={creating || Boolean(editing)}
       />
       <DeleteTagGroupModal
         group={deleting}
         onClose={() => setDeleting(null)}
         onConfirm={confirmDelete}
+        deleting={isDeleting}
       />
     </section>
   );

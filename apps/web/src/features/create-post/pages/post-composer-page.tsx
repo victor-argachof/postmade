@@ -120,7 +120,6 @@ export function PostComposerPage() {
   const [previewChannel, setPreviewChannel] = useState(channelIds[0] ?? "");
   const channels =
     workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
-  const tagGroups = workspace?.resources.tagGroups ?? [];
   const selected = channels.filter((channel) =>
     channelIds.includes(channel.id)
   );
@@ -303,8 +302,8 @@ export function PostComposerPage() {
             onMediaChange={setMedia}
             onTagGroupsChange={setTagGroupSnapshots}
             selectedPlatforms={selectedPlatforms}
-            tagGroups={tagGroups}
             tagGroupSnapshots={tagGroupSnapshots}
+            workspaceId={workspace?.id ?? ""}
           />
           <PersonalizationStep
             content={content}
@@ -320,9 +319,9 @@ export function PostComposerPage() {
             onTagGroupOverridesChange={setTagGroupOverrides}
             overrides={overrides}
             platforms={selectedPlatforms}
-            tagGroups={tagGroups}
             tagGroupOverrides={tagGroupOverrides}
             tagGroupSnapshots={tagGroupSnapshots}
+            workspaceId={workspace?.id ?? ""}
           />
           <SchedulingStep
             disabled={readOnly}

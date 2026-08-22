@@ -57,7 +57,8 @@ export class ChallengeResponseDto {
   @ApiProperty({ type: String }) resendAvailableAt!: string;
 }
 export class IdentityResponseDto {
-  @ApiProperty({ type: String, enum: ["password"] }) provider!: "password";
+  @ApiProperty({ type: String, enum: ["password", "google"] }) provider!:
+    "password" | "google";
   @ApiProperty({ type: Boolean }) emailVerified!: boolean;
 }
 export class UserResponseDto {

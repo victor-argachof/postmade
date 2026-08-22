@@ -48,6 +48,11 @@ export type Session = Prisma.SessionModel
  */
 export type Workspace = Prisma.WorkspaceModel
 /**
+ * Model TagGroup
+ * 
+ */
+export type TagGroup = Prisma.TagGroupModel
+/**
  * Model WorkspaceMember
  * 
  */

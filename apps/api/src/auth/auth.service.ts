@@ -1,4 +1,4 @@
-import { createHash, randomBytes, randomInt, randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import {
   BadRequestException,
   HttpException,
@@ -10,23 +10,20 @@ import * as argon2 from "argon2";
 
 import { apiError } from "../common/api-error.js";
 import type { User } from "../generated/prisma/client.js";
-import { MailService } from "../infrastructure/mail.service.js";
 import { PrismaService } from "../infrastructure/prisma.service.js";
 import { RedisService } from "../infrastructure/redis.service.js";
+import { EmailChallengeService } from "./email-challenge.service.js";
 
-const CHALLENGE_MS = 10 * 60_000;
-const RESEND_MS = 60_000;
 const SESSION_MS = 30 * 24 * 60 * 60_000;
-const MAX_ATTEMPTS = 5;
-type ChallengePurpose = "register" | "login" | "password_reset";
-export type SafeUser = ReturnType<AuthService["toSafeUser"]>;
+
+export type SafeUser = Awaited<ReturnType<AuthService["toSafeUser"]>>;
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
-    private readonly mail: MailService
+    private readonly challenges: EmailChallengeService
   ) {}
   normalizeEmail(email: string) {
     return email.trim().toLowerCase();
@@ -40,41 +37,6 @@ export class AuthService {
         apiError("RATE_LIMITED", "Too many attempts; try again later"),
         HttpStatus.TOO_MANY_REQUESTS
       );
-  }
-  private async issueChallenge(input: {
-    purpose: ChallengePurpose;
-    email: string;
-    userId?: string;
-    pendingName?: string;
-    pendingPassword?: string;
-    pendingTimezone?: string;
-    send?: boolean;
-  }) {
-    const id = randomUUID();
-    const code = randomInt(0, 1_000_000).toString().padStart(6, "0");
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + CHALLENGE_MS);
-    await this.prisma.emailChallenge.create({
-      data: {
-        id,
-        purpose: input.purpose,
-        email: input.email,
-        userId: input.userId ?? null,
-        pendingName: input.pendingName ?? null,
-        pendingPassword: input.pendingPassword ?? null,
-        pendingTimezone: input.pendingTimezone ?? null,
-        codeHash: this.digest(`${id}:${code}`),
-        expiresAt,
-        lastSentAt: now,
-      },
-    });
-    if (input.send !== false)
-      await this.mail.sendCode(input.email, code, input.purpose);
-    return {
-      challengeId: id,
-      expiresAt: expiresAt.toISOString(),
-      resendAvailableAt: new Date(now.getTime() + RESEND_MS).toISOString(),
-    };
   }
   async startRegistration(
     name: string,
@@ -93,7 +55,7 @@ export class AuthService {
     } catch {
       timezone = "UTC";
     }
-    return this.issueChallenge({
+    return this.challenges.issue({
       purpose: "register",
       email,
       pendingName: name.trim(),
@@ -106,8 +68,8 @@ export class AuthService {
     await this.enforce("login", email);
     const user = await this.prisma.user.findUnique({ where: { email } });
     const identity = user
-      ? await this.prisma.identity.findUnique({
-          where: { userId_provider: { userId: user.id, provider: "password" } },
+      ? await this.prisma.identity.findFirst({
+          where: { userId: user.id, provider: "password" },
         })
       : null;
     const credential = identity
@@ -123,50 +85,21 @@ export class AuthService {
       throw new UnauthorizedException(
         apiError("INVALID_CREDENTIALS", "Invalid email or password")
       );
-    return this.issueChallenge({ purpose: "login", email, userId: user.id });
+    return this.challenges.issue({ purpose: "login", email, userId: user.id });
   }
   async forgotPassword(rawEmail: string) {
     const email = this.normalizeEmail(rawEmail);
     await this.enforce("password-reset", email);
     const user = await this.prisma.user.findUnique({ where: { email } });
-    return this.issueChallenge({
+    return this.challenges.issue({
       purpose: "password_reset",
       email,
       userId: user?.id,
       send: Boolean(user),
     });
   }
-  private async validateChallenge(
-    id: string,
-    code: string,
-    purpose: ChallengePurpose
-  ) {
-    const challenge = await this.prisma.emailChallenge.findUnique({
-      where: { id },
-    });
-    if (
-      !challenge ||
-      challenge.purpose !== purpose ||
-      challenge.consumedAt ||
-      challenge.expiresAt <= new Date() ||
-      challenge.attempts >= MAX_ATTEMPTS
-    )
-      throw new BadRequestException(
-        apiError("INVALID_CHALLENGE", "Challenge is invalid or expired")
-      );
-    if (challenge.codeHash !== this.digest(`${id}:${code}`)) {
-      await this.prisma.emailChallenge.update({
-        where: { id },
-        data: { attempts: challenge.attempts + 1 },
-      });
-      throw new BadRequestException(
-        apiError("INVALID_CODE", "Verification code is invalid")
-      );
-    }
-    return challenge;
-  }
   async verifyRegistration(id: string, code: string) {
-    const challenge = await this.validateChallenge(id, code, "register");
+    const challenge = await this.challenges.validate(id, code, "register");
     if (!challenge.pendingName || !challenge.pendingPassword)
       throw new BadRequestException(
         apiError("INVALID_CHALLENGE", "Challenge is invalid")
@@ -219,7 +152,7 @@ export class AuthService {
     return this.createSession(user);
   }
   async verifyLogin(id: string, code: string) {
-    const challenge = await this.validateChallenge(id, code, "login");
+    const challenge = await this.challenges.validate(id, code, "login");
     const user = challenge.userId
       ? await this.prisma.user.findUnique({ where: { id: challenge.userId } })
       : null;
@@ -234,15 +167,17 @@ export class AuthService {
     return this.createSession(user);
   }
   async resetPassword(id: string, code: string, password: string) {
-    const challenge = await this.validateChallenge(id, code, "password_reset");
+    const challenge = await this.challenges.validate(
+      id,
+      code,
+      "password_reset"
+    );
     if (!challenge.userId)
       throw new BadRequestException(
         apiError("INVALID_CHALLENGE", "Challenge is invalid")
       );
-    const identity = await this.prisma.identity.findUnique({
-      where: {
-        userId_provider: { userId: challenge.userId, provider: "password" },
-      },
+    const identity = await this.prisma.identity.findFirst({
+      where: { userId: challenge.userId, provider: "password" },
     });
     if (!identity)
       throw new BadRequestException(
@@ -266,36 +201,7 @@ export class AuthService {
     });
   }
   async resend(id: string) {
-    const challenge = await this.prisma.emailChallenge.findUnique({
-      where: { id },
-    });
-    const now = new Date();
-    if (!challenge || challenge.consumedAt || challenge.expiresAt <= now)
-      throw new BadRequestException(
-        apiError("INVALID_CHALLENGE", "Challenge is invalid or expired")
-      );
-    if (challenge.lastSentAt.getTime() + RESEND_MS > now.getTime())
-      throw new HttpException(
-        apiError("RESEND_COOLDOWN", "Wait before requesting another code"),
-        HttpStatus.TOO_MANY_REQUESTS
-      );
-    const code = randomInt(0, 1_000_000).toString().padStart(6, "0");
-    const expiresAt = new Date(now.getTime() + CHALLENGE_MS);
-    await this.prisma.emailChallenge.update({
-      where: { id },
-      data: {
-        codeHash: this.digest(`${id}:${code}`),
-        attempts: 0,
-        expiresAt,
-        lastSentAt: now,
-      },
-    });
-    await this.mail.sendCode(challenge.email, code, challenge.purpose);
-    return {
-      challengeId: id,
-      expiresAt: expiresAt.toISOString(),
-      resendAvailableAt: new Date(now.getTime() + RESEND_MS).toISOString(),
-    };
+    return this.challenges.resend(id);
   }
   private async createSession(user: User) {
     const token = randomBytes(32).toString("base64url");
@@ -303,7 +209,7 @@ export class AuthService {
     await this.prisma.session.create({
       data: { userId: user.id, tokenHash: this.digest(token), expiresAt },
     });
-    return { token, expiresAt, user: this.toSafeUser(user) };
+    return { token, expiresAt, user: await this.toSafeUser(user) };
   }
   async authenticate(token?: string) {
     if (!token) return null;
@@ -315,7 +221,9 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { id: session.userId },
     });
-    return user ? { sessionId: session.id, user: this.toSafeUser(user) } : null;
+    return user
+      ? { sessionId: session.id, user: await this.toSafeUser(user) }
+      : null;
   }
   async logout(sessionId: string) {
     await this.prisma.session.updateMany({
@@ -323,12 +231,20 @@ export class AuthService {
       data: { revokedAt: new Date() },
     });
   }
-  toSafeUser(user: User) {
+  async toSafeUser(user: User) {
+    const identity = await this.prisma.identity.findFirst({
+      where: { userId: user.id },
+      orderBy: { id: "asc" },
+    });
+    if (!identity) return null as never;
     return {
       id: user.id,
       name: user.name,
       email: user.email,
-      identity: { provider: "password" as const, emailVerified: true },
+      identity: {
+        provider: identity.provider,
+        emailVerified: identity.emailVerified,
+      },
       createdAt: user.createdAt.toISOString(),
     };
   }

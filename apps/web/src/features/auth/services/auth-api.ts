@@ -1,17 +1,8 @@
+import type { ChallengeResponse, PublicUser } from "@postmade/types";
+
 import { api } from "@/shared/api/api";
 
-export interface ApiUser {
-  id: string;
-  name: string;
-  email: string;
-  identity: { provider: "password"; emailVerified: boolean };
-  createdAt: string;
-}
-export interface ChallengeResponse {
-  challengeId: string;
-  expiresAt: string;
-  resendAvailableAt: string;
-}
+export type ApiUser = PublicUser;
 export const authApi = api.injectEndpoints({
   endpoints: (build) => ({
     me: build.query<ApiUser, void>({ query: () => "/me" }),

@@ -7,6 +7,9 @@
   "selectLanguage": "Select language",
   "useLightTheme": "Use light theme",
   "useDarkTheme": "Use dark theme",
+  "dataTable": {
+    "retry": "Try again"
+  },
   "datePicker": {
     "placeholder": "Select a date",
     "calendar": "Calendar",

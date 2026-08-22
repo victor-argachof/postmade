@@ -17,10 +17,13 @@ import { store } from "@/shared/store";
 
 import { AccountPage } from "../account-page";
 
-const { toastSuccess } = vi.hoisted(() => ({ toastSuccess: vi.fn() }));
+const { toastError, toastSuccess } = vi.hoisted(() => ({
+  toastError: vi.fn(),
+  toastSuccess: vi.fn(),
+}));
 
 vi.mock("sonner", () => ({
-  toast: { success: toastSuccess },
+  toast: { error: toastError, success: toastSuccess },
 }));
 
 const initialLanguage = i18n.resolvedLanguage ?? "en";
@@ -35,6 +38,7 @@ afterAll(async () => {
 
 beforeEach(() => {
   toastSuccess.mockClear();
+  toastError.mockClear();
   store.dispatch(clearKnownAccounts());
   store.dispatch(
     setSession({
@@ -43,9 +47,10 @@ beforeEach(() => {
       identity: { provider: "password", emailVerified: true },
     })
   );
+  mockAccountApi();
 });
 
-function mockDeletionApi(impact: object, deleteStatus = 204) {
+function installRequestShim() {
   const NativeRequest = globalThis.Request;
   vi.stubGlobal(
     "Request",
@@ -60,6 +65,53 @@ function mockDeletionApi(impact: object, deleteStatus = 204) {
       }
     }
   );
+}
+
+function mockAccountApi() {
+  installRequestShim();
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (input: RequestInfo | URL) => {
+      const request = input instanceof Request ? input : new Request(input);
+      const url = new URL(request.url);
+      const body =
+        request.method === "GET"
+          ? {}
+          : ((await request.clone().json()) as Record<string, string>);
+      const current = store.getState().auth.user!;
+      if (url.pathname.endsWith("/account/profile"))
+        return Response.json({
+          ...current,
+          name: body.name,
+          createdAt: new Date().toISOString(),
+        });
+      if (url.pathname.endsWith("/account/email/change/start"))
+        return Response.json({
+          challengeId: "challenge-email",
+          expiresAt: new Date().toISOString(),
+          resendAvailableAt: new Date().toISOString(),
+        });
+      if (url.pathname.endsWith("/account/email/change/verify"))
+        return Response.json({
+          ...current,
+          email: "novo@postmade.app",
+          createdAt: new Date().toISOString(),
+        });
+      if (url.pathname.endsWith("/account/email/change/resend"))
+        return Response.json({
+          challengeId: "challenge-email",
+          expiresAt: new Date().toISOString(),
+          resendAvailableAt: new Date().toISOString(),
+        });
+      if (url.pathname.endsWith("/account/password"))
+        return new Response(null, { status: 204 });
+      return new Response("{}", { status: 404 });
+    })
+  );
+}
+
+function mockDeletionApi(impact: object, deleteStatus = 204) {
+  installRequestShim();
   const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
     const url =
       input instanceof Request
@@ -129,8 +181,10 @@ describe("AccountPage", () => {
     expect(saveButton).toBeEnabled();
 
     await user.click(saveButton);
-    expect(toastSuccess).toHaveBeenCalledWith(
-      "Alterações salvas nesta sessão."
+    await waitFor(() =>
+      expect(toastSuccess).toHaveBeenCalledWith(
+        "Alterações salvas com sucesso."
+      )
     );
     expect(saveButton).toBeDisabled();
   });
@@ -169,8 +223,8 @@ describe("AccountPage", () => {
     await user.type(screen.getByLabelText("Código de verificação"), "654321");
     await user.click(screen.getByRole("button", { name: "Validar" }));
 
-    expect(toastSuccess).toHaveBeenCalledWith(
-      "E-mail alterado com sucesso nesta sessão."
+    await waitFor(() =>
+      expect(toastSuccess).toHaveBeenCalledWith("E-mail alterado com sucesso.")
     );
     expect(store.getState().auth.user?.email).toBe("novo@postmade.app");
     expect(store.getState().auth.user?.id).toBe(originalUserId);
@@ -189,8 +243,8 @@ describe("AccountPage", () => {
     );
     await user.click(screen.getByRole("button", { name: "Atualizar senha" }));
 
-    expect(toastSuccess).toHaveBeenCalledWith(
-      "Senha alterada com sucesso nesta sessão."
+    await waitFor(() =>
+      expect(toastSuccess).toHaveBeenCalledWith("Senha alterada com sucesso.")
     );
   });
 

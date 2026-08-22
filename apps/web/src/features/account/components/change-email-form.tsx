@@ -5,25 +5,41 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import { updateProfile } from "@/features/auth/store/auth-slice";
-import { updateMemberIdentity } from "@/features/workspaces/store/workspaces-slice";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
+import { syncAccountUser } from "../lib/sync-account-user";
 import {
   createChangeEmailSchema,
   type ChangeEmailFormValues,
 } from "../schemas/account-security-schemas";
+import {
+  useResendEmailChangeMutation,
+  useStartEmailChangeMutation,
+  useVerifyEmailChangeMutation,
+} from "../services/account-api";
 import { ChangeEmailVerificationModal } from "./overlays/modals/change-email-verification-modal";
 
 export function ChangeEmailForm() {
   const { t } = useTranslation("account");
+  const { t: tApiError } = useTranslation("apiErrors");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const currentEmail = user?.email ?? "user@postmade.app";
   const provider = user?.identity.provider ?? "password";
-  const [pendingEmail, setPendingEmail] = useState("");
+  const [pending, setPending] = useState<{
+    email: string;
+    challengeId: string;
+  } | null>(null);
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
+  const [startEmailChange, { isLoading: isStarting }] =
+    useStartEmailChangeMutation();
+  const [verifyEmailChange] = useVerifyEmailChangeMutation();
+  const [resendEmailChange] = useResendEmailChangeMutation();
   const schema = useMemo(
     () => createChangeEmailSchema(t, currentEmail),
     [currentEmail, t]
@@ -61,14 +77,31 @@ export function ChangeEmailForm() {
     );
   }
 
-  const completeEmailChange = () => {
-    if (!pendingEmail) return;
-
-    dispatch(updateProfile({ email: pendingEmail }));
-    if (user)
-      dispatch(updateMemberIdentity({ userId: user.id, email: pendingEmail }));
-    setPendingEmail("");
-    toast.success(t("emailChangeSuccess"));
+  const startChange = async ({ newEmail }: ChangeEmailFormValues) => {
+    try {
+      const challenge = await startEmailChange({ newEmail }).unwrap();
+      setPending({
+        email: newEmail.trim().toLowerCase(),
+        challengeId: challenge.challengeId,
+      });
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
+  };
+  const completeEmailChange = async ({ code }: { code: string }) => {
+    if (!pending) return;
+    try {
+      const updatedUser = await verifyEmailChange({
+        challengeId: pending.challengeId,
+        code,
+      }).unwrap();
+      syncAccountUser(dispatch, updatedUser);
+      setPending(null);
+      reset({ newEmail: "" });
+      toast.success(t("emailChangeSuccess"));
+    } catch (error) {
+      setVerificationError(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
 
   return (
@@ -76,9 +109,7 @@ export function ChangeEmailForm() {
       <form
         className="mt-8 space-y-5"
         noValidate
-        onSubmit={handleSubmit(({ newEmail }) => {
-          setPendingEmail(newEmail);
-        })}
+        onSubmit={handleSubmit(startChange)}
       >
         <div>
           <label className="block text-sm font-medium" htmlFor="current-email">
@@ -118,16 +149,31 @@ export function ChangeEmailForm() {
         </div>
 
         <div>
-          <Button className="w-full sm:w-auto" type="submit">
+          <Button
+            className="w-full sm:w-auto"
+            disabled={isStarting}
+            type="submit"
+          >
             {t("sendVerificationCode")}
           </Button>
         </div>
       </form>
 
       <ChangeEmailVerificationModal
-        email={pendingEmail}
-        open={Boolean(pendingEmail)}
-        onClose={() => setPendingEmail("")}
+        email={pending?.email ?? ""}
+        error={verificationError}
+        open={Boolean(pending)}
+        onClose={() => {
+          setPending(null);
+          setVerificationError(null);
+        }}
+        onErrorDismiss={() => setVerificationError(null)}
+        onResend={async () => {
+          if (pending)
+            await resendEmailChange({
+              challengeId: pending.challengeId,
+            }).unwrap();
+        }}
         onVerified={completeEmailChange}
       />
     </>

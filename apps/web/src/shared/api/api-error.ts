@@ -1,7 +1,9 @@
 import type { ApiError, ApiErrorCode } from "@postmade/types";
 
 export type ApiErrorTranslationKey =
+  | "accountProviderRestricted"
   | "emailAlreadyRegistered"
+  | "emailUnchanged"
   | "forbidden"
   | "internal"
   | "invalidChallenge"
@@ -11,14 +13,19 @@ export type ApiErrorTranslationKey =
   | "network"
   | "notFound"
   | "notReady"
+  | "passwordUnchanged"
   | "rateLimited"
   | "resendCooldown"
+  | "tagGroupNameConflict"
+  | "tagGroupNotFound"
   | "unauthenticated"
   | "unexpected"
   | "validation";
 
 export const API_ERROR_TRANSLATION_KEYS = {
+  ACCOUNT_PROVIDER_RESTRICTED: "accountProviderRestricted",
   EMAIL_ALREADY_REGISTERED: "emailAlreadyRegistered",
+  EMAIL_UNCHANGED: "emailUnchanged",
   INTERNAL_ERROR: "internal",
   INVALID_CHALLENGE: "invalidChallenge",
   INVALID_CODE: "invalidCode",
@@ -26,8 +33,11 @@ export const API_ERROR_TRANSLATION_KEYS = {
   INVALID_TIMEZONE: "invalidTimezone",
   NOT_READY: "notReady",
   ORIGIN_FORBIDDEN: "forbidden",
+  PASSWORD_UNCHANGED: "passwordUnchanged",
   RATE_LIMITED: "rateLimited",
   RESEND_COOLDOWN: "resendCooldown",
+  TAG_GROUP_NAME_CONFLICT: "tagGroupNameConflict",
+  TAG_GROUP_NOT_FOUND: "tagGroupNotFound",
   UNAUTHENTICATED: "unauthenticated",
   VALIDATION_ERROR: "validation",
   WORKSPACE_FORBIDDEN: "forbidden",

@@ -90,7 +90,6 @@ function createPageStore({
             resources: {
               channels,
               posts: [],
-              tagGroups: [],
               selectedCalendarDate: null,
             },
           },

@@ -29,7 +29,12 @@ export function TagInput({
       setInvalid(true);
       return;
     }
-    onChange(normalizeTags([...value, ...candidates]));
+    const next = normalizeTags([...value, ...candidates]);
+    if (next.length > 30) {
+      setInvalid(true);
+      return;
+    }
+    onChange(next);
     setDraft("");
     setInvalid(false);
   };
@@ -65,6 +70,7 @@ export function TagInput({
           aria-label={t("input.label")}
           className="h-7 min-w-32 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           disabled={disabled}
+          maxLength={50}
           placeholder={value.length ? "" : t("input.placeholder")}
           value={draft}
           onBlur={() => {

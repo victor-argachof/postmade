@@ -8,10 +8,12 @@ export function DeleteTagGroupModal({
   group,
   onClose,
   onConfirm,
+  deleting = false,
 }: {
   group: TagGroup | null;
   onClose: () => void;
   onConfirm: () => void;
+  deleting?: boolean;
 }) {
   const { t } = useTranslation("tags");
   return (
@@ -30,7 +32,7 @@ export function DeleteTagGroupModal({
             <Button type="button" variant="outline" onClick={onClose}>
               {t("deleteModal.cancel")}
             </Button>
-            <Button type="button" onClick={onConfirm}>
+            <Button disabled={deleting} type="button" onClick={onConfirm}>
               {t("deleteModal.confirm")}
             </Button>
           </div>
