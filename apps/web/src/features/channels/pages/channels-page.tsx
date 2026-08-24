@@ -9,6 +9,11 @@ import { getWorkspaceChannelLimit } from "@/features/workspaces/lib/workspace-li
 import { ROUTES } from "@/routes/route-paths";
 import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { PageHeader } from "@/shared/components/page-header";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";
 import { useAppSelector } from "@/shared/hooks/store-hooks";
 
@@ -177,38 +182,40 @@ function ChannelsPageContent() {
       <ChannelUsage connected={connectedCount} limit={limit} />
 
       {import.meta.env.DEV && (
-        <p className="mt-4 text-xs text-muted-foreground" role="note">
-          {t("mockNotice")}
-        </p>
+        <Alert className="mt-4" variant="destructive">
+          <TriangleAlert aria-hidden="true" />
+          <div>
+            <AlertTitle>{t("mockNotice.title")}</AlertTitle>
+            <AlertDescription>{t("mockNotice.description")}</AlertDescription>
+          </div>
+        </Alert>
       )}
 
       {limitReached && (
-        <div className="mt-6 flex flex-col gap-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 sm:flex-row sm:items-center">
-          <TriangleAlert
-            className="size-5 shrink-0 text-amber-700 dark:text-amber-400"
-            aria-hidden="true"
-          />
-          <div className="flex-1">
-            <p className="font-bold">{t("limit.title")}</p>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              {t("limit.description")}
-            </p>
+        <Alert className="mt-6 pr-4 sm:pr-40" variant="warning">
+          <TriangleAlert aria-hidden="true" />
+          <div>
+            <AlertTitle>{t("limit.title")}</AlertTitle>
+            <AlertDescription>{t("limit.description")}</AlertDescription>
           </div>
           <Button
             type="button"
             variant="outline"
+            className="mt-4 ml-7 sm:absolute sm:top-1/2 sm:right-4 sm:mt-0 sm:ml-0 sm:-translate-y-1/2"
             onClick={() => navigate(ROUTES.workspaceSubscription)}
           >
             {t("limit.action")}
           </Button>
-        </div>
+        </Alert>
       )}
 
       {!canManage && workspace && (
-        <p className="mt-6 flex items-start gap-2 rounded-2xl border border-border bg-muted p-4 text-sm leading-6 text-muted-foreground">
-          <LockKeyhole className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          {t("permissions.readOnly")}
-        </p>
+        <Alert className="mt-6 bg-muted">
+          <LockKeyhole aria-hidden="true" />
+          <AlertDescription className="text-muted-foreground">
+            {t("permissions.readOnly")}
+          </AlertDescription>
+        </Alert>
       )}
 
       <PlatformGrid

@@ -2,7 +2,10 @@
   "pageTitle": "Canais",
   "pageDescription": "Conecte suas contas de redes sociais para publicar e agendar conteúdos pelo Postmade.",
   "loading": "Carregando canais…",
-  "mockNotice": "Ambiente de desenvolvimento: as conexões são simuladas e não realizam ações nas redes sociais.",
+  "mockNotice": {
+    "title": "Ambiente de desenvolvimento",
+    "description": "As conexões são simuladas e não realizam ações nas redes sociais."
+  },
   "usage": {
     "label": "Utilização",
     "limited": "{{count}} de {{limit}} canais conectados",

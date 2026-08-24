@@ -2,7 +2,10 @@
   "pageTitle": "Channels",
   "pageDescription": "Connect your social accounts to publish and schedule content through Postmade.",
   "loading": "Loading channels…",
-  "mockNotice": "Development environment: connections are simulated and do not perform actions on social networks.",
+  "mockNotice": {
+    "title": "Development environment",
+    "description": "Connections are simulated and do not perform actions on social networks."
+  },
   "usage": {
     "label": "Usage",
     "limited": "{{count}} of {{limit}} channels connected",

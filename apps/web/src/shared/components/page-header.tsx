@@ -35,7 +35,7 @@ export function PageHeader({
       {description && (
         <p
           className={cn(
-            "max-w-2xl text-base text-muted-foreground",
+            "text-base text-muted-foreground",
             (eyebrow || title) && "mt-4"
           )}
         >
