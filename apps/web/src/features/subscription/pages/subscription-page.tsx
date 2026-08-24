@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
+import { useGetChannelsQuery } from "@/features/channels/services/channels-api";
 import { getMinimumSubscriptionConfiguration } from "@/features/workspaces/lib/subscription-pricing";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import type { WorkspaceSubscriptionConfiguration } from "@/features/workspaces/types";
@@ -36,6 +37,10 @@ export function SubscriptionPage() {
   const [createCheckoutSession] = useCreateCheckoutSessionMutation();
   const [updateSubscription, { isLoading: isUpdatingSubscription }] =
     useUpdateSubscriptionMutation();
+  const { data: channelPage } = useGetChannelsQuery(
+    { workspaceId: workspace?.id ?? "", page: 1, pageSize: 10 },
+    { skip: !workspace }
+  );
 
   useEffect(() => {
     if (location.hash !== "#subscription-configurator") return;
@@ -115,9 +120,7 @@ export function SubscriptionPage() {
     }
   };
 
-  const connectedChannels =
-    workspace?.resources.channels.filter((channel) => channel.connected)
-      .length ?? 0;
+  const connectedChannels = channelPage?.summary.total ?? 0;
   const occupiedMembers = workspace
     ? workspace.members.length +
       workspace.invitations.filter(

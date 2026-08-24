@@ -57,6 +57,7 @@ export const ModelName = {
   EmailChallenge: 'EmailChallenge',
   Session: 'Session',
   Workspace: 'Workspace',
+  Channel: 'Channel',
   TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
 } as const
@@ -154,6 +155,27 @@ export const WorkspaceScalarFieldEnum = {
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
+
+
+export const ChannelScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  platform: 'platform',
+  providerAccountId: 'providerAccountId',
+  displayName: 'displayName',
+  username: 'username',
+  avatarUrl: 'avatarUrl',
+  searchText: 'searchText',
+  connectionStatus: 'connectionStatus',
+  lastCheckedAt: 'lastCheckedAt',
+  connectedAt: 'connectedAt',
+  disconnectedAt: 'disconnectedAt',
+  createdBy: 'createdBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
 export const TagGroupScalarFieldEnum = {

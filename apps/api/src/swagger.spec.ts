@@ -9,6 +9,7 @@ import { createOpenApiDocument } from "./swagger.js";
 
 process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";
 process.env.REDIS_URL ??= "redis://localhost:6379";
+process.env.CHANNEL_PROVIDER_MODE ??= "disabled";
 
 describe("OpenAPI contract", () => {
   it("documents every public endpoint", async () => {
@@ -44,6 +45,11 @@ describe("OpenAPI contract", () => {
       "/api/v1/workspaces/{workspaceId}/tag-groups",
       "/api/v1/workspaces/{workspaceId}/tag-groups/lookup",
       "/api/v1/workspaces/{workspaceId}/tag-groups/{tagGroupId}",
+      "/api/v1/workspaces/{workspaceId}/channels",
+      "/api/v1/workspaces/{workspaceId}/channels/lookup",
+      "/api/v1/workspaces/{workspaceId}/channels/oauth/{platform}/start",
+      "/api/v1/workspaces/{workspaceId}/channels/{channelId}",
+      "/api/v1/channels/oauth/mock/callback",
       "/api/v1/health/live",
       "/api/v1/health/ready",
     ])

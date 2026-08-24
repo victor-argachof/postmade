@@ -46,3 +46,24 @@ export const SubscriptionStatus = {
 } as const
 
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
+
+
+export const SocialPlatform = {
+  facebook: 'facebook',
+  linkedin: 'linkedin',
+  instagram: 'instagram',
+  tiktok: 'tiktok',
+  youtube: 'youtube'
+} as const
+
+export type SocialPlatform = (typeof SocialPlatform)[keyof typeof SocialPlatform]
+
+
+export const ChannelConnectionStatus = {
+  connected: 'connected',
+  requires_reauthentication: 'requires_reauthentication',
+  unavailable: 'unavailable',
+  disconnected: 'disconnected'
+} as const
+
+export type ChannelConnectionStatus = (typeof ChannelConnectionStatus)[keyof typeof ChannelConnectionStatus]

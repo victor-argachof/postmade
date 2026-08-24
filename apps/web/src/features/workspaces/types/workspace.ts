@@ -1,4 +1,4 @@
-import type { ScheduledPublication, SocialChannel } from "@postmade/types";
+import type { ScheduledPublication } from "@postmade/types";
 
 import type {
   SubscriptionStatus,
@@ -41,7 +41,6 @@ export interface Workspace {
   members: WorkspaceMember[];
   invitations: WorkspaceInvitation[];
   resources: {
-    channels: SocialChannel[];
     posts: ScheduledPublication[];
     selectedCalendarDate: string | null;
   };

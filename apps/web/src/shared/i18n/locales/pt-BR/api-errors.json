@@ -1,5 +1,10 @@
 {
   "accountProviderRestricted": "Esta operação não está disponível para o provedor desta conta.",
+  "channelAlreadyConnected": "Esta conta já está conectada ao workspace.",
+  "channelLimitReached": "O limite de canais do workspace foi atingido.",
+  "channelNotFound": "O canal solicitado não foi encontrado.",
+  "channelProviderUnavailable": "A integração com esta plataforma está indisponível no momento.",
+  "channelReauthRequired": "Este canal precisa ser conectado novamente.",
   "emailAlreadyRegistered": "Já existe uma conta com este e-mail.",
   "emailUnchanged": "Informe um e-mail diferente do atual.",
   "forbidden": "Você não tem permissão para realizar esta ação.",
@@ -7,6 +12,7 @@
   "invalidChallenge": "Esta solicitação de verificação é inválida ou expirou.",
   "invalidCode": "O código de verificação é inválido.",
   "invalidCredentials": "E-mail ou senha inválidos.",
+  "invalidOAuthState": "A tentativa de conexão expirou ou não é mais válida. Tente novamente.",
   "invalidTimezone": "Selecione um fuso horário válido.",
   "network": "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
   "notFound": "O recurso solicitado não foi encontrado.",

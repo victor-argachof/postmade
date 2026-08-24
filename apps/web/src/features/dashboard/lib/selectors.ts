@@ -9,12 +9,13 @@ export interface DashboardSummary {
   failed: number;
 }
 
-export function getDashboardSummary(workspace?: Workspace): DashboardSummary {
+export function getDashboardSummary(
+  workspace?: Workspace,
+  connectedChannels = 0
+): DashboardSummary {
   const posts = workspace?.resources.posts ?? [];
   return {
-    connectedChannels:
-      workspace?.resources.channels.filter((channel) => channel.connected)
-        .length ?? 0,
+    connectedChannels,
     drafts: posts.filter((post) => post.status === "draft").length,
     scheduled: posts.filter((post) => post.status === "scheduled").length,
     failed: posts.filter((post) => post.status === "failed").length,

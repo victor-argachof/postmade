@@ -1,6 +1,8 @@
 {
   "pageTitle": "Canais",
   "pageDescription": "Conecte suas contas de redes sociais para publicar e agendar conteúdos pelo Postmade.",
+  "loading": "Carregando canais…",
+  "mockNotice": "Ambiente de desenvolvimento: as conexões são simuladas e não realizam ações nas redes sociais.",
   "usage": {
     "label": "Utilização",
     "limited": "{{count}} de {{limit}} canais conectados",
@@ -73,12 +75,18 @@
     "title": "Nenhum canal conectado",
     "description": "Conecte sua primeira conta usando uma das plataformas acima para começar a publicar."
   },
-  "status": { "connected": "Conectado" },
+  "status": {
+    "connected": "Conectado",
+    "requires_reauthentication": "Reconexão necessária",
+    "unavailable": "Indisponível",
+    "disconnected": "Desconectado"
+  },
   "actions": {
     "connect": "Conectar conta",
     "connecting": "Conectando…",
     "disconnectNamed": "Desconectar {{name}}",
     "confirmDisconnect": "Desconectar canal",
+    "disconnecting": "Desconectando…",
     "cancel": "Cancelar",
     "close": "Fechar"
   },
@@ -95,6 +103,7 @@
     "description": "Você não poderá mais publicar nem agendar conteúdos usando a conta {{name}} no {{platform}}."
   },
   "feedback": {
+    "connectSuccess": "Canal simulado conectado com sucesso.",
     "connectError": "Não foi possível iniciar a conexão com {{platform}}. Tente novamente.",
     "disconnectSuccess": "{{name}} foi desconectado."
   }

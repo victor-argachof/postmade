@@ -1,5 +1,10 @@
 {
   "accountProviderRestricted": "This operation is not available for this account provider.",
+  "channelAlreadyConnected": "This account is already connected to the workspace.",
+  "channelLimitReached": "The workspace channel limit has been reached.",
+  "channelNotFound": "The requested channel was not found.",
+  "channelProviderUnavailable": "This platform integration is currently unavailable.",
+  "channelReauthRequired": "This channel needs to be connected again.",
   "emailAlreadyRegistered": "An account with this email already exists.",
   "emailUnchanged": "Enter an email address different from the current one.",
   "forbidden": "You don't have permission to perform this action.",
@@ -7,6 +12,7 @@
   "invalidChallenge": "This verification request is invalid or has expired.",
   "invalidCode": "The verification code is invalid.",
   "invalidCredentials": "Invalid email or password.",
+  "invalidOAuthState": "The connection attempt expired or is no longer valid. Try again.",
   "invalidTimezone": "Select a valid timezone.",
   "network": "We couldn't connect to the server. Check your connection and try again.",
   "notFound": "The requested resource was not found.",

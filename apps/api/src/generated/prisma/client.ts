@@ -72,6 +72,11 @@ export type Session = Prisma.SessionModel
  */
 export type Workspace = Prisma.WorkspaceModel
 /**
+ * Model Channel
+ * 
+ */
+export type Channel = Prisma.ChannelModel
+/**
  * Model TagGroup
  * 
  */

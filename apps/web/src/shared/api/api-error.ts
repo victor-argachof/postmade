@@ -2,6 +2,11 @@ import type { ApiError, ApiErrorCode } from "@postmade/types";
 
 export type ApiErrorTranslationKey =
   | "accountProviderRestricted"
+  | "channelAlreadyConnected"
+  | "channelLimitReached"
+  | "channelNotFound"
+  | "channelProviderUnavailable"
+  | "channelReauthRequired"
   | "emailAlreadyRegistered"
   | "emailUnchanged"
   | "forbidden"
@@ -9,6 +14,7 @@ export type ApiErrorTranslationKey =
   | "invalidChallenge"
   | "invalidCode"
   | "invalidCredentials"
+  | "invalidOAuthState"
   | "invalidTimezone"
   | "network"
   | "notFound"
@@ -24,12 +30,18 @@ export type ApiErrorTranslationKey =
 
 export const API_ERROR_TRANSLATION_KEYS = {
   ACCOUNT_PROVIDER_RESTRICTED: "accountProviderRestricted",
+  CHANNEL_ALREADY_CONNECTED: "channelAlreadyConnected",
+  CHANNEL_LIMIT_REACHED: "channelLimitReached",
+  CHANNEL_NOT_FOUND: "channelNotFound",
+  CHANNEL_PROVIDER_UNAVAILABLE: "channelProviderUnavailable",
+  CHANNEL_REAUTH_REQUIRED: "channelReauthRequired",
   EMAIL_ALREADY_REGISTERED: "emailAlreadyRegistered",
   EMAIL_UNCHANGED: "emailUnchanged",
   INTERNAL_ERROR: "internal",
   INVALID_CHALLENGE: "invalidChallenge",
   INVALID_CODE: "invalidCode",
   INVALID_CREDENTIALS: "invalidCredentials",
+  INVALID_OAUTH_STATE: "invalidOAuthState",
   INVALID_TIMEZONE: "invalidTimezone",
   NOT_READY: "notReady",
   ORIGIN_FORBIDDEN: "forbidden",

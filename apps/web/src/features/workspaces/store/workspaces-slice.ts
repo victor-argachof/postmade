@@ -1,4 +1,4 @@
-import type { ScheduledPublication } from "@postmade/types";
+import type { ScheduledPublication, SocialPlatform } from "@postmade/types";
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 
 import { SUBSCRIPTION_INCLUDED_QUANTITIES } from "../lib/subscription-pricing";
@@ -53,7 +53,6 @@ function createOwnedWorkspace(payload: {
     ],
     invitations: [],
     resources: {
-      channels: [],
       posts: [],
       selectedCalendarDate: null,
     },
@@ -87,7 +86,6 @@ const workspacesSlice = createSlice({
         members: [{ ...user, role, joinedAt: workspace.createdAt }],
         invitations: [],
         resources: {
-          channels: [],
           posts: [],
           selectedCalendarDate: null,
         },
@@ -190,59 +188,6 @@ const workspacesSlice = createSlice({
       );
       state.items.push(workspace);
     },
-    createConnectedChannelMock: (
-      state,
-      action: PayloadAction<{ userId: string }>
-    ) => {
-      const workspace = state.items.find(
-        (item) =>
-          item.id === state.activeWorkspaceId &&
-          item.members.some((member) => member.id === action.payload.userId)
-      );
-      if (!workspace) return;
-
-      const developmentChannels = [
-        {
-          id: `development-instagram-channel:${workspace.id}`,
-          platform: "instagram" as const,
-          displayName: "Postmade Instagram",
-          username: "@postmade",
-          avatarUrl: "/favicon.png",
-          connected: true,
-        },
-        {
-          id: `development-linkedin-channel:${workspace.id}`,
-          platform: "linkedin" as const,
-          displayName: "Postmade LinkedIn",
-          username: "Postmade",
-          avatarUrl: "/favicon.png",
-          connected: true,
-        },
-        {
-          id: `development-facebook-channel:${workspace.id}`,
-          platform: "facebook" as const,
-          displayName: "Postmade Facebook",
-          username: "@postmade.app",
-          avatarUrl: "/favicon.png",
-          connected: true,
-        },
-      ];
-
-      for (const channel of developmentChannels) {
-        if (
-          workspace.resources.channels.filter((item) => item.connected)
-            .length >= 3
-        )
-          break;
-        const existing = workspace.resources.channels.find(
-          (item) => item.id === channel.id
-        );
-        if (existing) {
-          existing.connected = true;
-          existing.avatarUrl = channel.avatarUrl;
-        } else workspace.resources.channels.push(channel);
-      }
-    },
     createPublicationsMock: (
       state,
       action: PayloadAction<{ userId: string }>
@@ -260,22 +205,24 @@ const workspacesSlice = createSlice({
       )
         return;
 
-      const channels = Object.fromEntries(
-        workspace.resources.channels.map((channel) => [
-          channel.platform,
-          channel,
-        ])
-      );
-      const instagram = channels.instagram;
-      const linkedin = channels.linkedin;
-      const facebook = channels.facebook;
-      if (!instagram || !linkedin || !facebook) return;
+      const instagram = {
+        id: `development-instagram-channel:${workspace.id}`,
+        platform: "instagram" as const,
+      };
+      const linkedin = {
+        id: `development-linkedin-channel:${workspace.id}`,
+        platform: "linkedin" as const,
+      };
+      const facebook = {
+        id: `development-facebook-channel:${workspace.id}`,
+        platform: "facebook" as const,
+      };
 
       const now = Date.now();
       const instant = (hoursFromNow: number) =>
         new Date(now + hoursFromNow * 60 * 60 * 1000).toISOString();
       const target = (
-        channel: typeof instagram,
+        channel: { id: string; platform: SocialPlatform },
         status: ScheduledPublication["status"],
         options?: { errorCode?: string; externalUrl?: string }
       ): ScheduledPublication["targets"][number] => ({
@@ -650,30 +597,6 @@ const workspacesSlice = createSlice({
           member.email = action.payload.email.toLowerCase();
       }
     },
-    disconnectWorkspaceChannel: (
-      state,
-      action: PayloadAction<{
-        workspaceId: string;
-        channelId: string;
-        actorId: string;
-      }>
-    ) => {
-      const workspace = state.items.find(
-        (item) => item.id === action.payload.workspaceId
-      );
-      const actor = workspace?.members.find(
-        (member) => member.id === action.payload.actorId
-      );
-      if (
-        !workspace ||
-        !actor ||
-        (actor.role !== "owner" && actor.role !== "admin")
-      )
-        return;
-      workspace.resources.channels = workspace.resources.channels.filter(
-        (channel) => channel.id !== action.payload.channelId
-      );
-    },
     createWorkspacePublication: (
       state,
       action: PayloadAction<{
@@ -924,7 +847,6 @@ export const {
   hydrateWorkspaces,
   createInitialWorkspace,
   createActiveWorkspaceMock,
-  createConnectedChannelMock,
   createPublicationsMock,
   createWorkspace,
   createWorkspacePublication,
@@ -934,7 +856,6 @@ export const {
   duplicateWorkspacePublication,
   retryWorkspacePublication,
   deleteAccountWorkspaces,
-  disconnectWorkspaceChannel,
   inviteMember,
   removeMember,
   renameWorkspace,

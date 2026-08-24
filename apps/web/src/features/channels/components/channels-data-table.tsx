@@ -1,12 +1,12 @@
 import type { SocialChannel } from "@postmade/types";
-import { CheckCircle2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { CheckCircle2, CircleAlert, Trash2, WifiOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { ChannelAvatar } from "@/shared/components/channel-avatar";
 import {
   DataTable,
   type DataTableColumn,
+  type DataTableError,
 } from "@/shared/components/data-table";
 import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
@@ -16,20 +16,28 @@ import { platformVisuals } from "../lib/platform-visuals";
 export function ChannelsDataTable({
   channels,
   canManage,
+  error,
   onDisconnect,
+  onPageChange,
+  onPageSizeChange,
+  page,
+  pageSize,
+  totalResults,
 }: {
   channels: SocialChannel[];
   canManage: boolean;
+  error?: DataTableError;
   onDisconnect: (channel: SocialChannel) => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  page: number;
+  pageSize: number;
+  totalResults: number;
 }) {
   const { t } = useTranslation("channels");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const totalPages = Math.max(1, Math.ceil(channels.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
 
   const currentPage = Math.min(page, totalPages);
-  const start = (currentPage - 1) * pageSize;
-  const visibleChannels = channels.slice(start, start + pageSize);
   const columns: DataTableColumn<SocialChannel>[] = [
     {
       id: "platform",
@@ -70,12 +78,36 @@ export function ChannelsDataTable({
     {
       id: "status",
       header: t("table.status"),
-      cell: () => (
-        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-400">
-          <CheckCircle2 className="size-3.5" aria-hidden="true" />
-          {t("status.connected")}
-        </span>
-      ),
+      cell: (channel) => {
+        const status = {
+          connected: {
+            icon: CheckCircle2,
+            className:
+              "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+          },
+          requires_reauthentication: {
+            icon: CircleAlert,
+            className: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+          },
+          unavailable: {
+            icon: WifiOff,
+            className: "bg-destructive/10 text-destructive",
+          },
+          disconnected: {
+            icon: WifiOff,
+            className: "bg-muted text-muted-foreground",
+          },
+        }[channel.connectionStatus];
+        const StatusIcon = status.icon;
+        return (
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${status.className}`}
+          >
+            <StatusIcon className="size-3.5" aria-hidden="true" />
+            {t(`status.${channel.connectionStatus}`)}
+          </span>
+        );
+      },
     },
     {
       id: "actions",
@@ -98,38 +130,38 @@ export function ChannelsDataTable({
       ),
     },
   ];
-  const resultKey = channels.length === 1 ? "singular" : "plural";
+  const resultKey = totalResults === 1 ? "singular" : "plural";
 
   return (
     <div className="mt-5 overflow-hidden rounded-3xl border border-border bg-card shadow-sm">
       <DataTable
         columns={columns}
-        data={visibleChannels}
+        data={channels}
+        error={error}
         getRowId={(channel) => channel.id}
         header={
           <p className="text-sm text-muted-foreground">
-            {t(`table.results.${resultKey}`, { count: channels.length })}
+            {t(`table.results.${resultKey}`, { count: totalResults })}
           </p>
         }
         label={t("table.label")}
       />
-      <Pagination
-        labels={{
-          perPage: t("pagination.perPage"),
-          navigation: t("pagination.navigation"),
-          previous: t("pagination.previous"),
-          next: t("pagination.next"),
-          page: (pageNumber) => t("pagination.page", { page: pageNumber }),
-        }}
-        onPageChange={setPage}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPage(1);
-        }}
-        page={currentPage}
-        pageSize={pageSize}
-        totalResults={channels.length}
-      />
+      {!error && (
+        <Pagination
+          labels={{
+            perPage: t("pagination.perPage"),
+            navigation: t("pagination.navigation"),
+            previous: t("pagination.previous"),
+            next: t("pagination.next"),
+            page: (pageNumber) => t("pagination.page", { page: pageNumber }),
+          }}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          page={currentPage}
+          pageSize={pageSize}
+          totalResults={totalResults}
+        />
+      )}
     </div>
   );
 }

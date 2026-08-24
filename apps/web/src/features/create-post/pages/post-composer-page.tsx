@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
+import { useLookupChannelsQuery } from "@/features/channels/services/channels-api";
 import { selectActiveWorkspace } from "@/features/posts/lib/selectors";
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
@@ -118,8 +120,17 @@ export function PostComposerPage() {
     "published" | "scheduled" | null
   >(null);
   const [previewChannel, setPreviewChannel] = useState(channelIds[0] ?? "");
-  const channels =
-    workspace?.resources.channels.filter((channel) => channel.connected) ?? [];
+  const { data: channelLookup } = useLookupChannelsQuery(
+    {
+      workspaceId: workspace?.id ?? "",
+      limit: 30,
+      includeIds: existing?.targets.map((target) => target.channelId),
+    },
+    { skip: !workspace }
+  );
+  const channels = mergeChannelLookup(channelLookup).filter(
+    (channel) => channel.connectionStatus === "connected"
+  );
   const selected = channels.filter((channel) =>
     channelIds.includes(channel.id)
   );

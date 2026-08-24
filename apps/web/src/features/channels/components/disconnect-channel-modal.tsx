@@ -6,10 +6,12 @@ import { Modal } from "@/shared/components/ui/modal";
 
 export function DisconnectChannelModal({
   channel,
+  disconnecting,
   onClose,
   onConfirm,
 }: {
   channel: SocialChannel | null;
+  disconnecting: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }) {
@@ -30,11 +32,20 @@ export function DisconnectChannelModal({
             })}
           </p>
           <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              disabled={disconnecting}
+              type="button"
+              variant="outline"
+              onClick={onClose}
+            >
               {t("actions.cancel")}
             </Button>
-            <Button type="button" onClick={onConfirm}>
-              {t("actions.confirmDisconnect")}
+            <Button disabled={disconnecting} type="button" onClick={onConfirm}>
+              {t(
+                disconnecting
+                  ? "actions.disconnecting"
+                  : "actions.confirmDisconnect"
+              )}
             </Button>
           </div>
         </>

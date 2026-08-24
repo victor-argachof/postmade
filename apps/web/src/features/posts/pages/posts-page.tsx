@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
+import { useLookupChannelsQuery } from "@/features/channels/services/channels-api";
 import {
   cancelWorkspacePublication,
   deleteWorkspacePublication,
@@ -45,6 +47,22 @@ function PostsPageContent() {
   const [canceling, setCanceling] = useState<ScheduledPublication | null>(null);
   const [deleting, setDeleting] = useState<ScheduledPublication | null>(null);
   const publications = workspace?.resources.posts ?? [];
+  const channelIds = Array.from(
+    new Set(
+      publications.flatMap((publication) =>
+        publication.targets.map((target) => target.channelId)
+      )
+    )
+  );
+  const { data: channelLookup } = useLookupChannelsQuery(
+    {
+      workspaceId: workspace?.id ?? "",
+      limit: 30,
+      includeIds: channelIds.slice(0, 50),
+    },
+    { skip: !workspace }
+  );
+  const channels = mergeChannelLookup(channelLookup);
   const filtered = filterPublications(publications, filters);
   const role = workspace?.members.find(
     (member) => member.id === user?.id
@@ -91,14 +109,14 @@ function PostsPageContent() {
       </div>
       <PostsViewSwitcher />
       <PostsFilters
-        channels={workspace?.resources.channels ?? []}
+        channels={channels}
         filters={filters}
         onChange={(change) => dispatch(setPublicationFilters(change))}
       />
       <PostsDataTable
         key={`${workspace?.id}-${JSON.stringify(filters)}`}
         canManage={canManage}
-        channels={workspace?.resources.channels ?? []}
+        channels={channels}
         empty={
           <div className="p-12 text-center">
             <p className="font-bold">

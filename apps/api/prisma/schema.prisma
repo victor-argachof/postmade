@@ -34,18 +34,34 @@ enum SubscriptionStatus {
   expired
 }
 
+enum SocialPlatform {
+  facebook
+  linkedin
+  instagram
+  tiktok
+  youtube
+}
+
+enum ChannelConnectionStatus {
+  connected
+  requires_reauthentication
+  unavailable
+  disconnected
+}
+
 model User {
-  id              String           @id @default(uuid())
-  name            String
-  email           String           @unique
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  identities      Identity[]
-  sessions        Session[]
-  memberships     WorkspaceMember[]
-  challenges      EmailChallenge[]
-  createdTagGroups TagGroup[]      @relation("TagGroupCreator")
-  ownedWorkspaces Workspace[]      @relation("WorkspaceOwner")
+  id               String            @id @default(uuid())
+  name             String
+  email            String            @unique
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  identities       Identity[]
+  sessions         Session[]
+  memberships      WorkspaceMember[]
+  challenges       EmailChallenge[]
+  createdTagGroups TagGroup[]        @relation("TagGroupCreator")
+  createdChannels  Channel[]         @relation("ChannelCreator")
+  ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
 }
 
 model Identity {
@@ -113,8 +129,34 @@ model Workspace {
   owner                User               @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Restrict)
   members              WorkspaceMember[]
   tagGroups            TagGroup[]
+  channels             Channel[]
 
   @@index([ownerId])
+}
+
+model Channel {
+  id                String                  @id @default(uuid())
+  workspaceId       String
+  platform          SocialPlatform
+  providerAccountId String
+  displayName       String
+  username          String
+  avatarUrl         String?
+  searchText        String
+  connectionStatus  ChannelConnectionStatus @default(connected)
+  lastCheckedAt     DateTime?
+  connectedAt       DateTime                @default(now())
+  disconnectedAt    DateTime?
+  createdBy         String
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  workspace         Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator           User                    @relation("ChannelCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+
+  @@unique([workspaceId, platform, providerAccountId])
+  @@index([workspaceId, connectionStatus])
+  @@index([workspaceId, platform])
+  @@index([workspaceId, searchText])
 }
 
 model TagGroup {

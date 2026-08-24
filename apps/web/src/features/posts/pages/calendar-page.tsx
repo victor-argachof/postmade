@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
+import { useLookupChannelsQuery } from "@/features/channels/services/channels-api";
 import { PostsViewSwitcher } from "@/features/posts/components/posts-view-switcher";
 import {
   groupPublicationsByLocalDay,
@@ -52,6 +54,22 @@ function CalendarPageContent() {
     : today;
   const [filters, setFilters] = useState(initialFilters);
   const [detail, setDetail] = useState<ScheduledPublication | null>(null);
+  const channelIds = Array.from(
+    new Set(
+      (workspace?.resources.posts ?? []).flatMap((publication) =>
+        publication.targets.map((target) => target.channelId)
+      )
+    )
+  );
+  const { data: channelLookup } = useLookupChannelsQuery(
+    {
+      workspaceId: workspace?.id ?? "",
+      limit: 30,
+      includeIds: channelIds.slice(0, 50),
+    },
+    { skip: !workspace }
+  );
+  const channels = mergeChannelLookup(channelLookup);
   const publications = useMemo(
     () =>
       (workspace?.resources.posts ?? []).filter(
@@ -114,7 +132,7 @@ function CalendarPageContent() {
       </div>
       <PostsViewSwitcher />
       <CalendarToolbar
-        channels={workspace?.resources.channels ?? []}
+        channels={channels}
         filters={filters}
         monthLabel={monthLabel}
         onChange={(change) =>
@@ -154,7 +172,7 @@ function CalendarPageContent() {
       />
       <PublicationDetailsPanel
         canManage={canManage}
-        channels={workspace?.resources.channels ?? []}
+        channels={channels}
         onClose={() => setDetail(null)}
         onEdit={(id) => navigate(ROUTES.editPost(id))}
         publication={detail}

@@ -1,181 +1,95 @@
 # Gerenciamento de canais sociais
 
-Este documento registra as decisões arquiteturais da feature de canais sociais e
-a divisão de responsabilidades entre o front-end atual e a futura integração com
-o back-end.
+## Status atual
 
-## Plataformas do MVP
+Canais são um domínio independente no back-end, exposto na seção `Channels` do
+Swagger. Eles pertencem a um workspace, mas não ficam no módulo de workspaces
+nem em `workspace.resources`. O PostgreSQL é a fonte persistente e o cache do
+RTK Query é a fonte de verdade no front-end.
 
-O Postmade oferece suporte às seguintes plataformas:
+As integrações externas ainda não estão ativas:
 
-- Facebook;
-- LinkedIn;
-- Instagram;
-- TikTok;
-- YouTube.
+| Plataforma | Estado atual   | Publicação real |
+| ---------- | -------------- | --------------- |
+| Facebook   | OAuth simulado | Não             |
+| Instagram  | OAuth simulado | Não             |
+| LinkedIn   | OAuth simulado | Não             |
+| TikTok     | OAuth simulado | Não             |
+| YouTube    | OAuth simulado | Não             |
 
-`SocialPlatform`, definido em `packages/types`, é o contrato compartilhado que
-representa essa lista. X/Twitter não faz parte do MVP e não deve ser introduzido
-em dados, componentes ou contratos da feature.
+O simulador não chama APIs externas, não cria tokens e não publica conteúdo.
+Ele existe somente em `development` e `test`; a API recusa iniciar em
+`staging` ou `production` com `CHANNEL_PROVIDER_MODE=mock`.
 
-## Fonte de verdade e isolamento
+O seed cria três canais persistidos para o workspace demonstrativo: Facebook,
+Instagram e LinkedIn. Esses registros são identificados como dados de
+desenvolvimento e não são migrados do antigo armazenamento local.
 
-Os canais pertencem a um workspace e são armazenados exclusivamente em
-`workspace.resources.channels`. Não existe um slice global de canais.
+## Modelo, estados e permissões
 
-Essa decisão garante que:
+Um canal armazena a plataforma, o identificador da conta no provider, nome,
+username, avatar e datas operacionais. Tokens e credenciais não fazem parte do
+modelo atual; eles serão introduzidos com armazenamento criptografado quando o
+primeiro provider real for implementado.
 
-- trocar o workspace ativo troca imediatamente os canais exibidos;
-- conexão e desconexão sempre informam o `workspaceId` de destino;
-- a persistência local existente para workspaces inclui os canais;
-- não há sincronização manual entre duas representações concorrentes.
+Estados disponíveis:
 
-`SocialChannel`, também definido em `packages/types`, contém somente os dados
-necessários para identificar a conta e seu estado de conexão. Novos campos devem
-ser adicionados apenas quando um contrato real com o back-end exigir essa
-informação.
+- `connected`: disponível para novas publicações;
+- `requires_reauthentication`: ocupa uma vaga, mas precisa ser reconectado;
+- `unavailable`: ocupa uma vaga, mas está temporariamente indisponível;
+- `disconnected`: não ocupa vaga e aparece somente ao resolver referências
+  históricas.
 
-## Permissões e limites
+Qualquer membro pode listar e consultar canais. Somente owners e admins podem
+conectar ou desconectar. A API recalcula a cota antes de iniciar e concluir a
+conexão: workspaces em trial possuem três vagas; os demais usam a quantidade
+configurada na assinatura.
 
-Owners e admins podem conectar e desconectar canais. Editors e viewers possuem
-acesso somente para leitura. A interface comunica e desabilita ações sem
-permissão, mas operações locais também validam o papel no reducer. O back-end
-deverá repetir essas validações; o estado ou os controles do navegador nunca são
-uma fronteira de segurança.
+A desconexão é lógica e idempotente. O registro permanece para que publicações
+antigas continuem exibindo a conta correta. Uma autorização futura para a mesma
+conta reativa o registro em vez de duplicá-lo.
 
-Os limites são calculados por `getWorkspaceChannelLimit`, em
-`features/workspaces/lib/workspace-limits.ts`:
+## Endpoints
 
-| Situação           |              Limite de canais |
-| ------------------ | ----------------------------: |
-| Avaliação gratuita |                             3 |
-| Assinatura ativa   | Quantidade contratada (3–500) |
+- `GET /workspaces/:workspaceId/channels`: listagem paginada com busca e filtro
+  por plataforma. A resposta inclui um resumo global para uso e contadores.
+- `GET /workspaces/:workspaceId/channels/lookup`: consulta leve para compositor,
+  posts e calendário. `includeIds` resolve também referências desconectadas.
+- `POST /workspaces/:workspaceId/channels/oauth/:platform/start`: valida papel,
+  cota e rate limit e cria um `state` no Redis com validade de dez minutos.
+- `GET /channels/oauth/mock/callback`: consome o `state` uma única vez, persiste
+  uma conta simulada e redireciona para `/channels`.
+- `DELETE /workspaces/:workspaceId/channels/:channelId`: desconecta o canal.
 
-Componentes não devem duplicar esses números. O limite pago vem de
-`workspace.subscriptionConfiguration.channels`. A quantidade utilizada considera
-apenas canais com `connected: true`.
+O callback usa `WEB_APP_URL` configurada no servidor e nunca aceita uma URL de
+retorno enviada pelo navegador. O endereço público da API vem de
+`API_PUBLIC_URL`.
 
-## Listagem e gerenciamento
+## Front-end e consumidores
 
-Os canais conectados são apresentados em uma tabela, em vez de cards individuais,
-para que a interface continue utilizável em workspaces com muitas contas. A
-tabela exibe plataforma, identificação da conta, status e ações disponíveis.
+A página `/channels` mantém busca, plataforma, página e tamanho nos search
+params. Paginação e filtros são processados no servidor. Erros da listagem são
+traduzidos pelo código da API e exibidos dentro da tabela com retry.
 
-A estrutura genérica fica em `shared/components/data-table.tsx`. A definição das
-colunas e o comportamento específico dos canais permanecem dentro da feature. Essa
-separação permite reutilizar a tabela sem levar regras de canais para a camada
-compartilhada.
+Mutations invalidam a tag `Channel`. Os demais módulos não copiam canais para
+Redux:
 
-A listagem oferece:
+- compositor usa lookup e aceita somente canais `connected`;
+- posts e calendário enviam IDs dos targets em `includeIds`;
+- dashboard usa o resumo da API;
+- assinatura usa o total remoto para calcular o mínimo ocupado.
 
-- busca local por nome de exibição ou username;
-- filtro pelas cinco redes sociais suportadas;
-- contador de resultados após a aplicação dos filtros;
-- seleção de 10, 25 ou 50 resultados por página;
-- navegação por páginas, incluindo primeira, última e páginas adjacentes;
-- retorno à primeira página quando a busca, o filtro ou a quantidade por página muda;
-- empty state específico quando nenhum canal corresponde aos filtros.
+## Evolução para providers reais
 
-Os filtros ficam fora da tabela e são implementados dentro da feature. A estrutura
-de paginação é compartilhada por meio de `shared/components/Pagination.tsx`. Busca
-e paginação são locais enquanto os dados também forem locais. Quando o back-end
-oferecer uma listagem paginada, busca, plataforma, página e tamanho da página
-deverão ser enviados como parâmetros da API.
+Cada provider real deve implementar a interface interna de autorização,
+callback, leitura da conta e revogação. A entrada deve ser gradual, sem alterar
+os contratos públicos do domínio.
 
-A desconexão exige confirmação e informa o nome da conta e sua plataforma. Somente
-owners e admins recebem uma ação habilitada; o reducer repete a autorização antes
-de alterar o workspace.
+Antes da liberação serão necessários credenciais próprias, HTTPS e redirect
+URIs estáveis, política de privacidade, termos, exclusão de dados e as revisões
+exigidas por cada plataforma. Nessa etapa também serão adicionados credenciais
+criptografadas, refresh de tokens, health checks, webhooks e publicação real.
 
-## Fluxo OAuth
-
-O contrato do front-end para iniciar uma conexão é:
-
-```ts
-type GetOAuthUrlInput = {
-  workspaceId: string;
-  platform: SocialPlatform;
-};
-
-type GetOAuthUrlOutput = {
-  url: string;
-};
-```
-
-O fluxo esperado é:
-
-1. O usuário seleciona uma plataforma.
-2. O front-end solicita a URL OAuth para o workspace ativo.
-3. O navegador é redirecionado para a URL retornada.
-4. Uma falha na solicitação produz feedback traduzido e não altera os canais.
-
-Enquanto não há back-end, tentativas de conexão apresentam o erro normal da
-integração indisponível. No modo de desenvolvimento, uma conta temporária é
-adicionada ao `workspace.resources.channels` do workspace de avaliação para
-revisão visual. Dessa forma, `/channels`, `/subscription` e as validações de
-limite usam a mesma fonte de verdade. O mock não é criado no build de produção.
-
-Tokens de acesso, refresh tokens, client secrets e demais credenciais OAuth nunca
-devem ser incluídos no bundle, no Redux ou no `localStorage` do front-end.
-
-## Estado e saúde da conexão
-
-O contrato atual utiliza apenas `connected: boolean`. Ele é suficiente para a
-demonstração da interface, mas não representa credenciais expiradas, autorização
-revogada ou indisponibilidade temporária de uma API externa.
-
-Quando o back-end implementar a verificação das conexões, o booleano deverá ser
-substituído por um único estado explícito, evitando duas propriedades que possam
-se contradizer. Uma direção inicial possível é:
-
-```ts
-type ChannelConnectionStatus =
-  "connected" | "requires_reauthentication" | "unavailable";
-
-interface SocialChannel {
-  id: string;
-  platform: SocialPlatform;
-  displayName: string;
-  username: string;
-  connectionStatus: ChannelConnectionStatus;
-  lastCheckedAt: string | null;
-}
-```
-
-Essa estrutura é uma direção de evolução, não um contrato implementado. Os nomes,
-transições e motivos de falha devem ser confirmados a partir das respostas e dos
-processos reais do back-end.
-
-A interface poderá representar os estados da seguinte forma:
-
-| Estado                      | Significado                                   | Tratamento esperado               |
-| --------------------------- | --------------------------------------------- | --------------------------------- |
-| `connected`                 | Credenciais válidas e conta disponível        | Status positivo.                  |
-| `requires_reauthentication` | Credenciais expiradas ou autorização revogada | Aviso e ação para reconectar.     |
-| `unavailable`               | Não foi possível validar ou usar a conexão    | Erro temporário e nova tentativa. |
-
-Problemas individuais de autenticação não devem ser confundidos com a
-indisponibilidade global de uma plataforma. Uma falha geral do Instagram ou do
-YouTube, por exemplo, deve ser representada separadamente, sem alterar em massa o
-estado persistido de todas as contas. `lastCheckedAt` pode ser exibido como texto
-secundário ou tooltip, sem expor tokens ou detalhes sensíveis do provedor.
-
-O back-end será a fonte de verdade para a saúde da conexão. Ele deverá atualizar o
-status durante sincronizações, tentativas de publicação ou verificações periódicas,
-e retornar ao front-end somente informações seguras e acionáveis.
-
-## Continuidade no back-end
-
-A integração futura deverá:
-
-1. Validar associação ao workspace, papel do usuário e limite antes de iniciar o OAuth.
-2. Gerar `state` OAuth de uso único, associado ao workspace, usuário e plataforma.
-3. Processar o callback e trocar o código por credenciais exclusivamente no servidor.
-4. Armazenar credenciais criptografadas e retornar ao front-end somente metadados seguros da conta.
-5. Sincronizar `workspace.resources.channels` por API após conexão, reconexão ou revogação.
-6. Revogar credenciais e interromper publicações futuras ao desconectar uma conta.
-7. Tratar callbacks e desconexões de forma idempotente e auditável.
-8. Verificar periodicamente a validade das conexões e registrar a última checagem.
-9. Diferenciar falhas de uma conta de indisponibilidades gerais da plataforma.
-
-O callback OAuth, a persistência de credenciais e o endpoint servidor de
-desconexão não fazem parte da implementação atual do front-end.
+Até isso ocorrer, nenhuma tela deve afirmar que uma ação foi realizada em uma
+rede social; o ambiente de desenvolvimento informa explicitamente que a conexão
+é simulada.

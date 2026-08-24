@@ -3,6 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 
 import { AccountModule } from "./account/account.module.js";
 import { AuthModule } from "./auth/auth.module.js";
+import { ChannelsModule } from "./channels/channels.module.js";
 import { validateConfig } from "./config.js";
 import { HealthModule } from "./health/health.module.js";
 import { InfrastructureModule } from "./infrastructure/infrastructure.module.js";
@@ -15,6 +16,7 @@ import { WorkspacesModule } from "./workspaces/workspaces.module.js";
     InfrastructureModule,
     AuthModule,
     AccountModule,
+    ChannelsModule,
     WorkspacesModule,
     TagsModule,
     HealthModule,

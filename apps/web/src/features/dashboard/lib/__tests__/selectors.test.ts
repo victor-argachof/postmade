@@ -1,4 +1,4 @@
-import type { ScheduledPublication, SocialChannel } from "@postmade/types";
+import type { ScheduledPublication } from "@postmade/types";
 
 import type { Workspace } from "@/features/workspaces/types";
 
@@ -25,17 +25,8 @@ const post = (
   updatedAt: "2026-08-01T00:00:00.000Z",
 });
 
-const channel = (id: string, connected: boolean): SocialChannel => ({
-  id,
-  platform: "instagram",
-  displayName: id,
-  username: id,
-  connected,
-});
-
 const workspace = {
   resources: {
-    channels: [channel("connected", true), channel("disconnected", false)],
     posts: [
       post("draft", "draft", null),
       post("scheduled-2", "scheduled", "2026-08-16T12:00:00.000Z"),
@@ -47,7 +38,7 @@ const workspace = {
 
 describe("dashboard selectors", () => {
   it("derives the operational summary from the workspace", () => {
-    expect(getDashboardSummary(workspace)).toEqual({
+    expect(getDashboardSummary(workspace, 1)).toEqual({
       connectedChannels: 1,
       drafts: 1,
       scheduled: 2,

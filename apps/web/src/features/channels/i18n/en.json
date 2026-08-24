@@ -1,6 +1,8 @@
 {
   "pageTitle": "Channels",
   "pageDescription": "Connect your social accounts to publish and schedule content through Postmade.",
+  "loading": "Loading channels…",
+  "mockNotice": "Development environment: connections are simulated and do not perform actions on social networks.",
   "usage": {
     "label": "Usage",
     "limited": "{{count}} of {{limit}} channels connected",
@@ -70,12 +72,18 @@
     "title": "No connected channels",
     "description": "Connect your first account using one of the platforms above to start publishing."
   },
-  "status": { "connected": "Connected" },
+  "status": {
+    "connected": "Connected",
+    "requires_reauthentication": "Reauthentication required",
+    "unavailable": "Unavailable",
+    "disconnected": "Disconnected"
+  },
   "actions": {
     "connect": "Connect account",
     "connecting": "Connecting…",
     "disconnectNamed": "Disconnect {{name}}",
     "confirmDisconnect": "Disconnect channel",
+    "disconnecting": "Disconnecting…",
     "cancel": "Cancel",
     "close": "Close"
   },
@@ -92,6 +100,7 @@
     "description": "You will no longer be able to publish or schedule content using the {{name}} account on {{platform}}."
   },
   "feedback": {
+    "connectSuccess": "Simulated channel connected successfully.",
     "connectError": "We couldn't start the {{platform}} connection. Try again.",
     "disconnectSuccess": "{{name}} was disconnected."
   }

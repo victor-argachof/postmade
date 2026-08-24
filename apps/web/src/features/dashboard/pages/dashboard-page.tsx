@@ -2,6 +2,11 @@ import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
+import {
+  useGetChannelsQuery,
+  useLookupChannelsQuery,
+} from "@/features/channels/services/channels-api";
 import { setPublicationFilters } from "@/features/posts/store/posts-slice";
 import { ROUTES } from "@/routes/route-paths";
 import { PageHeader } from "@/shared/components/page-header";
@@ -26,9 +31,28 @@ export function DashboardPage() {
     (member) => member.id === user?.id
   )?.role;
   const canManage = Boolean(role && role !== "viewer");
-  const summary = getDashboardSummary(workspace);
   const upcoming = getUpcomingPublications(workspace);
-  const channels = workspace?.resources.channels ?? [];
+  const targetIds = Array.from(
+    new Set(
+      upcoming.flatMap((publication) =>
+        publication.targets.map((target) => target.channelId)
+      )
+    )
+  );
+  const { data: channelPage } = useGetChannelsQuery(
+    { workspaceId: workspace?.id ?? "", page: 1, pageSize: 10 },
+    { skip: !workspace }
+  );
+  const { data: channelLookup } = useLookupChannelsQuery(
+    {
+      workspaceId: workspace?.id ?? "",
+      limit: 20,
+      includeIds: targetIds,
+    },
+    { skip: !workspace }
+  );
+  const channels = mergeChannelLookup(channelLookup);
+  const summary = getDashboardSummary(workspace, channelPage?.summary.total);
   const firstName = user?.name.trim().split(/\s+/)[0];
 
   const selectMetric = (
