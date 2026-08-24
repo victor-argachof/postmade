@@ -113,7 +113,7 @@ export function TimezoneSettings({
             onValueChange={setTimezone}
           >
             <SelectTrigger
-              aria-describedby="timezone-help timezone-current"
+              aria-describedby="timezone-current"
               aria-labelledby="workspace-timezone-label"
               className="mt-2 h-11 w-full"
             >
@@ -127,9 +127,6 @@ export function TimezoneSettings({
               ))}
             </SelectContent>
           </Select>
-          <p className="mt-2 text-xs text-muted-foreground" id="timezone-help">
-            {t("timezone.help")}
-          </p>
           {valid && (
             <p className="mt-2 text-sm font-semibold" id="timezone-current">
               {t("timezone.currentTime", { time: currentTime(timezone) })}
