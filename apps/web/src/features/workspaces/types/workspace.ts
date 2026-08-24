@@ -31,6 +31,7 @@ export interface Workspace {
   id: string;
   name: string;
   ownerId: string;
+  role: WorkspaceRole;
   subscriptionConfiguration: WorkspaceSubscriptionConfiguration;
   subscriptionStatus: SubscriptionStatus;
   trialStartedAt: string;

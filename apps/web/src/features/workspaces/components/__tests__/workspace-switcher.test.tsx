@@ -44,6 +44,10 @@ describe("WorkspaceSwitcher", () => {
       </Provider>
     );
 
+    expect(screen.getAllByText(/proprietário|owner/i).length).toBeGreaterThan(
+      0
+    );
+
     await user.click(
       screen.getByLabelText(/alternar workspace|switch workspace/i)
     );

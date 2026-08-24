@@ -33,6 +33,7 @@ function createOwnedWorkspace(payload: {
     id: payload.id,
     name: payload.name.trim(),
     ownerId: payload.userId,
+    role: "owner",
     subscriptionConfiguration: { ...SUBSCRIPTION_INCLUDED_QUANTITIES },
     subscriptionStatus: "trialing",
     trialStartedAt: payload.createdAt,
@@ -80,6 +81,7 @@ const workspacesSlice = createSlice({
     ) => {
       state.items = action.payload.map(({ user, role, ...workspace }) => ({
         ...workspace,
+        role,
         members: [{ ...user, role, joinedAt: workspace.createdAt }],
         invitations: [],
         resources: {

@@ -128,6 +128,7 @@ function renderPage(role: "owner" | "admin" | "editor" | "viewer" = "owner") {
             id: "workspace-1",
             name: "Postmade",
             ownerId: owner.id,
+            role,
             subscriptionConfiguration: { channels: 15, members: 1 },
             subscriptionStatus: "active" as const,
             trialStartedAt: now,

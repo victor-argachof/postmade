@@ -85,7 +85,7 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
             className="size-4 shrink-0 text-primary"
             aria-hidden="true"
           />
-          <span className="truncate text-sm font-bold">
+          <span className="min-w-0 flex-1 truncate text-sm font-bold">
             {activeWorkspace?.name ?? t("selectWorkspace")}
           </span>
           <ChevronsUpDown
@@ -113,29 +113,21 @@ export function WorkspaceSwitcher({ className }: { className?: string }) {
                     {workspace.name}
                   </span>
                   <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                    {workspace.subscriptionStatus === "trialing" ? (
-                      <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] leading-none font-bold text-secondary-foreground">
-                        {t("freeTrialBadge")}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">
-                        {t("subscriptionQuantities", {
-                          channels: t(
-                            `channelCount.${workspace.subscriptionConfiguration.channels === 1 ? "singular" : "plural"}`,
-                            {
-                              count:
-                                workspace.subscriptionConfiguration.channels,
-                            }
-                          ),
-                          members: t(
-                            `memberCount.${workspace.subscriptionConfiguration.members === 1 ? "singular" : "plural"}`,
-                            {
-                              count:
-                                workspace.subscriptionConfiguration.members,
-                            }
-                          ),
-                        })}
-                      </span>
+                    <span className="text-xs text-muted-foreground">
+                      {t(`roles.${workspace.role}`)}
+                    </span>
+                    {workspace.subscriptionStatus === "trialing" && (
+                      <>
+                        <span
+                          aria-hidden="true"
+                          className="text-muted-foreground"
+                        >
+                          ·
+                        </span>
+                        <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] leading-none font-bold text-secondary-foreground">
+                          {t("freeTrialBadge")}
+                        </span>
+                      </>
                     )}
                   </span>
                 </span>

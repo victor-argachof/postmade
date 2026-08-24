@@ -5,15 +5,6 @@
   "switcherLabel": "Switch workspace",
   "selectWorkspace": "Select a workspace",
   "yourWorkspaces": "Your workspaces",
-  "subscriptionQuantities": "{{channels}} · {{members}}",
-  "channelCount": {
-    "singular": "{{count}} channel",
-    "plural": "{{count}} channels"
-  },
-  "memberCount": {
-    "singular": "{{count}} member",
-    "plural": "{{count}} members"
-  },
   "freeTrialBadge": "Free trial",
   "switchingTitle": "Switching workspace",
   "switchingWorkspace": "Switching to the {{name}} workspace",
