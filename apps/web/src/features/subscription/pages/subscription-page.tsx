@@ -1,3 +1,4 @@
+import { TriangleAlert } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -6,8 +7,17 @@ import { toast } from "sonner";
 import { useGetChannelsQuery } from "@/features/channels/services/channels-api";
 import { getMinimumSubscriptionConfiguration } from "@/features/workspaces/lib/subscription-pricing";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
+import {
+  useGetWorkspaceInvitationsQuery,
+  useGetWorkspaceMembersQuery,
+} from "@/features/workspaces/services/workspaces-api";
 import type { WorkspaceSubscriptionConfiguration } from "@/features/workspaces/types";
 import { PageHeader } from "@/shared/components/page-header";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/shared/components/ui/alert";
 import { useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { BillingDetailsCard } from "../components/billing-details-card";
@@ -25,6 +35,7 @@ const pageLoadedAt = Date.now();
 
 export function SubscriptionPage() {
   const { t } = useTranslation("subscription");
+  const { t: tCommon } = useTranslation("common");
   const location = useLocation();
   const user = useAppSelector((state) => state.auth.user);
   const workspace = useAppSelector((state) =>
@@ -74,6 +85,14 @@ export function SubscriptionPage() {
   const canManageBilling = Boolean(
     workspace && user && workspace.ownerId === user.id
   );
+  const { data: workspaceMembers } = useGetWorkspaceMembersQuery(
+    workspace?.id ?? "",
+    { skip: !workspace }
+  );
+  const { data: workspaceInvitations } = useGetWorkspaceInvitationsQuery(
+    workspace?.id ?? "",
+    { skip: !workspace || !canManageBilling }
+  );
   const openBillingPortal = async () => {
     if (!workspace || !canManageBilling) return;
     const portalWindow = window.open("about:blank", "_blank");
@@ -122,8 +141,8 @@ export function SubscriptionPage() {
 
   const connectedChannels = channelPage?.summary.total ?? 0;
   const occupiedMembers = workspace
-    ? workspace.members.length +
-      workspace.invitations.filter(
+    ? (workspaceMembers?.length ?? workspace.members.length) +
+      (workspaceInvitations ?? workspace.invitations).filter(
         (invitation) => invitation.status === "pending"
       ).length
     : 1;
@@ -180,6 +199,15 @@ export function SubscriptionPage() {
         title={t("pageTitle")}
         description={t("pageDescription", { workspace: workspace?.name ?? "" })}
       />
+      {!canManageBilling && workspace && (
+        <Alert className="mt-6" variant="warning">
+          <TriangleAlert aria-hidden="true" />
+          <div>
+            <AlertTitle>{tCommon("permissionRestrictedTitle")}</AlertTitle>
+            <AlertDescription>{t("ownerOnly")}</AlertDescription>
+          </div>
+        </Alert>
+      )}
       {workspace && workspace.subscriptionStatus !== "trialing" && (
         <BillingDetailsCard
           configuration={workspace.subscriptionConfiguration}
@@ -208,11 +236,6 @@ export function SubscriptionPage() {
         membersUsed={occupiedMembers}
         onSubscribe={scrollToConfigurator}
       />
-      {!canManageBilling && workspace && (
-        <p className="mt-8 rounded-2xl border border-border bg-muted p-4 text-sm text-muted-foreground">
-          {t("ownerOnly")}
-        </p>
-      )}
       <SubscriptionConfigurator
         configuration={configuredQuantities}
         minimumConfiguration={minimumConfiguration}

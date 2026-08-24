@@ -57,6 +57,7 @@ export const ModelName = {
   EmailChallenge: 'EmailChallenge',
   Session: 'Session',
   Workspace: 'Workspace',
+  WorkspaceInvitation: 'WorkspaceInvitation',
   Channel: 'Channel',
   TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
@@ -121,6 +122,7 @@ export const EmailChallengeScalarFieldEnum = {
   pendingName: 'pendingName',
   pendingPassword: 'pendingPassword',
   pendingTimezone: 'pendingTimezone',
+  pendingInvitationId: 'pendingInvitationId',
   userId: 'userId',
   createdAt: 'createdAt'
 } as const
@@ -155,6 +157,24 @@ export const WorkspaceScalarFieldEnum = {
 } as const
 
 export type WorkspaceScalarFieldEnum = (typeof WorkspaceScalarFieldEnum)[keyof typeof WorkspaceScalarFieldEnum]
+
+
+export const WorkspaceInvitationScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  email: 'email',
+  role: 'role',
+  tokenHash: 'tokenHash',
+  status: 'status',
+  invitedBy: 'invitedBy',
+  expiresAt: 'expiresAt',
+  acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkspaceInvitationScalarFieldEnum = (typeof WorkspaceInvitationScalarFieldEnum)[keyof typeof WorkspaceInvitationScalarFieldEnum]
 
 
 export const ChannelScalarFieldEnum = {

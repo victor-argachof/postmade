@@ -1,10 +1,8 @@
 import reducer, {
-  acceptInvitation,
   clearWorkspaceSession,
   createActiveWorkspaceMock,
   createInitialWorkspace,
   createWorkspace,
-  inviteMember,
   renameWorkspace,
   selectWorkspace,
 } from "../workspaces-slice";
@@ -93,66 +91,6 @@ describe("workspacesSlice", () => {
     expect(state.activeWorkspaceId).toBe(firstId);
   });
 
-  it("blocks invitations during the trial and accepts them after a subscription with more members activates", () => {
-    let state = reducer(undefined, createInitialWorkspace(owner));
-    const workspaceId = state.activeWorkspaceId!;
-    const invitationInput = {
-      workspaceId,
-      actorId: owner.userId,
-      email: "grace@postmade.app",
-      role: "editor" as const,
-    };
-
-    state = reducer(state, inviteMember(invitationInput));
-    expect(state.items[0]!.invitations).toHaveLength(0);
-
-    state = {
-      ...state,
-      items: state.items.map((workspace) =>
-        workspace.id === workspaceId
-          ? {
-              ...workspace,
-              subscriptionConfiguration: { channels: 3, members: 5 },
-              subscriptionStatus: "active" as const,
-            }
-          : workspace
-      ),
-    };
-    state = reducer(state, inviteMember(invitationInput));
-    const invitation = state.items[0]!.invitations[0]!;
-    expect(invitation.status).toBe("pending");
-
-    state = reducer(
-      state,
-      acceptInvitation({
-        token: invitation.token,
-        userId: "user:grace@postmade.app",
-        userName: "Grace Hopper",
-        userEmail: "different@postmade.app",
-        acceptedAt: new Date().toISOString(),
-      })
-    );
-    expect(state.items[0]!.members).toHaveLength(1);
-
-    state = reducer(
-      state,
-      acceptInvitation({
-        token: invitation.token,
-        userId: "user:grace@postmade.app",
-        userName: "Grace Hopper",
-        userEmail: "grace@postmade.app",
-        acceptedAt: new Date().toISOString(),
-      })
-    );
-    expect(state.items[0]!.members[1]).toEqual(
-      expect.objectContaining({
-        email: "grace@postmade.app",
-        role: "editor",
-      })
-    );
-    expect(state.activeWorkspaceId).toBe(workspaceId);
-  });
-
   it("limits renaming to workspace managers", () => {
     let state = reducer(undefined, createInitialWorkspace(owner));
     const workspaceId = state.activeWorkspaceId!;
@@ -170,43 +108,5 @@ describe("workspacesSlice", () => {
       })
     );
     expect(state.items[0]!.name).toBe("Minha marca");
-  });
-
-  it("counts pending invitations against the configured member allowance", () => {
-    let state = reducer(undefined, createInitialWorkspace(owner));
-    const workspaceId = state.activeWorkspaceId!;
-    state = {
-      ...state,
-      items: state.items.map((workspace) => ({
-        ...workspace,
-        subscriptionStatus: "active" as const,
-        subscriptionConfiguration: { channels: 3, members: 2 },
-      })),
-    };
-
-    state = reducer(
-      state,
-      inviteMember({
-        workspaceId,
-        actorId: owner.userId,
-        email: "first@postmade.app",
-        role: "editor",
-      })
-    );
-    state = reducer(
-      state,
-      inviteMember({
-        workspaceId,
-        actorId: owner.userId,
-        email: "second@postmade.app",
-        role: "viewer",
-      })
-    );
-
-    expect(
-      state.items[0]!.invitations.filter(
-        (invitation) => invitation.status === "pending"
-      )
-    ).toHaveLength(1);
   });
 });

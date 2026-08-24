@@ -67,7 +67,8 @@ export class AuthController {
       body.name,
       body.email,
       body.password,
-      body.timezone
+      body.timezone,
+      body.invitationToken
     );
   }
   @Post("auth/register/verify")

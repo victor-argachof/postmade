@@ -26,6 +26,12 @@ enum WorkspaceRole {
   viewer
 }
 
+enum InvitationStatus {
+  pending
+  accepted
+  revoked
+}
+
 enum SubscriptionStatus {
   trialing
   active
@@ -61,6 +67,7 @@ model User {
   challenges       EmailChallenge[]
   createdTagGroups TagGroup[]        @relation("TagGroupCreator")
   createdChannels  Channel[]         @relation("ChannelCreator")
+  sentInvitations  WorkspaceInvitation[] @relation("InvitationSender")
   ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
 }
 
@@ -95,6 +102,7 @@ model EmailChallenge {
   pendingName     String?
   pendingPassword String?
   pendingTimezone String?
+  pendingInvitationId String?
   userId          String?
   user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt       DateTime         @default(now())
@@ -130,8 +138,29 @@ model Workspace {
   members              WorkspaceMember[]
   tagGroups            TagGroup[]
   channels             Channel[]
+  invitations          WorkspaceInvitation[]
 
   @@index([ownerId])
+}
+
+model WorkspaceInvitation {
+  id          String           @id @default(uuid())
+  workspaceId String
+  email       String
+  role        WorkspaceRole
+  tokenHash   String           @unique
+  status      InvitationStatus @default(pending)
+  invitedBy   String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  workspace   Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  sender      User             @relation("InvitationSender", fields: [invitedBy], references: [id], onDelete: Restrict)
+
+  @@index([workspaceId, status, expiresAt])
+  @@index([workspaceId, email, status])
 }
 
 model Channel {

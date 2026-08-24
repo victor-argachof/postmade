@@ -22,4 +22,25 @@ export class MailService {
       text: `Código para ${purpose}: ${code}. Ele expira em 10 minutos.`,
     });
   }
+  async sendWorkspaceInvitation(input: {
+    email: string;
+    workspaceName: string;
+    inviterName: string;
+    role: string;
+    expiresAt: Date;
+    url: string;
+  }) {
+    await this.transport.sendMail({
+      from: this.from,
+      to: input.email,
+      subject: `Convite para ${input.workspaceName} no Postmade`,
+      text: [
+        `${input.inviterName} convidou você para participar de ${input.workspaceName} como ${input.role}.`,
+        `Aceite até ${input.expiresAt.toISOString()}: ${input.url}`,
+        "---",
+        `${input.inviterName} invited you to join ${input.workspaceName} as ${input.role}.`,
+        `Accept by ${input.expiresAt.toISOString()}: ${input.url}`,
+      ].join("\n"),
+    });
+  }
 }

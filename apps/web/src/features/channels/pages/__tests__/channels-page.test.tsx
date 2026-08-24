@@ -173,7 +173,9 @@ describe("ChannelsPage", () => {
 
   it("keeps editors read-only", () => {
     renderPage("editor");
-    expect(screen.getByText(/somente owners e admins/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/somente proprietários e administradores/i)
+    ).toBeInTheDocument();
     expect(
       screen.getAllByRole("button", { name: "Conectar conta" })[0]
     ).toBeDisabled();

@@ -12,6 +12,7 @@ import { apiError } from "../common/api-error.js";
 import type { User } from "../generated/prisma/client.js";
 import { PrismaService } from "../infrastructure/prisma.service.js";
 import { RedisService } from "../infrastructure/redis.service.js";
+import { hashInvitationToken } from "../workspaces/invitation-token.js";
 import { EmailChallengeService } from "./email-challenge.service.js";
 
 const SESSION_MS = 30 * 24 * 60 * 60_000;
@@ -42,7 +43,8 @@ export class AuthService {
     name: string,
     rawEmail: string,
     password: string,
-    timezone = "UTC"
+    timezone = "UTC",
+    invitationToken?: string
   ) {
     const email = this.normalizeEmail(rawEmail);
     await this.enforce("register", email);
@@ -55,12 +57,43 @@ export class AuthService {
     } catch {
       timezone = "UTC";
     }
+    let pendingInvitationId: string | undefined;
+    if (invitationToken) {
+      const invitation = await this.prisma.workspaceInvitation.findUnique({
+        where: { tokenHash: hashInvitationToken(invitationToken) },
+      });
+      if (!invitation)
+        throw new BadRequestException(
+          apiError("INVITATION_INVALID", "Invitation is invalid")
+        );
+      if (invitation.status === "accepted")
+        throw new BadRequestException(
+          apiError("INVITATION_ALREADY_ACCEPTED", "Invitation already accepted")
+        );
+      if (invitation.status === "revoked")
+        throw new BadRequestException(
+          apiError("INVITATION_REVOKED", "Invitation revoked")
+        );
+      if (invitation.expiresAt <= new Date())
+        throw new BadRequestException(
+          apiError("INVITATION_EXPIRED", "Invitation expired")
+        );
+      if (invitation.email !== email)
+        throw new BadRequestException(
+          apiError(
+            "INVITATION_EMAIL_MISMATCH",
+            "Invitation email does not match"
+          )
+        );
+      pendingInvitationId = invitation.id;
+    }
     return this.challenges.issue({
       purpose: "register",
       email,
       pendingName: name.trim(),
       pendingPassword: await argon2.hash(password),
       pendingTimezone: timezone,
+      pendingInvitationId,
     });
   }
   async startLogin(rawEmail: string, password: string) {
@@ -127,22 +160,24 @@ export class AuthService {
           passwordHash: challenge.pendingPassword!,
         },
       });
-      const workspace = await tx.workspace.create({
-        data: {
-          name: `Workspace de ${created.name}`,
-          ownerId: created.id,
-          timezone: challenge.pendingTimezone ?? "UTC",
-          trialStartedAt: now,
-          trialEndsAt,
-        },
-      });
-      await tx.workspaceMember.create({
-        data: {
-          workspaceId: workspace.id,
-          userId: created.id,
-          role: "owner",
-        },
-      });
+      if (!challenge.pendingInvitationId) {
+        const workspace = await tx.workspace.create({
+          data: {
+            name: `Workspace de ${created.name}`,
+            ownerId: created.id,
+            timezone: challenge.pendingTimezone ?? "UTC",
+            trialStartedAt: now,
+            trialEndsAt,
+          },
+        });
+        await tx.workspaceMember.create({
+          data: {
+            workspaceId: workspace.id,
+            userId: created.id,
+            role: "owner",
+          },
+        });
+      }
       await tx.emailChallenge.update({
         where: { id },
         data: { consumedAt: now },

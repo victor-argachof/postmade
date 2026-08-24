@@ -10,6 +10,14 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Channel", "Post", "Schedule", "TagGroup"],
+  tagTypes: [
+    "Channel",
+    "Post",
+    "Schedule",
+    "TagGroup",
+    "Workspace",
+    "WorkspaceMember",
+    "WorkspaceInvitation",
+  ],
   endpoints: () => ({}),
 });

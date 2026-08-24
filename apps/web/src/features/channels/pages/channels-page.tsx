@@ -1,5 +1,5 @@
 import type { SocialChannel, SocialPlatform } from "@postmade/types";
-import { LockKeyhole, TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -45,6 +45,7 @@ export function ChannelsPage() {
 
 function ChannelsPageContent() {
   const { t } = useTranslation("channels");
+  const { t: tCommon } = useTranslation("common");
   const { t: tApiError } = useTranslation("apiErrors");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -179,10 +180,8 @@ function ChannelsPageContent() {
   return (
     <section className="mx-auto max-w-6xl">
       <PageHeader title={t("pageTitle")} description={t("pageDescription")} />
-      <ChannelUsage connected={connectedCount} limit={limit} />
-
       {import.meta.env.DEV && (
-        <Alert className="mt-4" variant="destructive">
+        <Alert className="mt-6" variant="destructive">
           <TriangleAlert aria-hidden="true" />
           <div>
             <AlertTitle>{t("mockNotice.title")}</AlertTitle>
@@ -191,8 +190,18 @@ function ChannelsPageContent() {
         </Alert>
       )}
 
+      {!canManage && workspace && (
+        <Alert className="mt-4" variant="warning">
+          <TriangleAlert aria-hidden="true" />
+          <div>
+            <AlertTitle>{tCommon("permissionRestrictedTitle")}</AlertTitle>
+            <AlertDescription>{t("permissions.readOnly")}</AlertDescription>
+          </div>
+        </Alert>
+      )}
+
       {limitReached && (
-        <Alert className="mt-6 pr-4 sm:pr-40" variant="warning">
+        <Alert className="mt-4 pr-4 sm:pr-40" variant="warning">
           <TriangleAlert aria-hidden="true" />
           <div>
             <AlertTitle>{t("limit.title")}</AlertTitle>
@@ -209,14 +218,7 @@ function ChannelsPageContent() {
         </Alert>
       )}
 
-      {!canManage && workspace && (
-        <Alert className="mt-6 bg-muted">
-          <LockKeyhole aria-hidden="true" />
-          <AlertDescription className="text-muted-foreground">
-            {t("permissions.readOnly")}
-          </AlertDescription>
-        </Alert>
-      )}
+      <ChannelUsage connected={connectedCount} limit={limit} />
 
       <PlatformGrid
         counts={counts}

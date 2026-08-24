@@ -46,6 +46,7 @@ export type EmailChallengeMinAggregateOutputType = {
   pendingName: string | null
   pendingPassword: string | null
   pendingTimezone: string | null
+  pendingInvitationId: string | null
   userId: string | null
   createdAt: Date | null
 }
@@ -62,6 +63,7 @@ export type EmailChallengeMaxAggregateOutputType = {
   pendingName: string | null
   pendingPassword: string | null
   pendingTimezone: string | null
+  pendingInvitationId: string | null
   userId: string | null
   createdAt: Date | null
 }
@@ -78,6 +80,7 @@ export type EmailChallengeCountAggregateOutputType = {
   pendingName: number
   pendingPassword: number
   pendingTimezone: number
+  pendingInvitationId: number
   userId: number
   createdAt: number
   _all: number
@@ -104,6 +107,7 @@ export type EmailChallengeMinAggregateInputType = {
   pendingName?: true
   pendingPassword?: true
   pendingTimezone?: true
+  pendingInvitationId?: true
   userId?: true
   createdAt?: true
 }
@@ -120,6 +124,7 @@ export type EmailChallengeMaxAggregateInputType = {
   pendingName?: true
   pendingPassword?: true
   pendingTimezone?: true
+  pendingInvitationId?: true
   userId?: true
   createdAt?: true
 }
@@ -136,6 +141,7 @@ export type EmailChallengeCountAggregateInputType = {
   pendingName?: true
   pendingPassword?: true
   pendingTimezone?: true
+  pendingInvitationId?: true
   userId?: true
   createdAt?: true
   _all?: true
@@ -239,6 +245,7 @@ export type EmailChallengeGroupByOutputType = {
   pendingName: string | null
   pendingPassword: string | null
   pendingTimezone: string | null
+  pendingInvitationId: string | null
   userId: string | null
   createdAt: Date
   _count: EmailChallengeCountAggregateOutputType | null
@@ -278,6 +285,7 @@ export type EmailChallengeWhereInput = {
   pendingName?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingPassword?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingTimezone?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
+  pendingInvitationId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   userId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmailChallenge"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -295,6 +303,7 @@ export type EmailChallengeOrderByWithRelationInput = {
   pendingName?: Prisma.SortOrderInput | Prisma.SortOrder
   pendingPassword?: Prisma.SortOrderInput | Prisma.SortOrder
   pendingTimezone?: Prisma.SortOrderInput | Prisma.SortOrder
+  pendingInvitationId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -315,6 +324,7 @@ export type EmailChallengeWhereUniqueInput = Prisma.AtLeast<{
   pendingName?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingPassword?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingTimezone?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
+  pendingInvitationId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   userId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmailChallenge"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -332,6 +342,7 @@ export type EmailChallengeOrderByWithAggregationInput = {
   pendingName?: Prisma.SortOrderInput | Prisma.SortOrder
   pendingPassword?: Prisma.SortOrderInput | Prisma.SortOrder
   pendingTimezone?: Prisma.SortOrderInput | Prisma.SortOrder
+  pendingInvitationId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.EmailChallengeCountOrderByAggregateInput
@@ -356,6 +367,7 @@ export type EmailChallengeScalarWhereWithAggregatesInput = {
   pendingName?: Prisma.StringNullableWithAggregatesFilter<"EmailChallenge"> | string | null
   pendingPassword?: Prisma.StringNullableWithAggregatesFilter<"EmailChallenge"> | string | null
   pendingTimezone?: Prisma.StringNullableWithAggregatesFilter<"EmailChallenge"> | string | null
+  pendingInvitationId?: Prisma.StringNullableWithAggregatesFilter<"EmailChallenge"> | string | null
   userId?: Prisma.StringNullableWithAggregatesFilter<"EmailChallenge"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmailChallenge"> | Date | string
 }
@@ -372,6 +384,7 @@ export type EmailChallengeCreateInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   createdAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutChallengesInput
 }
@@ -388,6 +401,7 @@ export type EmailChallengeUncheckedCreateInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   userId?: string | null
   createdAt?: Date | string
 }
@@ -404,6 +418,7 @@ export type EmailChallengeUpdateInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutChallengesNestedInput
 }
@@ -420,6 +435,7 @@ export type EmailChallengeUncheckedUpdateInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -436,6 +452,7 @@ export type EmailChallengeCreateManyInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   userId?: string | null
   createdAt?: Date | string
 }
@@ -452,6 +469,7 @@ export type EmailChallengeUpdateManyMutationInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -467,6 +485,7 @@ export type EmailChallengeUncheckedUpdateManyInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -493,6 +512,7 @@ export type EmailChallengeCountOrderByAggregateInput = {
   pendingName?: Prisma.SortOrder
   pendingPassword?: Prisma.SortOrder
   pendingTimezone?: Prisma.SortOrder
+  pendingInvitationId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -513,6 +533,7 @@ export type EmailChallengeMaxOrderByAggregateInput = {
   pendingName?: Prisma.SortOrder
   pendingPassword?: Prisma.SortOrder
   pendingTimezone?: Prisma.SortOrder
+  pendingInvitationId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -529,6 +550,7 @@ export type EmailChallengeMinOrderByAggregateInput = {
   pendingName?: Prisma.SortOrder
   pendingPassword?: Prisma.SortOrder
   pendingTimezone?: Prisma.SortOrder
+  pendingInvitationId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -611,6 +633,7 @@ export type EmailChallengeCreateWithoutUserInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   createdAt?: Date | string
 }
 
@@ -626,6 +649,7 @@ export type EmailChallengeUncheckedCreateWithoutUserInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   createdAt?: Date | string
 }
 
@@ -670,6 +694,7 @@ export type EmailChallengeScalarWhereInput = {
   pendingName?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingPassword?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   pendingTimezone?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
+  pendingInvitationId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   userId?: Prisma.StringNullableFilter<"EmailChallenge"> | string | null
   createdAt?: Prisma.DateTimeFilter<"EmailChallenge"> | Date | string
 }
@@ -686,6 +711,7 @@ export type EmailChallengeCreateManyUserInput = {
   pendingName?: string | null
   pendingPassword?: string | null
   pendingTimezone?: string | null
+  pendingInvitationId?: string | null
   createdAt?: Date | string
 }
 
@@ -701,6 +727,7 @@ export type EmailChallengeUpdateWithoutUserInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -716,6 +743,7 @@ export type EmailChallengeUncheckedUpdateWithoutUserInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -731,6 +759,7 @@ export type EmailChallengeUncheckedUpdateManyWithoutUserInput = {
   pendingName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingPassword?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pendingTimezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingInvitationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -748,6 +777,7 @@ export type EmailChallengeSelect<ExtArgs extends runtime.Types.Extensions.Intern
   pendingName?: boolean
   pendingPassword?: boolean
   pendingTimezone?: boolean
+  pendingInvitationId?: boolean
   userId?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.EmailChallenge$userArgs<ExtArgs>
@@ -765,6 +795,7 @@ export type EmailChallengeSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   pendingName?: boolean
   pendingPassword?: boolean
   pendingTimezone?: boolean
+  pendingInvitationId?: boolean
   userId?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.EmailChallenge$userArgs<ExtArgs>
@@ -782,6 +813,7 @@ export type EmailChallengeSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   pendingName?: boolean
   pendingPassword?: boolean
   pendingTimezone?: boolean
+  pendingInvitationId?: boolean
   userId?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.EmailChallenge$userArgs<ExtArgs>
@@ -799,11 +831,12 @@ export type EmailChallengeSelectScalar = {
   pendingName?: boolean
   pendingPassword?: boolean
   pendingTimezone?: boolean
+  pendingInvitationId?: boolean
   userId?: boolean
   createdAt?: boolean
 }
 
-export type EmailChallengeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "purpose" | "email" | "codeHash" | "attempts" | "expiresAt" | "consumedAt" | "lastSentAt" | "pendingName" | "pendingPassword" | "pendingTimezone" | "userId" | "createdAt", ExtArgs["result"]["emailChallenge"]>
+export type EmailChallengeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "purpose" | "email" | "codeHash" | "attempts" | "expiresAt" | "consumedAt" | "lastSentAt" | "pendingName" | "pendingPassword" | "pendingTimezone" | "pendingInvitationId" | "userId" | "createdAt", ExtArgs["result"]["emailChallenge"]>
 export type EmailChallengeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.EmailChallenge$userArgs<ExtArgs>
 }
@@ -831,6 +864,7 @@ export type $EmailChallengePayload<ExtArgs extends runtime.Types.Extensions.Inte
     pendingName: string | null
     pendingPassword: string | null
     pendingTimezone: string | null
+    pendingInvitationId: string | null
     userId: string | null
     createdAt: Date
   }, ExtArgs["result"]["emailChallenge"]>
@@ -1268,6 +1302,7 @@ export interface EmailChallengeFieldRefs {
   readonly pendingName: Prisma.FieldRef<"EmailChallenge", 'String'>
   readonly pendingPassword: Prisma.FieldRef<"EmailChallenge", 'String'>
   readonly pendingTimezone: Prisma.FieldRef<"EmailChallenge", 'String'>
+  readonly pendingInvitationId: Prisma.FieldRef<"EmailChallenge", 'String'>
   readonly userId: Prisma.FieldRef<"EmailChallenge", 'String'>
   readonly createdAt: Prisma.FieldRef<"EmailChallenge", 'DateTime'>
 }

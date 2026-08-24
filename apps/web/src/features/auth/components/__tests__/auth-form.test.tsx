@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -41,10 +41,10 @@ beforeEach(() => {
     })
   );
 });
-function renderForm(mode: "login" | "register") {
+function renderForm(mode: "login" | "register", entry = "/") {
   return render(
     <Provider store={store}>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[entry]}>
         <Routes>
           <Route path="/" element={<AuthForm mode={mode} />} />
           <Route path="/dashboard" element={<p>Dashboard carregado</p>} />
@@ -127,6 +127,32 @@ describe("AuthForm", () => {
       await screen.findByText(
         /enviamos um código de 6 dígitos para ada@postmade\.app/i
       )
+    ).toBeInTheDocument();
+  });
+  it("locks the invited email during registration", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              workspaceName: "Postmade Studio",
+              email: "invitee@postmade.app",
+              role: "editor",
+              invitedByName: "Ada",
+              expiresAt: new Date(Date.now() + 60_000).toISOString(),
+              status: "pending",
+            }),
+            { status: 200, headers: { "content-type": "application/json" } }
+          )
+      )
+    );
+    renderForm("register", "/?invite=valid-token");
+    const email = screen.getByLabelText("E-mail");
+    await waitFor(() => expect(email).toHaveValue("invitee@postmade.app"));
+    expect(email).toHaveAttribute("readonly");
+    expect(
+      screen.getByText(/este convite foi enviado para este e-mail/i)
     ).toBeInTheDocument();
   });
   it("reports Google authentication as unavailable", async () => {

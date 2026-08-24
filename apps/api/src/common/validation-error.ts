@@ -36,10 +36,7 @@ function constraintParams(
   return params;
 }
 
-function details(
-  errors: ValidationError[],
-  parent = ""
-): ValidationDetail[] {
+function details(errors: ValidationError[], parent = ""): ValidationDetail[] {
   return errors.flatMap((error) => {
     const field = parent ? `${parent}.${error.property}` : error.property;
     const own = Object.keys(error.constraints ?? {}).map((constraint) => ({
@@ -55,10 +52,6 @@ function details(
 
 export function validationException(errors: ValidationError[]) {
   return new BadRequestException(
-    apiError(
-      "VALIDATION_ERROR",
-      "Request validation failed",
-      details(errors)
-    )
+    apiError("VALIDATION_ERROR", "Request validation failed", details(errors))
   );
 }

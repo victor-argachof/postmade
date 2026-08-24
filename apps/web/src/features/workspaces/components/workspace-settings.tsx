@@ -1,3 +1,4 @@
+import type { AssignableWorkspaceRole } from "@postmade/types";
 import {
   Building2,
   Copy,
@@ -15,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { ROUTES } from "@/routes/route-paths";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { SectionCard } from "@/shared/components/section-card";
 import {
   Alert,
@@ -33,22 +35,20 @@ import {
 import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { getWorkspaceMemberLimit } from "../lib/workspace-limits";
-import { useUpdateWorkspaceMutation } from "../services/workspaces-api";
 import {
-  changeMemberRole,
-  inviteMember,
-  removeMember,
-  renameWorkspace,
-  revokeInvitation,
-} from "../store/workspaces-slice";
-import type { WorkspaceRole } from "../types";
+  useCreateWorkspaceInvitationMutation,
+  useGetWorkspaceInvitationsQuery,
+  useGetWorkspaceMembersQuery,
+  useRemoveWorkspaceMemberMutation,
+  useResendWorkspaceInvitationMutation,
+  useRevokeWorkspaceInvitationMutation,
+  useUpdateWorkspaceMemberMutation,
+  useUpdateWorkspaceMutation,
+} from "../services/workspaces-api";
+import { renameWorkspace } from "../store/workspaces-slice";
 import { TimezoneSettings } from "./timezone-settings";
 
-const roles: Array<Exclude<WorkspaceRole, "owner">> = [
-  "admin",
-  "editor",
-  "viewer",
-];
+const roles: AssignableWorkspaceRole[] = ["admin", "editor", "viewer"];
 
 export function WorkspaceSettings() {
   const workspaceId = useAppSelector(
@@ -59,8 +59,14 @@ export function WorkspaceSettings() {
 
 function WorkspaceSettingsContent() {
   const { t } = useTranslation("workspaces");
+  const { t: tApiError } = useTranslation("apiErrors");
   const dispatch = useAppDispatch();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const [createInvitation] = useCreateWorkspaceInvitationMutation();
+  const [resendInvitation] = useResendWorkspaceInvitationMutation();
+  const [revokeInvitation] = useRevokeWorkspaceInvitationMutation();
+  const [updateMember] = useUpdateWorkspaceMemberMutation();
+  const [removeMember] = useRemoveWorkspaceMemberMutation();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const workspace = useAppSelector((state) =>
@@ -68,15 +74,23 @@ function WorkspaceSettingsContent() {
       (item) => item.id === state.workspaces.activeWorkspaceId
     )
   );
+  const { data: members = [] } = useGetWorkspaceMembersQuery(
+    workspace?.id ?? "",
+    { skip: !workspace }
+  );
+  const { data: invitations = [] } = useGetWorkspaceInvitationsQuery(
+    workspace?.id ?? "",
+    { skip: !workspace }
+  );
   const [name, setName] = useState(workspace?.name ?? "");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<Exclude<WorkspaceRole, "owner">>("editor");
+  const [role, setRole] = useState<AssignableWorkspaceRole>("editor");
 
   if (!workspace || !user) return null;
 
-  const currentMember = workspace.members.find(
-    (member) => member.id === user.id
-  );
+  const currentMember =
+    members.find((member) => member.id === user.id) ??
+    workspace.members.find((member) => member.id === user.id);
   const canManage =
     currentMember?.role === "owner" || currentMember?.role === "admin";
   const isOwner = currentMember?.role === "owner";
@@ -84,10 +98,10 @@ function WorkspaceSettingsContent() {
     workspace.subscriptionConfiguration,
     workspace.subscriptionStatus
   );
-  const pendingInvitations = workspace.invitations.filter(
+  const pendingInvitations = invitations.filter(
     (invitation) => invitation.status === "pending"
   );
-  const occupiedMembers = workspace.members.length + pendingInvitations.length;
+  const occupiedMembers = members.length + pendingInvitations.length;
   const inviteLocked = workspace.subscriptionStatus === "trialing";
 
   const saveName = (event: React.FormEvent) => {
@@ -101,23 +115,21 @@ function WorkspaceSettingsContent() {
     toast.success(t("nameSaved"));
   };
 
-  const submitInvite = (event: React.FormEvent) => {
+  const submitInvite = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!email.trim() || inviteLocked || occupiedMembers >= memberLimit) return;
-    dispatch(
-      inviteMember({
+    try {
+      await createInvitation({
         workspaceId: workspace.id,
-        actorId: user.id,
         email,
         role,
-      })
-    );
-    setEmail("");
-    toast.success(t("invitationSent"));
+      }).unwrap();
+      setEmail("");
+      toast.success(t("invitationSent"));
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
-
-  const invitationUrl = (token: string) =>
-    `${window.location.origin}${ROUTES.register}?invite=${encodeURIComponent(token)}`;
 
   return (
     <>
@@ -213,11 +225,13 @@ function WorkspaceSettingsContent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {roles.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`roles.${option}`)}
-                  </SelectItem>
-                ))}
+                {roles
+                  .filter((option) => isOwner || option !== "admin")
+                  .map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`roles.${option}`)}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             <Button type="submit" disabled={occupiedMembers >= memberLimit}>
@@ -235,7 +249,7 @@ function WorkspaceSettingsContent() {
         )}
 
         <div className="mt-8 divide-y divide-border border-y border-border">
-          {workspace.members.map((member) => (
+          {members.map((member) => (
             <div
               key={member.id}
               className="flex flex-wrap items-center gap-3 py-4"
@@ -251,18 +265,21 @@ function WorkspaceSettingsContent() {
                   {member.email}
                 </span>
               </span>
-              {canManage && member.role !== "owner" ? (
+              {canManage &&
+              member.role !== "owner" &&
+              (isOwner || member.role !== "admin") ? (
                 <Select
                   value={member.role}
                   onValueChange={(value) =>
-                    dispatch(
-                      changeMemberRole({
-                        workspaceId: workspace.id,
-                        memberId: member.id,
-                        role: value as Exclude<WorkspaceRole, "owner">,
-                        actorId: user.id,
-                      })
-                    )
+                    void updateMember({
+                      workspaceId: workspace.id,
+                      memberId: member.id,
+                      role: value as AssignableWorkspaceRole,
+                    })
+                      .unwrap()
+                      .catch((error) =>
+                        toast.error(tApiError(getApiErrorTranslationKey(error)))
+                      )
                   }
                 >
                   <SelectTrigger
@@ -272,11 +289,13 @@ function WorkspaceSettingsContent() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {roles.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {t(`roles.${option}`)}
-                      </SelectItem>
-                    ))}
+                    {roles
+                      .filter((option) => isOwner || option !== "admin")
+                      .map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {t(`roles.${option}`)}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               ) : (
@@ -284,24 +303,30 @@ function WorkspaceSettingsContent() {
                   {t(`roles.${member.role}`)}
                 </span>
               )}
-              {isOwner && member.role !== "owner" && (
-                <Button
-                  aria-label={t("removeMember", { name: member.name })}
-                  size="icon"
-                  variant="ghost"
-                  onClick={() =>
-                    dispatch(
-                      removeMember({
+              {canManage &&
+                member.role !== "owner" &&
+                (isOwner || member.role !== "admin") &&
+                member.id !== user.id && (
+                  <Button
+                    aria-label={t("removeMember", { name: member.name })}
+                    size="icon"
+                    variant="ghost"
+                    onClick={() =>
+                      void removeMember({
                         workspaceId: workspace.id,
                         memberId: member.id,
-                        actorId: user.id,
                       })
-                    )
-                  }
-                >
-                  <Trash2 className="size-4" aria-hidden="true" />
-                </Button>
-              )}
+                        .unwrap()
+                        .catch((error) =>
+                          toast.error(
+                            tApiError(getApiErrorTranslationKey(error))
+                          )
+                        )
+                    }
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </Button>
+                )}
             </div>
           ))}
           {pendingInvitations.map((invitation) => (
@@ -325,9 +350,18 @@ function WorkspaceSettingsContent() {
                 size="icon"
                 variant="ghost"
                 onClick={() =>
-                  void navigator.clipboard
-                    ?.writeText(invitationUrl(invitation.token))
-                    .then(() => toast.success(t("inviteCopied")))
+                  void resendInvitation({
+                    workspaceId: workspace.id,
+                    invitationId: invitation.id,
+                  })
+                    .unwrap()
+                    .then((result) =>
+                      navigator.clipboard?.writeText(result.invitationUrl ?? "")
+                    )
+                    .then(() => toast.success(t("invitationResent")))
+                    .catch((error) =>
+                      toast.error(tApiError(getApiErrorTranslationKey(error)))
+                    )
                 }
               >
                 <Copy className="size-4" aria-hidden="true" />
@@ -338,13 +372,14 @@ function WorkspaceSettingsContent() {
                   size="icon"
                   variant="ghost"
                   onClick={() =>
-                    dispatch(
-                      revokeInvitation({
-                        workspaceId: workspace.id,
-                        invitationId: invitation.id,
-                        actorId: user.id,
-                      })
-                    )
+                    void revokeInvitation({
+                      workspaceId: workspace.id,
+                      invitationId: invitation.id,
+                    })
+                      .unwrap()
+                      .catch((error) =>
+                        toast.error(tApiError(getApiErrorTranslationKey(error)))
+                      )
                   }
                 >
                   <Trash2 className="size-4" aria-hidden="true" />

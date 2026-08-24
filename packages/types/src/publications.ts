@@ -1,11 +1,7 @@
 import type { SocialPlatform } from "./channels.js";
 
 export type PublicationStatus =
-  | "draft"
-  | "scheduled"
-  | "publishing"
-  | "published"
-  | "failed";
+  "draft" | "scheduled" | "publishing" | "published" | "failed";
 
 export interface PublicationTagGroupSnapshot {
   groupId: string;

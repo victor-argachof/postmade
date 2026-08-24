@@ -14,6 +14,13 @@
   "invalidCredentials": "Invalid email or password.",
   "invalidOAuthState": "The connection attempt expired or is no longer valid. Try again.",
   "invalidTimezone": "Select a valid timezone.",
+  "invitationAlreadyAccepted": "This invitation has already been accepted.",
+  "invitationDuplicate": "A pending invitation already exists for this email.",
+  "invitationEmailFailed": "The invitation was saved, but the email could not be sent. Try resending it.",
+  "invitationEmailMismatch": "Sign in with the same email address that received the invitation.",
+  "invitationExpired": "This invitation has expired.",
+  "invitationInvalid": "This invitation is invalid.",
+  "invitationRevoked": "This invitation was revoked.",
   "network": "We couldn't connect to the server. Check your connection and try again.",
   "notFound": "The requested resource was not found.",
   "notReady": "A required service is temporarily unavailable.",
@@ -24,5 +31,8 @@
   "tagGroupNotFound": "This tag group was not found.",
   "unauthenticated": "Your session has expired. Sign in again.",
   "unexpected": "Something went wrong. Please try again.",
-  "validation": "Review the provided information and try again."
+  "validation": "Review the provided information and try again.",
+  "workspaceMemberExists": "This user is already a workspace member.",
+  "workspaceMemberLimitReached": "The workspace member limit has been reached.",
+  "workspaceMemberNotFound": "This member was not found."
 }

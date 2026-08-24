@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from "@nestjs/common";
 import {
   ApiCookieAuth,
   ApiOkResponse,
@@ -8,6 +18,11 @@ import {
 
 import { CurrentUser, SessionGuard } from "../auth/auth.guard.js";
 import type { SafeUser } from "../auth/auth.service.js";
+import {
+  CreateInvitationDto,
+  UpdateMemberRoleDto,
+} from "./workspace-members.dto.js";
+import { WorkspaceMembersService } from "./workspace-members.service.js";
 import { UpdateWorkspaceDto, WorkspaceResponseDto } from "./workspaces.dto.js";
 import { WorkspacesService } from "./workspaces.service.js";
 
@@ -16,7 +31,10 @@ import { WorkspacesService } from "./workspaces.service.js";
 @UseGuards(SessionGuard)
 @Controller("workspaces")
 export class WorkspacesController {
-  constructor(private readonly workspaces: WorkspacesService) {}
+  constructor(
+    private readonly workspaces: WorkspacesService,
+    private readonly members: WorkspaceMembersService
+  ) {}
   @Get()
   @ApiOperation({ summary: "List workspaces available to the user" })
   @ApiOkResponse({ type: [WorkspaceResponseDto] })
@@ -38,5 +56,59 @@ export class WorkspacesController {
     @Body() body: UpdateWorkspaceDto
   ) {
     return this.workspaces.update(user.id, id, body);
+  }
+  @Get(":workspaceId/members")
+  listMembers(@CurrentUser() user: SafeUser, @Param("workspaceId") id: string) {
+    return this.members.listMembers(user.id, id);
+  }
+  @Get(":workspaceId/invitations")
+  listInvitations(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string
+  ) {
+    return this.members.listInvitations(user.id, id);
+  }
+  @Post(":workspaceId/invitations")
+  createInvitation(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string,
+    @Body() body: CreateInvitationDto
+  ) {
+    return this.members.create(user.id, id, body.email, body.role);
+  }
+  @Post(":workspaceId/invitations/:invitationId/resend")
+  resendInvitation(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string,
+    @Param("invitationId") invitationId: string
+  ) {
+    return this.members.resend(user.id, id, invitationId);
+  }
+  @Delete(":workspaceId/invitations/:invitationId")
+  @HttpCode(204)
+  async revokeInvitation(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string,
+    @Param("invitationId") invitationId: string
+  ) {
+    await this.members.revoke(user.id, id, invitationId);
+  }
+  @Patch(":workspaceId/members/:memberId")
+  updateMember(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string,
+    @Param("memberId") memberId: string,
+    @Body() body: UpdateMemberRoleDto
+  ) {
+    return this.members.updateRole(user.id, id, memberId, body.role);
+  }
+  @Delete(":workspaceId/members/:memberId")
+  @HttpCode(204)
+  async removeMember(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") id: string,
+    @Param("memberId") memberId: string
+  ) {
+    await this.members.remove(user.id, id, memberId);
   }
 }

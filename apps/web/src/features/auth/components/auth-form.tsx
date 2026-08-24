@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Trans, useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
+import { useGetInvitationDetailsQuery } from "@/features/workspaces/services/workspaces-api";
 import { ROUTES } from "@/routes/route-paths";
 import { api } from "@/shared/api/api";
 import { getApiErrorTranslationKey } from "@/shared/api/api-error";
@@ -61,6 +62,11 @@ export function AuthForm({
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const invitationToken = searchParams.get("invite");
+  const isRegister = mode === "register";
+  const { data: invitationDetails } = useGetInvitationDetailsQuery(
+    invitationToken ?? "",
+    { skip: !invitationToken || !isRegister }
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [pendingCredentials, setPendingCredentials] =
     useState<AuthFormValues | null>(null);
@@ -73,7 +79,6 @@ export function AuthForm({
   const [authenticationError, setAuthenticationError] = useState<string | null>(
     null
   );
-  const isRegister = mode === "register";
   const schema = useMemo(
     () => createAuthSchema(t, isRegister),
     [isRegister, t]
@@ -82,6 +87,7 @@ export function AuthForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<AuthFormValues>({
     resolver: zodResolver(schema),
@@ -90,6 +96,10 @@ export function AuthForm({
     reValidateMode: "onChange",
   });
   const password = useWatch({ control, name: "password" }) ?? "";
+  useEffect(() => {
+    if (isRegister && invitationDetails)
+      setValue("email", invitationDetails.email, { shouldValidate: true });
+  }, [invitationDetails, isRegister, setValue]);
 
   const submitCredentials = async (values: AuthFormValues) => {
     try {
@@ -99,6 +109,7 @@ export function AuthForm({
             email: values.email,
             password: values.password,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            invitationToken: invitationToken ?? undefined,
           }).unwrap()
         : await loginStart({
             email: values.email,
@@ -126,7 +137,11 @@ export function AuthForm({
         })
       );
       dispatch(api.util.invalidateTags([]));
-      navigate(ROUTES.dashboard);
+      navigate(
+        invitationToken
+          ? `${ROUTES.invitation}?token=${encodeURIComponent(invitationToken)}`
+          : ROUTES.dashboard
+      );
     } catch (error) {
       setAuthenticationError(tApiError(getApiErrorTranslationKey(error)));
     }
@@ -225,14 +240,29 @@ export function AuthForm({
           {t("email")}
         </label>
         <Input
-          aria-describedby={errors.email ? "auth-email-error" : undefined}
+          aria-describedby={
+            errors.email
+              ? "auth-email-error"
+              : invitationDetails
+                ? "auth-invitation-email-hint"
+                : undefined
+          }
           aria-invalid={Boolean(errors.email)}
           className={`mt-2 ${errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/15" : ""}`}
           id="auth-email"
           type="email"
           autoComplete="email"
+          readOnly={Boolean(isRegister && invitationDetails)}
           {...register("email")}
         />
+        {isRegister && invitationDetails && !errors.email && (
+          <p
+            className="mt-2 text-xs text-muted-foreground"
+            id="auth-invitation-email-hint"
+          >
+            {t("invitationEmailLocked")}
+          </p>
+        )}
         {errors.email && (
           <p
             className="mt-2 text-xs text-red-600"

@@ -23,6 +23,10 @@ export class RegisterStartDto {
   @IsOptional()
   @IsString()
   timezone?: string;
+  @ApiProperty({ type: String, required: false })
+  @IsOptional()
+  @IsString()
+  invitationToken?: string;
 }
 export class LoginStartDto {
   @ApiProperty({ type: String, example: "victor@example.com" })

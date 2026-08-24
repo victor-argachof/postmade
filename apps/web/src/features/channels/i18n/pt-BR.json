@@ -94,7 +94,7 @@
     "close": "Fechar"
   },
   "permissions": {
-    "readOnly": "Seu papel permite visualizar os canais, mas somente owners e admins podem conectar ou desconectar contas."
+    "readOnly": "Seu nível de acesso permite apenas visualizar os canais. Somente proprietários e administradores podem conectar ou desconectar contas."
   },
   "limit": {
     "title": "Limite de canais atingido",

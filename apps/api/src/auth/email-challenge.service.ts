@@ -33,6 +33,7 @@ export class EmailChallengeService {
     pendingName?: string;
     pendingPassword?: string;
     pendingTimezone?: string;
+    pendingInvitationId?: string;
     send?: boolean;
   }) {
     const id = randomUUID();
@@ -48,6 +49,7 @@ export class EmailChallengeService {
         pendingName: input.pendingName ?? null,
         pendingPassword: input.pendingPassword ?? null,
         pendingTimezone: input.pendingTimezone ?? null,
+        pendingInvitationId: input.pendingInvitationId ?? null,
         codeHash: this.digest(`${id}:${code}`),
         expiresAt,
         lastSentAt: now,

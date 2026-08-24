@@ -91,7 +91,7 @@
     "close": "Close"
   },
   "permissions": {
-    "readOnly": "Your role can view channels, but only owners and admins can connect or disconnect accounts."
+    "readOnly": "Your access level only allows you to view channels. Only workspace owners and administrators can connect or disconnect accounts."
   },
   "limit": {
     "title": "Channel limit reached",

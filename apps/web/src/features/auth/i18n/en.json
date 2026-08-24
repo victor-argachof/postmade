@@ -13,6 +13,7 @@
   "register": "Create account",
   "startFreeTrial": "Start free trial",
   "joinWorkspace": "Create account and join workspace",
+  "invitationEmailLocked": "This invitation was sent to this email address, and the account must be created with it.",
   "registrationAgreement": "By proceeding, you agree to the <terms>Terms of Use</terms> and <privacy>Privacy Policy</privacy>.",
   "loginWithGoogle": "Sign in with Google",
   "registerWithGoogle": "Sign up with Google",

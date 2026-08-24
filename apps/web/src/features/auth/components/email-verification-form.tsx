@@ -161,7 +161,10 @@ export function EmailVerificationForm({
         )}
 
         {resendError && (
-          <p className="text-center text-xs font-medium text-red-600" role="alert">
+          <p
+            className="text-center text-xs font-medium text-red-600"
+            role="alert"
+          >
             {resendError}
           </p>
         )}

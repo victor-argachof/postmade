@@ -8,7 +8,13 @@ export const authApi = api.injectEndpoints({
     me: build.query<ApiUser, void>({ query: () => "/me" }),
     registerStart: build.mutation<
       ChallengeResponse,
-      { name: string; email: string; password: string; timezone?: string }
+      {
+        name: string;
+        email: string;
+        password: string;
+        timezone?: string;
+        invitationToken?: string;
+      }
     >({
       query: (body) => ({ url: "/auth/register/start", method: "POST", body }),
     }),

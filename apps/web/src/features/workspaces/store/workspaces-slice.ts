@@ -2,11 +2,8 @@ import type { ScheduledPublication, SocialPlatform } from "@postmade/types";
 import { createSlice, nanoid, type PayloadAction } from "@reduxjs/toolkit";
 
 import { SUBSCRIPTION_INCLUDED_QUANTITIES } from "../lib/subscription-pricing";
-import {
-  getWorkspaceMemberLimit,
-  WORKSPACE_TRIAL_LIMITS,
-} from "../lib/workspace-limits";
-import type { Workspace, WorkspaceInvitation, WorkspaceRole } from "../types";
+import { WORKSPACE_TRIAL_LIMITS } from "../lib/workspace-limits";
+import type { Workspace, WorkspaceRole } from "../types";
 
 interface WorkspacesState {
   items: Workspace[];
@@ -348,6 +345,12 @@ const workspacesSlice = createSlice({
       );
       if (allowed) state.activeWorkspaceId = action.payload.workspaceId;
     },
+    activateAcceptedWorkspace: (
+      state,
+      action: PayloadAction<{ workspaceId: string }>
+    ) => {
+      state.activeWorkspaceId = action.payload.workspaceId;
+    },
     renameWorkspace: (
       state,
       action: PayloadAction<{
@@ -398,189 +401,6 @@ const workspacesSlice = createSlice({
         workspace.timezone = action.payload.timezone;
       } catch {
         // Ignore values that are not valid IANA time zones.
-      }
-    },
-    inviteMember: {
-      reducer: (
-        state,
-        action: PayloadAction<{
-          workspaceId: string;
-          actorId: string;
-          invitation: WorkspaceInvitation;
-        }>
-      ) => {
-        const workspace = state.items.find(
-          (item) => item.id === action.payload.workspaceId
-        );
-        const actor = workspace?.members.find(
-          (member) => member.id === action.payload.actorId
-        );
-        if (
-          !workspace ||
-          !actor ||
-          (actor.role !== "owner" && actor.role !== "admin")
-        )
-          return;
-        const occupiedMembers =
-          workspace.members.length +
-          workspace.invitations.filter((invite) => invite.status === "pending")
-            .length;
-        if (
-          occupiedMembers >=
-          getWorkspaceMemberLimit(
-            workspace.subscriptionConfiguration,
-            workspace.subscriptionStatus
-          )
-        )
-          return;
-        const email = action.payload.invitation.email.toLowerCase();
-        const duplicate =
-          workspace.members.some((member) => member.email === email) ||
-          workspace.invitations.some(
-            (invite) => invite.email === email && invite.status === "pending"
-          );
-        if (!duplicate)
-          workspace.invitations.push({ ...action.payload.invitation, email });
-      },
-      prepare: (payload: {
-        workspaceId: string;
-        actorId: string;
-        email: string;
-        role: Exclude<WorkspaceRole, "owner">;
-      }) => ({
-        payload: {
-          workspaceId: payload.workspaceId,
-          actorId: payload.actorId,
-          invitation: {
-            id: nanoid(),
-            token: nanoid(32),
-            email: payload.email.trim().toLowerCase(),
-            role: payload.role,
-            status: "pending" as const,
-            invitedAt: new Date().toISOString(),
-          },
-        },
-      }),
-    },
-    revokeInvitation: (
-      state,
-      action: PayloadAction<{
-        workspaceId: string;
-        invitationId: string;
-        actorId: string;
-      }>
-    ) => {
-      const workspace = state.items.find(
-        (item) => item.id === action.payload.workspaceId
-      );
-      const actor = workspace?.members.find(
-        (member) => member.id === action.payload.actorId
-      );
-      const invitation = workspace?.invitations.find(
-        (item) => item.id === action.payload.invitationId
-      );
-      if (
-        invitation &&
-        actor &&
-        (actor.role === "owner" || actor.role === "admin")
-      )
-        invitation.status = "revoked";
-    },
-    acceptInvitation: (
-      state,
-      action: PayloadAction<{
-        token: string;
-        userId: string;
-        userName: string;
-        userEmail: string;
-        acceptedAt: string;
-      }>
-    ) => {
-      const workspace = state.items.find((item) =>
-        item.invitations.some(
-          (invitation) => invitation.token === action.payload.token
-        )
-      );
-      const invitation = workspace?.invitations.find(
-        (item) => item.token === action.payload.token
-      );
-      if (!workspace || !invitation || invitation.status !== "pending") return;
-      if (invitation.email !== action.payload.userEmail.toLowerCase()) return;
-      if (
-        workspace.members.length >=
-        getWorkspaceMemberLimit(
-          workspace.subscriptionConfiguration,
-          workspace.subscriptionStatus
-        )
-      )
-        return;
-      if (
-        !workspace.members.some((member) => member.id === action.payload.userId)
-      ) {
-        workspace.members.push({
-          id: action.payload.userId,
-          name: action.payload.userName,
-          email: action.payload.userEmail.toLowerCase(),
-          role: invitation.role,
-          joinedAt: action.payload.acceptedAt,
-        });
-      }
-      invitation.status = "accepted";
-      state.activeWorkspaceId = workspace.id;
-    },
-    changeMemberRole: (
-      state,
-      action: PayloadAction<{
-        workspaceId: string;
-        memberId: string;
-        role: Exclude<WorkspaceRole, "owner">;
-        actorId: string;
-      }>
-    ) => {
-      const workspace = state.items.find(
-        (item) => item.id === action.payload.workspaceId
-      );
-      const actor = workspace?.members.find(
-        (member) => member.id === action.payload.actorId
-      );
-      const member = workspace?.members.find(
-        (item) => item.id === action.payload.memberId
-      );
-      if (
-        member &&
-        member.role !== "owner" &&
-        actor &&
-        (actor.role === "owner" || actor.role === "admin")
-      ) {
-        member.role = action.payload.role;
-      }
-    },
-    removeMember: (
-      state,
-      action: PayloadAction<{
-        workspaceId: string;
-        memberId: string;
-        actorId: string;
-      }>
-    ) => {
-      const workspace = state.items.find(
-        (item) => item.id === action.payload.workspaceId
-      );
-      const actor = workspace?.members.find(
-        (member) => member.id === action.payload.actorId
-      );
-      const target = workspace?.members.find(
-        (member) => member.id === action.payload.memberId
-      );
-      if (
-        workspace &&
-        target?.role !== "owner" &&
-        actor &&
-        (actor.role === "owner" || actor.role === "admin")
-      ) {
-        workspace.members = workspace.members.filter(
-          (member) => member.id !== action.payload.memberId
-        );
       }
     },
     updateMemberIdentity: (
@@ -841,8 +661,7 @@ function prepareOwnedWorkspace(payload: {
 }
 
 export const {
-  acceptInvitation,
-  changeMemberRole,
+  activateAcceptedWorkspace,
   clearWorkspaceSession,
   hydrateWorkspaces,
   createInitialWorkspace,
@@ -856,11 +675,8 @@ export const {
   duplicateWorkspacePublication,
   retryWorkspacePublication,
   deleteAccountWorkspaces,
-  inviteMember,
-  removeMember,
   renameWorkspace,
   updateWorkspaceTimezone,
-  revokeInvitation,
   selectWorkspace,
   updateMemberIdentity,
 } = workspacesSlice.actions;

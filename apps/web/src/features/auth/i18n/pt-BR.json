@@ -13,6 +13,7 @@
   "register": "Criar conta",
   "startFreeTrial": "Iniciar avaliação gratuita",
   "joinWorkspace": "Criar conta e entrar no workspace",
+  "invitationEmailLocked": "Este convite foi enviado para este e-mail e a conta deve ser criada com ele.",
   "registrationAgreement": "Ao prosseguir, você concorda com os <terms>Termos de uso</terms> e a <privacy>Política de privacidade</privacy>.",
   "loginWithGoogle": "Entrar com o Google",
   "registerWithGoogle": "Cadastrar com o Google",
