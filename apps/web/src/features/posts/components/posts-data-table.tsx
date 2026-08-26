@@ -24,6 +24,7 @@ export function PostsDataTable({
   onAction,
   onEdit,
   publications,
+  remotePagination,
   timezone,
 }: {
   canManage: boolean;
@@ -33,14 +34,25 @@ export function PostsDataTable({
   onAction: (action: Action, id: string) => void;
   onEdit: (id: string) => void;
   publications: ScheduledPublication[];
+  remotePagination?: {
+    page: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (page: number) => void;
+    onPageSizeChange: (pageSize: number) => void;
+  };
   timezone: string;
 }) {
   const { t } = useTranslation("posts");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sorting, setSorting] = useState<DataTableSorting>();
-  const totalPages = Math.max(1, Math.ceil(publications.length / pageSize));
-  const currentPage = Math.min(page, totalPages);
+  const activePageSize = remotePagination?.pageSize ?? pageSize;
+  const totalPages = Math.max(
+    1,
+    Math.ceil((remotePagination?.total ?? publications.length) / activePageSize)
+  );
+  const currentPage = Math.min(remotePagination?.page ?? page, totalPages);
   const sortableValue = (post: ScheduledPublication, columnId: string) => {
     if (columnId === "publication")
       return post.content.toLocaleLowerCase(locale);
@@ -62,10 +74,9 @@ export function PostsDataTable({
         return sorting.direction === "asc" ? comparison : -comparison;
       })
     : publications;
-  const visible = sorted.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const visible = remotePagination
+    ? sorted
+    : sorted.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const date = (post: ScheduledPublication) =>
     new Intl.DateTimeFormat(locale, {
       dateStyle: "medium",
@@ -251,14 +262,17 @@ export function PostsDataTable({
           next: t("pagination.next"),
           page: (number) => t("pagination.page", { number }),
         }}
-        onPageChange={setPage}
+        onPageChange={remotePagination?.onPageChange ?? setPage}
         onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPage(1);
+          if (remotePagination) remotePagination.onPageSizeChange(size);
+          else {
+            setPageSize(size);
+            setPage(1);
+          }
         }}
         page={currentPage}
-        pageSize={pageSize}
-        totalResults={publications.length}
+        pageSize={activePageSize}
+        totalResults={remotePagination?.total ?? publications.length}
       />
     </div>
   );

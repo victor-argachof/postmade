@@ -2,6 +2,8 @@
   "pageTitle": "Publications",
   "pageDescription": "Create, schedule, and track content across all your channels.",
   "newPost": "New publication",
+  "loading": "Loading publications...",
+  "retry": "Retry",
   "views": {
     "navigation": "Publication view",
     "list": "List",

@@ -1,7 +1,9 @@
 import type {
+  PublicationInput,
   PublicationMedia,
   PublicationStatus,
   PublicationTagGroupSnapshot,
+  PublicationTargetInput,
   ScheduledPublication,
   SocialPlatform,
 } from "@postmade/types";
@@ -14,13 +16,16 @@ import { toast } from "sonner";
 import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
 import { useLookupChannelsQuery } from "@/features/channels/services/channels-api";
 import { selectActiveWorkspace } from "@/features/posts/lib/selectors";
+import {
+  useCreatePublicationMutation,
+  useGetPublicationQuery,
+  useGetPublicationsQuery,
+  useUpdatePublicationMutation,
+} from "@/features/posts/services/posts-api";
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
-import {
-  createWorkspacePublication,
-  updateWorkspacePublication,
-} from "@/features/workspaces/store/workspaces-slice";
 import { ROUTES } from "@/routes/route-paths";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import {
   Select,
@@ -29,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { PublicationConfirmationModal } from "../components/overlays/publication-confirmation-modal";
 import { PlatformPreview } from "../components/platform-preview";
@@ -42,7 +47,48 @@ import { utcToZonedInput, zonedInputToUtc } from "../lib/dates";
 import { validateTarget } from "../lib/platform-rules";
 
 export function PostComposerPage() {
+  const { publicationId } = useParams();
+  const workspace = useAppSelector(selectActiveWorkspace);
+  const { data, error, isError, isLoading, refetch } = useGetPublicationQuery(
+    { workspaceId: workspace?.id ?? "", publicationId: publicationId ?? "" },
+    { skip: !workspace || !publicationId }
+  );
+  const { t } = useTranslation("createPost");
+  const { t: tApiError } = useTranslation("apiErrors");
+  if (publicationId && isLoading)
+    return (
+      <p
+        className="mx-auto max-w-6xl text-sm text-muted-foreground"
+        role="status"
+      >
+        {t("composer.loading")}
+      </p>
+    );
+  if (publicationId && isError)
+    return (
+      <div className="mx-auto max-w-6xl">
+        <p>{tApiError(getApiErrorTranslationKey(error))}</p>
+        <Button className="mt-3" onClick={() => void refetch()}>
+          {t("composer.retry")}
+        </Button>
+      </div>
+    );
+  if (publicationId && !data) return null;
+  return (
+    <PostComposerContent
+      key={`${workspace?.id}-${publicationId ?? "new"}`}
+      existing={data}
+    />
+  );
+}
+
+function PostComposerContent({
+  existing,
+}: {
+  existing?: ScheduledPublication;
+}) {
   const { t, i18n } = useTranslation("createPost");
+  const { t: tApiError } = useTranslation("apiErrors");
   const navigate = useNavigate();
   const openTagsManager = () => {
     window.open(ROUTES.tags, "_blank", "noopener,noreferrer");
@@ -50,13 +96,16 @@ export function PostComposerPage() {
   const openChannelsManager = () => {
     window.open(ROUTES.workspaceChannels, "_blank", "noopener,noreferrer");
   };
-  const dispatch = useAppDispatch();
-  const { publicationId } = useParams();
   const [search] = useSearchParams();
   const workspace = useAppSelector(selectActiveWorkspace);
   const user = useAppSelector((state) => state.auth.user);
-  const existing = workspace?.resources.posts.find(
-    (post) => post.id === publicationId
+  const [createPublication, { isLoading: isCreating }] =
+    useCreatePublicationMutation();
+  const [updatePublication, { isLoading: isUpdating }] =
+    useUpdatePublicationMutation();
+  const { data: trialPublications } = useGetPublicationsQuery(
+    { workspaceId: workspace?.id ?? "", page: 1, pageSize: 50 },
+    { skip: !workspace || workspace.subscriptionStatus !== "trialing" }
   );
   const [content, setContent] = useState(existing?.content ?? "");
   const [media, setMedia] = useState<PublicationMedia[]>(existing?.media ?? []);
@@ -162,7 +211,7 @@ export function PostComposerPage() {
     ).map((error) => ({ channel, error }))
   );
   const used =
-    workspace?.resources.posts.filter(
+    trialPublications?.items.filter(
       (post) => post.status !== "draft" && post.id !== existing?.id
     ).length ?? 0;
   const role = workspace?.members.find(
@@ -209,19 +258,17 @@ export function PostComposerPage() {
     }
     return true;
   };
-  const save = (status: PublicationStatus, validated = false) => {
+  const save = async (
+    status: "draft" | "scheduled" | "published",
+    validated = false
+  ) => {
     if (!workspace || !user || readOnly) return;
-    if (!validated && !validateSubmission(status)) return;
-    const now = new Date().toISOString();
-    const publication: ScheduledPublication = {
-      id: existing?.id ?? crypto.randomUUID(),
-      createdBy: existing?.createdBy ?? user.id,
+    if (status !== "draft" && !validated && !validateSubmission(status)) return;
+    const publication: PublicationInput = {
       status,
       content: content.trim(),
-      media,
-      targets: selected.map((channel) => ({
+      targets: selected.map((channel): PublicationTargetInput => ({
         channelId: channel.id,
-        platform: channel.platform,
         contentOverride: activeCustomizedPlatforms.includes(channel.platform)
           ? overrides[channel.platform]?.trim() || null
           : null,
@@ -230,41 +277,33 @@ export function PostComposerPage() {
         )
           ? (tagGroupOverrides[channel.platform] ?? tagGroupSnapshots)
           : null,
-        mediaOverride: null,
         settings:
           existing?.targets.find((target) => target.channelId === channel.id)
             ?.settings ?? {},
-        status,
-        errorCode: null,
-        externalUrl: null,
       })),
       tagGroupSnapshots,
       scheduledFor:
         status === "scheduled"
           ? zonedInputToUtc(scheduledFor, workspace.timezone)
           : null,
-      publishedAt: status === "published" ? now : null,
-      createdAt: existing?.createdAt ?? now,
-      updatedAt: now,
     };
-    if (existing)
-      dispatch(
-        updateWorkspacePublication({
+    try {
+      if (existing)
+        await updatePublication({
           workspaceId: workspace.id,
-          actorId: user.id,
+          publicationId: existing.id,
           publication,
-        })
-      );
-    else
-      dispatch(
-        createWorkspacePublication({
+        }).unwrap();
+      else
+        await createPublication({
           workspaceId: workspace.id,
-          actorId: user.id,
           publication,
-        })
-      );
-    toast.success(t(`composer.feedback.${status}`));
-    navigate(ROUTES.posts);
+        }).unwrap();
+      toast.success(t(`composer.feedback.${status}`));
+      navigate(ROUTES.posts);
+    } catch (error) {
+      toast.error(tApiError(getApiErrorTranslationKey(error)));
+    }
   };
   const requestConfirmation = (status: "published" | "scheduled") => {
     if (validateSubmission(status)) setConfirmationMode(status);
@@ -308,6 +347,7 @@ export function PostComposerPage() {
             disabled={readOnly}
             effectiveContentLength={effectiveContent.length}
             media={media}
+            mediaDisabled
             onContentChange={setContent}
             onManageTags={openTagsManager}
             onMediaChange={setMedia}
@@ -347,6 +387,7 @@ export function PostComposerPage() {
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
               <Button
                 className="w-full sm:w-auto"
+                disabled={isCreating || isUpdating}
                 variant="outline"
                 onClick={() => save("draft")}
               >
@@ -355,7 +396,11 @@ export function PostComposerPage() {
               </Button>
               <Button
                 className="w-full sm:w-auto"
-                disabled={timingMode === "scheduled" && !scheduledFor}
+                disabled={
+                  isCreating ||
+                  isUpdating ||
+                  (timingMode === "scheduled" && !scheduledFor)
+                }
                 onClick={() =>
                   requestConfirmation(
                     timingMode === "scheduled" ? "scheduled" : "published"

@@ -16,6 +16,7 @@ export function ContentStep({
   disabled,
   effectiveContentLength,
   media,
+  mediaDisabled = false,
   onContentChange,
   onManageTags,
   onMediaChange,
@@ -28,6 +29,7 @@ export function ContentStep({
   disabled: boolean;
   effectiveContentLength: number;
   media: PublicationMedia[];
+  mediaDisabled?: boolean;
   onContentChange: (content: string) => void;
   onManageTags: () => void;
   onMediaChange: (media: PublicationMedia[]) => void;
@@ -42,11 +44,16 @@ export function ContentStep({
   return (
     <PostComposerStepCard title={t("composer.content")}>
       <MediaUploader
-        disabled={disabled}
+        disabled={disabled || mediaDisabled}
         media={media}
         platforms={selectedPlatforms}
         onChange={onMediaChange}
       />
+      {mediaDisabled && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {t("composer.mediaUnavailable")}
+        </p>
+      )}
       <div className="mt-5 flex justify-between gap-4">
         <label className="text-sm font-semibold" htmlFor="post-caption">
           {t("composer.caption")}

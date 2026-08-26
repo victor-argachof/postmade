@@ -405,6 +405,8 @@ export const ModelName = {
   Workspace: 'Workspace',
   WorkspaceInvitation: 'WorkspaceInvitation',
   Channel: 'Channel',
+  Publication: 'Publication',
+  PublicationTarget: 'PublicationTarget',
   TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
 } as const
@@ -422,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "identity" | "passwordCredential" | "emailChallenge" | "session" | "workspace" | "workspaceInvitation" | "channel" | "tagGroup" | "workspaceMember"
+    modelProps: "user" | "identity" | "passwordCredential" | "emailChallenge" | "session" | "workspace" | "workspaceInvitation" | "channel" | "publication" | "publicationTarget" | "tagGroup" | "workspaceMember"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1018,6 +1020,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Publication: {
+      payload: Prisma.$PublicationPayload<ExtArgs>
+      fields: Prisma.PublicationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PublicationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PublicationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        findFirst: {
+          args: Prisma.PublicationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PublicationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        findMany: {
+          args: Prisma.PublicationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+        }
+        create: {
+          args: Prisma.PublicationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        createMany: {
+          args: Prisma.PublicationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PublicationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+        }
+        delete: {
+          args: Prisma.PublicationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        update: {
+          args: Prisma.PublicationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        deleteMany: {
+          args: Prisma.PublicationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PublicationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PublicationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>[]
+        }
+        upsert: {
+          args: Prisma.PublicationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationPayload>
+        }
+        aggregate: {
+          args: Prisma.PublicationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePublication>
+        }
+        groupBy: {
+          args: Prisma.PublicationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PublicationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationCountAggregateOutputType> | number
+        }
+      }
+    }
+    PublicationTarget: {
+      payload: Prisma.$PublicationTargetPayload<ExtArgs>
+      fields: Prisma.PublicationTargetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PublicationTargetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PublicationTargetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        findFirst: {
+          args: Prisma.PublicationTargetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PublicationTargetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        findMany: {
+          args: Prisma.PublicationTargetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>[]
+        }
+        create: {
+          args: Prisma.PublicationTargetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        createMany: {
+          args: Prisma.PublicationTargetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PublicationTargetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>[]
+        }
+        delete: {
+          args: Prisma.PublicationTargetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        update: {
+          args: Prisma.PublicationTargetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        deleteMany: {
+          args: Prisma.PublicationTargetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PublicationTargetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PublicationTargetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>[]
+        }
+        upsert: {
+          args: Prisma.PublicationTargetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PublicationTargetPayload>
+        }
+        aggregate: {
+          args: Prisma.PublicationTargetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePublicationTarget>
+        }
+        groupBy: {
+          args: Prisma.PublicationTargetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationTargetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PublicationTargetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PublicationTargetCountAggregateOutputType> | number
+        }
+      }
+    }
     TagGroup: {
       payload: Prisma.$TagGroupPayload<ExtArgs>
       fields: Prisma.TagGroupFieldRefs
@@ -1324,6 +1474,38 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
+export const PublicationScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  createdBy: 'createdBy',
+  status: 'status',
+  content: 'content',
+  tagGroupSnapshots: 'tagGroupSnapshots',
+  scheduledFor: 'scheduledFor',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
+
+
+export const PublicationTargetScalarFieldEnum = {
+  id: 'id',
+  publicationId: 'publicationId',
+  channelId: 'channelId',
+  platform: 'platform',
+  contentOverride: 'contentOverride',
+  tagGroupSnapshotsOverride: 'tagGroupSnapshotsOverride',
+  settings: 'settings',
+  status: 'status',
+  errorCode: 'errorCode',
+  externalUrl: 'externalUrl'
+} as const
+
+export type PublicationTargetScalarFieldEnum = (typeof PublicationTargetScalarFieldEnum)[keyof typeof PublicationTargetScalarFieldEnum]
+
+
 export const TagGroupScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -1358,6 +1540,21 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -1374,6 +1571,15 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
 
 /**
  * Field references
@@ -1384,14 +1590,14 @@ export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
  * Reference to a field of type 'String'
  */
 export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
-
+    
 
 
 /**
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
-
+    
 
 
 /**
@@ -1510,20 +1716,48 @@ export type EnumSocialPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'SocialPlatform[]'
  */
 export type ListEnumSocialPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SocialPlatform[]'>
-
+    
 
 
 /**
  * Reference to a field of type 'ChannelConnectionStatus'
  */
 export type EnumChannelConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelConnectionStatus'>
-
+    
 
 
 /**
  * Reference to a field of type 'ChannelConnectionStatus[]'
  */
 export type ListEnumChannelConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelConnectionStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PublicationStatus'
+ */
+export type EnumPublicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PublicationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PublicationStatus[]'
+ */
+export type ListEnumPublicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PublicationStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -1699,6 +1933,8 @@ export type GlobalOmitConfig = {
   workspace?: Prisma.WorkspaceOmit
   workspaceInvitation?: Prisma.WorkspaceInvitationOmit
   channel?: Prisma.ChannelOmit
+  publication?: Prisma.PublicationOmit
+  publicationTarget?: Prisma.PublicationTargetOmit
   tagGroup?: Prisma.TagGroupOmit
   workspaceMember?: Prisma.WorkspaceMemberOmit
 }
@@ -1763,3 +1999,4 @@ export type PrismaAction =
  * `PrismaClient` proxy available in interactive transactions.
  */
 export type TransactionClient = Omit<DefaultPrismaClient, runtime.ITXClientDenyList>
+

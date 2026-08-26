@@ -76,3 +76,14 @@ export const ChannelConnectionStatus = {
 } as const
 
 export type ChannelConnectionStatus = (typeof ChannelConnectionStatus)[keyof typeof ChannelConnectionStatus]
+
+
+export const PublicationStatus = {
+  draft: 'draft',
+  scheduled: 'scheduled',
+  publishing: 'publishing',
+  published: 'published',
+  failed: 'failed'
+} as const
+
+export type PublicationStatus = (typeof PublicationStatus)[keyof typeof PublicationStatus]

@@ -1,38 +1,38 @@
-import type { ScheduledPublication } from "@postmade/types";
+import type {
+  PublicationFiltersInput,
+  PublicationInput,
+  PublicationsPage,
+  ScheduledPublication,
+} from "@postmade/types";
 
 import { api } from "@/shared/api/api";
 
-interface PublicationListInput {
-  workspaceId: string;
-  status?: string;
-  channelId?: string;
-  query?: string;
-  from?: string;
-  to?: string;
-  page?: number;
-  pageSize?: number;
-}
-interface PublicationListOutput {
-  items: ScheduledPublication[];
-  total: number;
-}
-interface PublicationMutationInput {
-  workspaceId: string;
-  publication: ScheduledPublication;
-}
-
+type WorkspaceInput = { workspaceId: string };
 export const postsApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getPublications: build.query<PublicationListOutput, PublicationListInput>({
+    getPublications: build.query<
+      PublicationsPage,
+      WorkspaceInput & PublicationFiltersInput
+    >({
       query: ({ workspaceId, ...params }) => ({
         url: `/workspaces/${workspaceId}/publications`,
         params,
       }),
-      providesTags: ["Post"],
+      providesTags: ["Post", "Schedule"],
+    }),
+    getPublication: build.query<
+      ScheduledPublication,
+      WorkspaceInput & { publicationId: string }
+    >({
+      query: ({ workspaceId, publicationId }) =>
+        `/workspaces/${workspaceId}/publications/${publicationId}`,
+      providesTags: (_r, _e, input) => [
+        { type: "Post", id: input.publicationId },
+      ],
     }),
     createPublication: build.mutation<
       ScheduledPublication,
-      PublicationMutationInput
+      WorkspaceInput & { publication: PublicationInput }
     >({
       query: ({ workspaceId, publication }) => ({
         url: `/workspaces/${workspaceId}/publications`,
@@ -43,10 +43,10 @@ export const postsApi = api.injectEndpoints({
     }),
     updatePublication: build.mutation<
       ScheduledPublication,
-      PublicationMutationInput
+      WorkspaceInput & { publicationId: string; publication: PublicationInput }
     >({
-      query: ({ workspaceId, publication }) => ({
-        url: `/workspaces/${workspaceId}/publications/${publication.id}`,
+      query: ({ workspaceId, publicationId, publication }) => ({
+        url: `/workspaces/${workspaceId}/publications/${publicationId}`,
         method: "PATCH",
         body: publication,
       }),
@@ -54,7 +54,7 @@ export const postsApi = api.injectEndpoints({
     }),
     deletePublication: build.mutation<
       void,
-      { workspaceId: string; publicationId: string }
+      WorkspaceInput & { publicationId: string }
     >({
       query: ({ workspaceId, publicationId }) => ({
         url: `/workspaces/${workspaceId}/publications/${publicationId}`,
@@ -64,7 +64,7 @@ export const postsApi = api.injectEndpoints({
     }),
     duplicatePublication: build.mutation<
       ScheduledPublication,
-      { workspaceId: string; publicationId: string }
+      WorkspaceInput & { publicationId: string }
     >({
       query: ({ workspaceId, publicationId }) => ({
         url: `/workspaces/${workspaceId}/publications/${publicationId}/duplicate`,
@@ -72,9 +72,19 @@ export const postsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Post", "Schedule"],
     }),
+    cancelPublication: build.mutation<
+      ScheduledPublication,
+      WorkspaceInput & { publicationId: string }
+    >({
+      query: ({ workspaceId, publicationId }) => ({
+        url: `/workspaces/${workspaceId}/publications/${publicationId}/cancel`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Post", "Schedule"],
+    }),
     retryPublication: build.mutation<
       ScheduledPublication,
-      { workspaceId: string; publicationId: string }
+      WorkspaceInput & { publicationId: string }
     >({
       query: ({ workspaceId, publicationId }) => ({
         url: `/workspaces/${workspaceId}/publications/${publicationId}/retry`,
@@ -82,25 +92,16 @@ export const postsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Post", "Schedule"],
     }),
-    uploadPublicationMedia: build.mutation<
-      { url: string },
-      { workspaceId: string; body: FormData }
-    >({
-      query: ({ workspaceId, body }) => ({
-        url: `/workspaces/${workspaceId}/media`,
-        method: "POST",
-        body,
-      }),
-    }),
   }),
 });
 
 export const {
   useGetPublicationsQuery,
+  useGetPublicationQuery,
   useCreatePublicationMutation,
   useUpdatePublicationMutation,
   useDeletePublicationMutation,
   useDuplicatePublicationMutation,
+  useCancelPublicationMutation,
   useRetryPublicationMutation,
-  useUploadPublicationMediaMutation,
 } = postsApi;

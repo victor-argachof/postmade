@@ -2,6 +2,8 @@
   "pageTitle": "Publicações",
   "pageDescription": "Crie, agende e acompanhe o conteúdo de todos os seus canais.",
   "newPost": "Nova publicação",
+  "loading": "Carregando publicações...",
+  "retry": "Tentar novamente",
   "views": {
     "navigation": "Visualização de publicações",
     "list": "Lista",

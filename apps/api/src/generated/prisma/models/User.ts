@@ -188,6 +188,7 @@ export type UserWhereInput = {
   challenges?: Prisma.EmailChallengeListRelationFilter
   createdTagGroups?: Prisma.TagGroupListRelationFilter
   createdChannels?: Prisma.ChannelListRelationFilter
+  createdPublications?: Prisma.PublicationListRelationFilter
   sentInvitations?: Prisma.WorkspaceInvitationListRelationFilter
   ownedWorkspaces?: Prisma.WorkspaceListRelationFilter
 }
@@ -204,6 +205,7 @@ export type UserOrderByWithRelationInput = {
   challenges?: Prisma.EmailChallengeOrderByRelationAggregateInput
   createdTagGroups?: Prisma.TagGroupOrderByRelationAggregateInput
   createdChannels?: Prisma.ChannelOrderByRelationAggregateInput
+  createdPublications?: Prisma.PublicationOrderByRelationAggregateInput
   sentInvitations?: Prisma.WorkspaceInvitationOrderByRelationAggregateInput
   ownedWorkspaces?: Prisma.WorkspaceOrderByRelationAggregateInput
 }
@@ -223,6 +225,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   challenges?: Prisma.EmailChallengeListRelationFilter
   createdTagGroups?: Prisma.TagGroupListRelationFilter
   createdChannels?: Prisma.ChannelListRelationFilter
+  createdPublications?: Prisma.PublicationListRelationFilter
   sentInvitations?: Prisma.WorkspaceInvitationListRelationFilter
   ownedWorkspaces?: Prisma.WorkspaceListRelationFilter
 }, "id" | "email">
@@ -261,6 +264,7 @@ export type UserCreateInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -277,6 +281,7 @@ export type UserUncheckedCreateInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -293,6 +298,7 @@ export type UserUpdateInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -309,6 +315,7 @@ export type UserUncheckedUpdateInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -465,6 +472,20 @@ export type UserUpdateOneRequiredWithoutCreatedChannelsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedChannelsInput, Prisma.UserUpdateWithoutCreatedChannelsInput>, Prisma.UserUncheckedUpdateWithoutCreatedChannelsInput>
 }
 
+export type UserCreateNestedOneWithoutCreatedPublicationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPublicationsInput, Prisma.UserUncheckedCreateWithoutCreatedPublicationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPublicationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedPublicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPublicationsInput, Prisma.UserUncheckedCreateWithoutCreatedPublicationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPublicationsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedPublicationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedPublicationsInput, Prisma.UserUpdateWithoutCreatedPublicationsInput>, Prisma.UserUncheckedUpdateWithoutCreatedPublicationsInput>
+}
+
 export type UserCreateNestedOneWithoutCreatedTagGroupsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedTagGroupsInput, Prisma.UserUncheckedCreateWithoutCreatedTagGroupsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedTagGroupsInput
@@ -504,6 +525,7 @@ export type UserCreateWithoutIdentitiesInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -519,6 +541,7 @@ export type UserUncheckedCreateWithoutIdentitiesInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -550,6 +573,7 @@ export type UserUpdateWithoutIdentitiesInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -565,6 +589,7 @@ export type UserUncheckedUpdateWithoutIdentitiesInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -580,6 +605,7 @@ export type UserCreateWithoutChallengesInput = {
   memberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -595,6 +621,7 @@ export type UserUncheckedCreateWithoutChallengesInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -626,6 +653,7 @@ export type UserUpdateWithoutChallengesInput = {
   memberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -641,6 +669,7 @@ export type UserUncheckedUpdateWithoutChallengesInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -656,6 +685,7 @@ export type UserCreateWithoutSessionsInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -671,6 +701,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -702,6 +733,7 @@ export type UserUpdateWithoutSessionsInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -717,6 +749,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -733,6 +766,7 @@ export type UserCreateWithoutOwnedWorkspacesInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
 }
 
@@ -748,6 +782,7 @@ export type UserUncheckedCreateWithoutOwnedWorkspacesInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
 }
 
@@ -779,6 +814,7 @@ export type UserUpdateWithoutOwnedWorkspacesInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
 }
 
@@ -794,6 +830,7 @@ export type UserUncheckedUpdateWithoutOwnedWorkspacesInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
 }
 
@@ -809,6 +846,7 @@ export type UserCreateWithoutSentInvitationsInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
 
@@ -824,6 +862,7 @@ export type UserUncheckedCreateWithoutSentInvitationsInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
 
@@ -855,6 +894,7 @@ export type UserUpdateWithoutSentInvitationsInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
 
@@ -870,6 +910,7 @@ export type UserUncheckedUpdateWithoutSentInvitationsInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
 
@@ -884,6 +925,7 @@ export type UserCreateWithoutCreatedChannelsInput = {
   memberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -899,6 +941,7 @@ export type UserUncheckedCreateWithoutCreatedChannelsInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -930,6 +973,7 @@ export type UserUpdateWithoutCreatedChannelsInput = {
   memberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -945,6 +989,87 @@ export type UserUncheckedUpdateWithoutCreatedChannelsInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
+  sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
+  ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
+}
+
+export type UserCreateWithoutCreatedPublicationsInput = {
+  id?: string
+  name: string
+  email: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  identities?: Prisma.IdentityCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  memberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
+  challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
+  createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
+  createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
+  ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
+}
+
+export type UserUncheckedCreateWithoutCreatedPublicationsInput = {
+  id?: string
+  name: string
+  email: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  identities?: Prisma.IdentityUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
+  challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
+  createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
+  createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
+  ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
+}
+
+export type UserCreateOrConnectWithoutCreatedPublicationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPublicationsInput, Prisma.UserUncheckedCreateWithoutCreatedPublicationsInput>
+}
+
+export type UserUpsertWithoutCreatedPublicationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPublicationsInput, Prisma.UserUncheckedUpdateWithoutCreatedPublicationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPublicationsInput, Prisma.UserUncheckedCreateWithoutCreatedPublicationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedPublicationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPublicationsInput, Prisma.UserUncheckedUpdateWithoutCreatedPublicationsInput>
+}
+
+export type UserUpdateWithoutCreatedPublicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  identities?: Prisma.IdentityUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
+  challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
+  createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
+  createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
+  ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedPublicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  identities?: Prisma.IdentityUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
+  challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
+  createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
+  createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -960,6 +1085,7 @@ export type UserCreateWithoutCreatedTagGroupsInput = {
   memberships?: Prisma.WorkspaceMemberCreateNestedManyWithoutUserInput
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -975,6 +1101,7 @@ export type UserUncheckedCreateWithoutCreatedTagGroupsInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedCreateNestedManyWithoutUserInput
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -1006,6 +1133,7 @@ export type UserUpdateWithoutCreatedTagGroupsInput = {
   memberships?: Prisma.WorkspaceMemberUpdateManyWithoutUserNestedInput
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -1021,6 +1149,7 @@ export type UserUncheckedUpdateWithoutCreatedTagGroupsInput = {
   memberships?: Prisma.WorkspaceMemberUncheckedUpdateManyWithoutUserNestedInput
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -1036,6 +1165,7 @@ export type UserCreateWithoutMembershipsInput = {
   challenges?: Prisma.EmailChallengeCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceCreateNestedManyWithoutOwnerInput
 }
@@ -1051,6 +1181,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   challenges?: Prisma.EmailChallengeUncheckedCreateNestedManyWithoutUserInput
   createdTagGroups?: Prisma.TagGroupUncheckedCreateNestedManyWithoutCreatorInput
   createdChannels?: Prisma.ChannelUncheckedCreateNestedManyWithoutCreatorInput
+  createdPublications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCreatorInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedCreateNestedManyWithoutSenderInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedCreateNestedManyWithoutOwnerInput
 }
@@ -1082,6 +1213,7 @@ export type UserUpdateWithoutMembershipsInput = {
   challenges?: Prisma.EmailChallengeUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUpdateManyWithoutOwnerNestedInput
 }
@@ -1097,6 +1229,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   challenges?: Prisma.EmailChallengeUncheckedUpdateManyWithoutUserNestedInput
   createdTagGroups?: Prisma.TagGroupUncheckedUpdateManyWithoutCreatorNestedInput
   createdChannels?: Prisma.ChannelUncheckedUpdateManyWithoutCreatorNestedInput
+  createdPublications?: Prisma.PublicationUncheckedUpdateManyWithoutCreatorNestedInput
   sentInvitations?: Prisma.WorkspaceInvitationUncheckedUpdateManyWithoutSenderNestedInput
   ownedWorkspaces?: Prisma.WorkspaceUncheckedUpdateManyWithoutOwnerNestedInput
 }
@@ -1113,6 +1246,7 @@ export type UserCountOutputType = {
   challenges: number
   createdTagGroups: number
   createdChannels: number
+  createdPublications: number
   sentInvitations: number
   ownedWorkspaces: number
 }
@@ -1124,6 +1258,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   challenges?: boolean | UserCountOutputTypeCountChallengesArgs
   createdTagGroups?: boolean | UserCountOutputTypeCountCreatedTagGroupsArgs
   createdChannels?: boolean | UserCountOutputTypeCountCreatedChannelsArgs
+  createdPublications?: boolean | UserCountOutputTypeCountCreatedPublicationsArgs
   sentInvitations?: boolean | UserCountOutputTypeCountSentInvitationsArgs
   ownedWorkspaces?: boolean | UserCountOutputTypeCountOwnedWorkspacesArgs
 }
@@ -1183,6 +1318,13 @@ export type UserCountOutputTypeCountCreatedChannelsArgs<ExtArgs extends runtime.
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCreatedPublicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountSentInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.WorkspaceInvitationWhereInput
 }
@@ -1207,6 +1349,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   challenges?: boolean | Prisma.User$challengesArgs<ExtArgs>
   createdTagGroups?: boolean | Prisma.User$createdTagGroupsArgs<ExtArgs>
   createdChannels?: boolean | Prisma.User$createdChannelsArgs<ExtArgs>
+  createdPublications?: boolean | Prisma.User$createdPublicationsArgs<ExtArgs>
   sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
   ownedWorkspaces?: boolean | Prisma.User$ownedWorkspacesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1244,6 +1387,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   challenges?: boolean | Prisma.User$challengesArgs<ExtArgs>
   createdTagGroups?: boolean | Prisma.User$createdTagGroupsArgs<ExtArgs>
   createdChannels?: boolean | Prisma.User$createdChannelsArgs<ExtArgs>
+  createdPublications?: boolean | Prisma.User$createdPublicationsArgs<ExtArgs>
   sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
   ownedWorkspaces?: boolean | Prisma.User$ownedWorkspacesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1260,6 +1404,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     challenges: Prisma.$EmailChallengePayload<ExtArgs>[]
     createdTagGroups: Prisma.$TagGroupPayload<ExtArgs>[]
     createdChannels: Prisma.$ChannelPayload<ExtArgs>[]
+    createdPublications: Prisma.$PublicationPayload<ExtArgs>[]
     sentInvitations: Prisma.$WorkspaceInvitationPayload<ExtArgs>[]
     ownedWorkspaces: Prisma.$WorkspacePayload<ExtArgs>[]
   }
@@ -1669,6 +1814,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   challenges<T extends Prisma.User$challengesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$challengesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChallengePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdTagGroups<T extends Prisma.User$createdTagGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdTagGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TagGroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdChannels<T extends Prisma.User$createdChannelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdChannelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdPublications<T extends Prisma.User$createdPublicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdPublicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sentInvitations<T extends Prisma.User$sentInvitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspaceInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ownedWorkspaces<T extends Prisma.User$ownedWorkspacesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ownedWorkspacesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2239,6 +2385,30 @@ export type User$createdChannelsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.ChannelScalarFieldEnum | Prisma.ChannelScalarFieldEnum[]
+}
+
+/**
+ * User.createdPublications
+ */
+export type User$createdPublicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Publication
+   */
+  select?: Prisma.PublicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Publication
+   */
+  omit?: Prisma.PublicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicationInclude<ExtArgs> | null
+  where?: Prisma.PublicationWhereInput
+  orderBy?: Prisma.PublicationOrderByWithRelationInput | Prisma.PublicationOrderByWithRelationInput[]
+  cursor?: Prisma.PublicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicationScalarFieldEnum | Prisma.PublicationScalarFieldEnum[]
 }
 
 /**

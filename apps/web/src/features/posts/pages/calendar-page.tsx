@@ -24,6 +24,7 @@ import {
   type CalendarFilters,
 } from "../components/calendar-toolbar";
 import { PublicationDetailsPanel } from "../components/publication-details-panel";
+import { useGetPublicationsQuery } from "../services/posts-api";
 
 const initialFilters: CalendarFilters = {
   platform: "all",
@@ -54,9 +55,33 @@ function CalendarPageContent() {
     : today;
   const [filters, setFilters] = useState(initialFilters);
   const [detail, setDetail] = useState<ScheduledPublication | null>(null);
+  const [monthYear = "1970", monthNumber = "01"] = month.split("-");
+  const rangeFrom = new Date(
+    Date.UTC(Number(monthYear), Number(monthNumber) - 1, 1)
+  ).toISOString();
+  const rangeTo = new Date(
+    Date.UTC(Number(monthYear), Number(monthNumber), 1) - 1
+  ).toISOString();
+  const { data: publicationPage } = useGetPublicationsQuery(
+    {
+      workspaceId: workspace?.id ?? "",
+      page: 1,
+      pageSize: 50,
+      from: rangeFrom,
+      to: rangeTo,
+      status: filters.status === "all" ? undefined : filters.status,
+      platform: filters.platform === "all" ? undefined : filters.platform,
+      channelId: filters.channelId === "all" ? undefined : filters.channelId,
+    },
+    { skip: !workspace }
+  );
+  const remotePublications = useMemo(
+    () => publicationPage?.items ?? [],
+    [publicationPage?.items]
+  );
   const channelIds = Array.from(
     new Set(
-      (workspace?.resources.posts ?? []).flatMap((publication) =>
+      remotePublications.flatMap((publication) =>
         publication.targets.map((target) => target.channelId)
       )
     )
@@ -72,7 +97,7 @@ function CalendarPageContent() {
   const channels = mergeChannelLookup(channelLookup);
   const publications = useMemo(
     () =>
-      (workspace?.resources.posts ?? []).filter(
+      remotePublications.filter(
         (post) =>
           post.status !== "draft" &&
           (filters.status === "all" || post.status === filters.status) &&
@@ -85,7 +110,7 @@ function CalendarPageContent() {
               (target) => target.channelId === filters.channelId
             ))
       ),
-    [workspace, filters]
+    [remotePublications, filters]
   );
   const groups = groupPublicationsByLocalDay(
     publications,

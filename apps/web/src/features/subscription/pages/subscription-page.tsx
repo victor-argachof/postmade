@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
 import { useGetChannelsQuery } from "@/features/channels/services/channels-api";
+import { useGetPublicationsQuery } from "@/features/posts/services/posts-api";
 import { getMinimumSubscriptionConfiguration } from "@/features/workspaces/lib/subscription-pricing";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import {
@@ -49,6 +50,10 @@ export function SubscriptionPage() {
   const [updateSubscription, { isLoading: isUpdatingSubscription }] =
     useUpdateSubscriptionMutation();
   const { data: channelPage } = useGetChannelsQuery(
+    { workspaceId: workspace?.id ?? "", page: 1, pageSize: 10 },
+    { skip: !workspace }
+  );
+  const { data: publicationPage } = useGetPublicationsQuery(
     { workspaceId: workspace?.id ?? "", page: 1, pageSize: 10 },
     { skip: !workspace }
   );
@@ -231,7 +236,7 @@ export function SubscriptionPage() {
       <SubscriptionSummary
         configuration={workspace?.subscriptionConfiguration}
         status={workspace?.subscriptionStatus}
-        postsUsed={workspace?.resources.posts.length}
+        postsUsed={publicationPage?.total}
         channelsConnected={connectedChannels}
         membersUsed={occupiedMembers}
         onSubscribe={scrollToConfigurator}

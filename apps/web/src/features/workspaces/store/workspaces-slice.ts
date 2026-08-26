@@ -50,10 +50,7 @@ function createOwnedWorkspace(payload: {
       },
     ],
     invitations: [],
-    resources: {
-      posts: [],
-      selectedCalendarDate: null,
-    },
+    resources: { posts: [], selectedCalendarDate: null },
   };
 }
 
@@ -84,10 +81,7 @@ const workspacesSlice = createSlice({
         role,
         members: [{ ...user, role, joinedAt: workspace.createdAt }],
         invitations: [],
-        resources: {
-          posts: [],
-          selectedCalendarDate: null,
-        },
+        resources: { posts: [], selectedCalendarDate: null },
       }));
       if (!state.items.some((item) => item.id === state.activeWorkspaceId))
         state.activeWorkspaceId = state.items[0]?.id ?? null;

@@ -33,6 +33,9 @@
     "caption": "Legenda",
     "placeholder": "O que você quer compartilhar?",
     "addMedia": "Adicionar imagens ou vídeo",
+    "mediaUnavailable": "O upload de mídia estará disponível em uma próxima etapa. Salve como rascunho para continuar.",
+    "loading": "Carregando publicação...",
+    "retry": "Tentar novamente",
     "mediaGuidance": {
       "summary_one": "{{formats}} · até {{count}} arquivo",
       "summary_other": "{{formats}} · até {{count}} arquivos",

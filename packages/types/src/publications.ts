@@ -30,6 +30,21 @@ export interface PublicationTarget {
   externalUrl: string | null;
 }
 
+export interface PublicationTargetInput {
+  channelId: string;
+  contentOverride?: string | null;
+  tagGroupSnapshotsOverride?: PublicationTagGroupSnapshot[] | null;
+  settings?: Record<string, unknown>;
+}
+
+export interface PublicationInput {
+  status: "draft" | "scheduled" | "published";
+  content: string;
+  targets: PublicationTargetInput[];
+  tagGroupSnapshots?: PublicationTagGroupSnapshot[];
+  scheduledFor?: string | null;
+}
+
 export interface ScheduledPublication {
   id: string;
   createdBy: string;
@@ -45,3 +60,22 @@ export interface ScheduledPublication {
 }
 
 export type Publication = ScheduledPublication;
+
+export interface PublicationsPage {
+  items: ScheduledPublication[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PublicationFiltersInput {
+  status?: PublicationStatus;
+  platform?: SocialPlatform;
+  channelId?: string;
+  query?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  pageSize?: 10 | 25 | 50;
+}

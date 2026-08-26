@@ -2,10 +2,10 @@
 
 ## Fonte de verdade
 
-As publicações pertencem ao workspace e ficam exclusivamente em
-`workspace.resources.posts`. Os slices de posts e calendário guardam apenas estado
-transitório da interface. Trocar de workspace troca imediatamente a listagem e o
-calendário.
+As publicações pertencem ao workspace e são persistidas pela API. O cache do RTK
+Query é a fonte de verdade no navegador; slices guardam apenas estado transitório
+da interface. Trocar de workspace altera a chave das consultas e atualiza
+imediatamente listagem, calendário e dashboard.
 
 Publicações possui dois modos de visualização: Lista, acessível em `/posts`, e
 Calendário, acessível em `/posts/calendar`. Ambos fazem parte da feature `posts` e
@@ -71,11 +71,15 @@ exibição e novos agendamentos, mas não modifica os instantes UTC de publicaç
 já agendadas. Offsets fixos não devem ser usados, pois não representam mudanças
 regionais e regras de horário de verão.
 
-## Continuidade no backend
+## API persistente
 
-A futura API deverá oferecer listagem filtrada, criação, atualização, exclusão,
-duplicação, retry e upload sob `/workspaces/:workspaceId`. O servidor repetirá
-validações de associação, papel, trial, canais, plataforma e datas. Publicação e
-retry serão assíncronos, idempotentes e executados por filas; o navegador nunca
-armazenará credenciais sociais. Jobs de ciclo de vida deverão remover objetos
-expirados e registrar a limpeza de forma idempotente.
+A API oferece listagem filtrada e paginada, consulta individual, criação,
+atualização, exclusão, duplicação, cancelamento e retry sob
+`/workspaces/:workspaceId/publications`. O servidor repete validações de
+associação, papel, trial, canais, plataforma e datas.
+
+Nesta primeira integração, `Publicar agora` persiste imediatamente o estado
+`published`, de forma simulada e sem chamar redes externas. Upload de mídia ainda
+não está disponível: rascunhos podem permanecer incompletos, mas plataformas que
+exigem mídia não podem ser agendadas ou publicadas. Filas, envio real, retry do
+provedor e ciclo de vida de objetos permanecem como continuidade do backend.

@@ -7,11 +7,11 @@ import {
   useGetChannelsQuery,
   useLookupChannelsQuery,
 } from "@/features/channels/services/channels-api";
-import { setPublicationFilters } from "@/features/posts/store/posts-slice";
+import { useGetPublicationsQuery } from "@/features/posts/services/posts-api";
 import { ROUTES } from "@/routes/route-paths";
 import { PageHeader } from "@/shared/components/page-header";
 import { Button } from "@/shared/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/shared/hooks/store-hooks";
+import { useAppSelector } from "@/shared/hooks/store-hooks";
 
 import { DashboardMetrics } from "../components/dashboard-metrics";
 import { UpcomingPublications } from "../components/upcoming-publications";
@@ -20,7 +20,6 @@ import { getDashboardSummary, getUpcomingPublications } from "../lib/selectors";
 export function DashboardPage() {
   const { t, i18n } = useTranslation("dashboard");
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const workspace = useAppSelector((state) =>
     state.workspaces.items.find(
       (item) => item.id === state.workspaces.activeWorkspaceId
@@ -31,7 +30,22 @@ export function DashboardPage() {
     (member) => member.id === user?.id
   )?.role;
   const canManage = Boolean(role && role !== "viewer");
-  const upcoming = getUpcomingPublications(workspace);
+  const query = (status: "draft" | "scheduled" | "failed") => ({
+    workspaceId: workspace?.id ?? "",
+    page: 1 as const,
+    pageSize: 10 as const,
+    status,
+  });
+  const { data: drafts } = useGetPublicationsQuery(query("draft"), {
+    skip: !workspace,
+  });
+  const { data: scheduled } = useGetPublicationsQuery(query("scheduled"), {
+    skip: !workspace,
+  });
+  const { data: failed } = useGetPublicationsQuery(query("failed"), {
+    skip: !workspace,
+  });
+  const upcoming = getUpcomingPublications(scheduled?.items ?? []);
   const targetIds = Array.from(
     new Set(
       upcoming.flatMap((publication) =>
@@ -52,7 +66,11 @@ export function DashboardPage() {
     { skip: !workspace }
   );
   const channels = mergeChannelLookup(channelLookup);
-  const summary = getDashboardSummary(workspace, channelPage?.summary.total);
+  const summary = getDashboardSummary(undefined, channelPage?.summary.total, {
+    drafts: drafts?.total ?? 0,
+    scheduled: scheduled?.total ?? 0,
+    failed: failed?.total ?? 0,
+  });
   const firstName = user?.name.trim().split(/\s+/)[0];
 
   const selectMetric = (
@@ -68,17 +86,7 @@ export function DashboardPage() {
         : metric === "scheduled"
           ? "scheduled"
           : "failed";
-    dispatch(
-      setPublicationFilters({
-        query: "",
-        status,
-        platform: "all",
-        channelId: "all",
-        from: "",
-        to: "",
-      })
-    );
-    navigate(ROUTES.posts);
+    navigate(`${ROUTES.posts}?status=${status}`);
   };
 
   return (

@@ -27,6 +27,10 @@ export type ApiErrorTranslationKey =
   | "notFound"
   | "notReady"
   | "passwordUnchanged"
+  | "publicationImmutable"
+  | "publicationInvalidStatus"
+  | "publicationNotFound"
+  | "publicationTrialLimitReached"
   | "rateLimited"
   | "resendCooldown"
   | "tagGroupNameConflict"
@@ -63,6 +67,10 @@ export const API_ERROR_TRANSLATION_KEYS = {
   NOT_READY: "notReady",
   ORIGIN_FORBIDDEN: "forbidden",
   PASSWORD_UNCHANGED: "passwordUnchanged",
+  PUBLICATION_IMMUTABLE: "publicationImmutable",
+  PUBLICATION_INVALID_STATUS: "publicationInvalidStatus",
+  PUBLICATION_NOT_FOUND: "publicationNotFound",
+  PUBLICATION_TRIAL_LIMIT_REACHED: "publicationTrialLimitReached",
   RATE_LIMITED: "rateLimited",
   RESEND_COOLDOWN: "resendCooldown",
   TAG_GROUP_NAME_CONFLICT: "tagGroupNameConflict",

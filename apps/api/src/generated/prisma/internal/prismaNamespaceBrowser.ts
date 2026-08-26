@@ -59,6 +59,8 @@ export const ModelName = {
   Workspace: 'Workspace',
   WorkspaceInvitation: 'WorkspaceInvitation',
   Channel: 'Channel',
+  Publication: 'Publication',
+  PublicationTarget: 'PublicationTarget',
   TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
 } as const
@@ -198,6 +200,38 @@ export const ChannelScalarFieldEnum = {
 export type ChannelScalarFieldEnum = (typeof ChannelScalarFieldEnum)[keyof typeof ChannelScalarFieldEnum]
 
 
+export const PublicationScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  createdBy: 'createdBy',
+  status: 'status',
+  content: 'content',
+  tagGroupSnapshots: 'tagGroupSnapshots',
+  scheduledFor: 'scheduledFor',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
+
+
+export const PublicationTargetScalarFieldEnum = {
+  id: 'id',
+  publicationId: 'publicationId',
+  channelId: 'channelId',
+  platform: 'platform',
+  contentOverride: 'contentOverride',
+  tagGroupSnapshotsOverride: 'tagGroupSnapshotsOverride',
+  settings: 'settings',
+  status: 'status',
+  errorCode: 'errorCode',
+  externalUrl: 'externalUrl'
+} as const
+
+export type PublicationTargetScalarFieldEnum = (typeof PublicationTargetScalarFieldEnum)[keyof typeof PublicationTargetScalarFieldEnum]
+
+
 export const TagGroupScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
@@ -232,6 +266,21 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -246,4 +295,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

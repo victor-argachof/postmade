@@ -55,6 +55,14 @@ enum ChannelConnectionStatus {
   disconnected
 }
 
+enum PublicationStatus {
+  draft
+  scheduled
+  publishing
+  published
+  failed
+}
+
 model User {
   id               String            @id @default(uuid())
   name             String
@@ -67,6 +75,7 @@ model User {
   challenges       EmailChallenge[]
   createdTagGroups TagGroup[]        @relation("TagGroupCreator")
   createdChannels  Channel[]         @relation("ChannelCreator")
+  createdPublications Publication[]   @relation("PublicationCreator")
   sentInvitations  WorkspaceInvitation[] @relation("InvitationSender")
   ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
 }
@@ -138,6 +147,7 @@ model Workspace {
   members              WorkspaceMember[]
   tagGroups            TagGroup[]
   channels             Channel[]
+  publications         Publication[]
   invitations          WorkspaceInvitation[]
 
   @@index([ownerId])
@@ -181,11 +191,52 @@ model Channel {
   updatedAt         DateTime                @updatedAt
   workspace         Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   creator           User                    @relation("ChannelCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  publicationTargets PublicationTarget[]
 
   @@unique([workspaceId, platform, providerAccountId])
   @@index([workspaceId, connectionStatus])
   @@index([workspaceId, platform])
   @@index([workspaceId, searchText])
+}
+
+model Publication {
+  id                String             @id @default(uuid())
+  workspaceId       String
+  createdBy         String
+  status            PublicationStatus  @default(draft)
+  content           String
+  tagGroupSnapshots Json               @default("[]")
+  scheduledFor      DateTime?
+  publishedAt       DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator           User               @relation("PublicationCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  targets           PublicationTarget[]
+
+  @@index([workspaceId, status])
+  @@index([workspaceId, scheduledFor])
+  @@index([workspaceId, publishedAt])
+  @@index([workspaceId, createdAt])
+}
+
+model PublicationTarget {
+  id                         String            @id @default(uuid())
+  publicationId              String
+  channelId                  String
+  platform                   SocialPlatform
+  contentOverride            String?
+  tagGroupSnapshotsOverride  Json?
+  settings                   Json              @default("{}")
+  status                     PublicationStatus @default(draft)
+  errorCode                  String?
+  externalUrl                String?
+  publication                Publication       @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  channel                    Channel           @relation(fields: [channelId], references: [id], onDelete: Restrict)
+
+  @@unique([publicationId, channelId])
+  @@index([channelId])
+  @@index([publicationId, status])
 }
 
 model TagGroup {

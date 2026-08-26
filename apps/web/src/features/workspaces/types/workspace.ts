@@ -1,5 +1,3 @@
-import type { ScheduledPublication } from "@postmade/types";
-
 import type {
   SubscriptionStatus,
   WorkspaceBilling,
@@ -41,8 +39,9 @@ export interface Workspace {
   timezone: string;
   members: WorkspaceMember[];
   invitations: WorkspaceInvitation[];
+  /** @deprecated Remote publications are stored in the RTK Query cache. */
   resources: {
-    posts: ScheduledPublication[];
+    posts: import("@postmade/types").ScheduledPublication[];
     selectedCalendarDate: string | null;
   };
 }

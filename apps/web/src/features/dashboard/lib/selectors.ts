@@ -11,22 +11,30 @@ export interface DashboardSummary {
 
 export function getDashboardSummary(
   workspace?: Workspace,
-  connectedChannels = 0
+  connectedChannels = 0,
+  remote?: Pick<DashboardSummary, "drafts" | "scheduled" | "failed">
 ): DashboardSummary {
   const posts = workspace?.resources.posts ?? [];
   return {
     connectedChannels,
-    drafts: posts.filter((post) => post.status === "draft").length,
-    scheduled: posts.filter((post) => post.status === "scheduled").length,
-    failed: posts.filter((post) => post.status === "failed").length,
+    drafts:
+      remote?.drafts ?? posts.filter((post) => post.status === "draft").length,
+    scheduled:
+      remote?.scheduled ??
+      posts.filter((post) => post.status === "scheduled").length,
+    failed:
+      remote?.failed ?? posts.filter((post) => post.status === "failed").length,
   };
 }
 
 export function getUpcomingPublications(
-  workspace?: Workspace,
+  workspaceOrPublications?: Workspace | ScheduledPublication[],
   now = Date.now()
 ): ScheduledPublication[] {
-  return (workspace?.resources.posts ?? [])
+  const publications = Array.isArray(workspaceOrPublications)
+    ? workspaceOrPublications
+    : (workspaceOrPublications?.resources.posts ?? []);
+  return publications
     .filter(
       (post) =>
         post.status === "scheduled" &&
