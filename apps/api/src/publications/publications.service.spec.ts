@@ -16,6 +16,7 @@ const publication = (overrides: Record<string, unknown> = {}) => ({
   createdAt: now,
   updatedAt: now,
   targets: [],
+  media: [],
   ...overrides,
 });
 
@@ -24,6 +25,10 @@ describe("PublicationsService", () => {
     const tx = {
       $executeRawUnsafe: async () => undefined,
       channel: { findMany: async () => [] },
+      mediaAsset: {
+        findMany: async () => [],
+        updateMany: async () => ({ count: 0 }),
+      },
       publication: {
         create: async ({ data }: any) => publication({ content: data.content }),
       },
@@ -60,6 +65,7 @@ describe("PublicationsService", () => {
           },
         ],
       },
+      mediaAsset: { findMany: async () => [] },
     };
     const prisma = { $transaction: async (callback: any) => callback(tx) };
     const access = { requireRole: async () => ({ role: "owner" }) };
@@ -77,6 +83,81 @@ describe("PublicationsService", () => {
           .getResponse()
           .details.some((detail: any) => detail.code === "MEDIA_REQUIRED")
     );
+  });
+
+  it("allows a media-only publication without a caption", async () => {
+    const readyMedia = {
+      id: "media-1",
+      type: "image",
+      filename: "photo.png",
+      mimeType: "image/png",
+      declaredSize: 8,
+      confirmedSize: 8,
+      status: "ready",
+    };
+    const tx = {
+      $executeRawUnsafe: async () => undefined,
+      $queryRaw: async () => [{ id: "media-1", type: "image" }],
+      channel: {
+        findMany: async () => [
+          {
+            id: "facebook-1",
+            workspaceId: "workspace-1",
+            platform: "facebook",
+            connectionStatus: "connected",
+          },
+        ],
+      },
+      workspace: {
+        findUniqueOrThrow: async () => ({ subscriptionStatus: "active" }),
+      },
+      publication: {
+        create: async () =>
+          publication({
+            status: "published",
+            publishedAt: now,
+            media: [{ mediaAssetId: "media-1", mediaAsset: readyMedia }],
+            targets: [
+              {
+                channelId: "facebook-1",
+                platform: "facebook",
+                contentOverride: null,
+                tagGroupSnapshotsOverride: null,
+                settings: {},
+                status: "published",
+                errorCode: null,
+                externalUrl: null,
+              },
+            ],
+          }),
+      },
+      publicationMedia: {
+        findMany: async () => [
+          {
+            mediaAssetId: "media-1",
+            publication: publication({
+              status: "published",
+              publishedAt: now,
+            }),
+          },
+        ],
+      },
+      mediaAsset: { updateMany: async () => ({ count: 1 }) },
+    };
+    const prisma = { $transaction: async (callback: any) => callback(tx) };
+    const access = { requireRole: async () => ({ role: "editor" }) };
+    const service = new PublicationsService(prisma as never, access as never);
+
+    const result = await service.create("user-1", "workspace-1", {
+      status: "published",
+      content: "",
+      targets: [{ channelId: "facebook-1" }],
+      tagGroupSnapshots: [],
+      mediaIds: ["media-1"],
+    });
+
+    assert.equal(result.content, "");
+    assert.equal(result.media.length, 1);
   });
 
   it("returns paginated results isolated by workspace", async () => {

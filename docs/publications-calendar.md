@@ -41,7 +41,12 @@ Imagens e vídeos são ativos temporários, mantidos somente enquanto forem nece
 para rascunho, agendamento, processamento e retry. O arquivo original não deve ser
 copiado por target nem preservado indefinidamente depois da confirmação das redes.
 
-O backend deverá aplicar uma política automática de ciclo de vida:
+O upload é feito diretamente para um bucket privado Cloudflare R2 por URL PUT
+assinada. Publicações persistem associações ordenadas por `mediaIds`; previews usam
+URLs GET temporárias. As regras completas estão em
+[`media-storage.md`](media-storage.md).
+
+O backend aplica uma política automática de ciclo de vida:
 
 - manter a mídia de publicações agendadas até todos os targets terminarem;
 - manter falhas durante uma janela curta e configurável de retry;
@@ -49,6 +54,10 @@ O backend deverá aplicar uma política automática de ciclo de vida:
   estiverem publicados;
 - expirar mídia de rascunhos abandonados;
 - usar referências e contagem de uso para nunca excluir um ativo ainda necessário.
+
+Uploads sem publicação expiram em 24 horas, rascunhos em sete dias, falhas em sete
+dias e originais publicados em 48 horas. O lifecycle de 120 dias no R2 é uma
+proteção contra objetos órfãos.
 
 O histórico priorizará `externalUrl`, ligando o usuário à publicação real em cada
 rede. Quando uma representação visual local for necessária, deverá ser armazenada
@@ -64,7 +73,9 @@ conflito com a política de mídia temporária do MVP.
 
 O workspace possui um timezone IANA. A interface exibe datas nesse fuso e persiste
 instantes em UTC. O calendário oferece mês e agenda, com mês/data selecionados na
-query string. Rascunhos sem data não aparecem no calendário.
+query string. Rascunhos sem data não aparecem no calendário. Agendamentos devem
+estar entre cinco minutos e 90 dias no futuro; o servidor valida em UTC e a
+interface antecipa os mesmos limites.
 
 Owners e admins podem alterar o fuso em `/workspace/settings`. A mudança afeta a
 exibição e novos agendamentos, mas não modifica os instantes UTC de publicações

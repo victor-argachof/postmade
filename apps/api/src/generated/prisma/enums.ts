@@ -87,3 +87,14 @@ export const PublicationStatus = {
 } as const
 
 export type PublicationStatus = (typeof PublicationStatus)[keyof typeof PublicationStatus]
+
+
+export const MediaAssetStatus = {
+  pending: 'pending',
+  ready: 'ready',
+  failed: 'failed',
+  deleting: 'deleting',
+  deleted: 'deleted'
+} as const
+
+export type MediaAssetStatus = (typeof MediaAssetStatus)[keyof typeof MediaAssetStatus]

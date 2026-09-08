@@ -47,6 +47,7 @@ export function ContentStep({
         disabled={disabled || mediaDisabled}
         media={media}
         platforms={selectedPlatforms}
+        workspaceId={workspaceId}
         onChange={onMediaChange}
       />
       {mediaDisabled && (

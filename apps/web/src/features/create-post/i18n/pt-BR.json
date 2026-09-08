@@ -34,6 +34,9 @@
     "placeholder": "O que você quer compartilhar?",
     "addMedia": "Adicionar imagens ou vídeo",
     "mediaUnavailable": "O upload de mídia estará disponível em uma próxima etapa. Salve como rascunho para continuar.",
+    "mediaUploading": "Enviando {{progress}}%",
+    "mediaUploadFailed": "Falha no upload de mídia.",
+    "mediaRetry": "Tentar novamente",
     "loading": "Carregando publicação...",
     "retry": "Tentar novamente",
     "mediaGuidance": {
@@ -92,7 +95,8 @@
       "characters": "O texto excede o limite.",
       "mediaRequired": "Esta plataforma exige mídia.",
       "mediaCount": "Mídia demais para esta plataforma.",
-      "mediaType": "Formato de mídia incompatível."
+      "mediaType": "Formato de mídia incompatível.",
+      "mediaPending": "Aguarde a conclusão do envio da mídia."
     },
     "feedback": {
       "draft": "Rascunho salvo.",

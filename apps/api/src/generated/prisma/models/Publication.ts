@@ -221,6 +221,7 @@ export type PublicationWhereInput = {
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   targets?: Prisma.PublicationTargetListRelationFilter
+  media?: Prisma.PublicationMediaListRelationFilter
 }
 
 export type PublicationOrderByWithRelationInput = {
@@ -237,6 +238,7 @@ export type PublicationOrderByWithRelationInput = {
   workspace?: Prisma.WorkspaceOrderByWithRelationInput
   creator?: Prisma.UserOrderByWithRelationInput
   targets?: Prisma.PublicationTargetOrderByRelationAggregateInput
+  media?: Prisma.PublicationMediaOrderByRelationAggregateInput
 }
 
 export type PublicationWhereUniqueInput = Prisma.AtLeast<{
@@ -256,6 +258,7 @@ export type PublicationWhereUniqueInput = Prisma.AtLeast<{
   workspace?: Prisma.XOR<Prisma.WorkspaceScalarRelationFilter, Prisma.WorkspaceWhereInput>
   creator?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   targets?: Prisma.PublicationTargetListRelationFilter
+  media?: Prisma.PublicationMediaListRelationFilter
 }, "id">
 
 export type PublicationOrderByWithAggregationInput = {
@@ -302,6 +305,7 @@ export type PublicationCreateInput = {
   workspace: Prisma.WorkspaceCreateNestedOneWithoutPublicationsInput
   creator: Prisma.UserCreateNestedOneWithoutCreatedPublicationsInput
   targets?: Prisma.PublicationTargetCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationUncheckedCreateInput = {
@@ -316,6 +320,7 @@ export type PublicationUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   targets?: Prisma.PublicationTargetUncheckedCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaUncheckedCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationUpdateInput = {
@@ -330,6 +335,7 @@ export type PublicationUpdateInput = {
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutPublicationsNestedInput
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedPublicationsNestedInput
   targets?: Prisma.PublicationTargetUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateInput = {
@@ -344,6 +350,7 @@ export type PublicationUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targets?: Prisma.PublicationTargetUncheckedUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUncheckedUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationCreateManyInput = {
@@ -523,6 +530,20 @@ export type EnumPublicationStatusFieldUpdateOperationsInput = {
   set?: $Enums.PublicationStatus
 }
 
+export type PublicationCreateNestedOneWithoutMediaInput = {
+  create?: Prisma.XOR<Prisma.PublicationCreateWithoutMediaInput, Prisma.PublicationUncheckedCreateWithoutMediaInput>
+  connectOrCreate?: Prisma.PublicationCreateOrConnectWithoutMediaInput
+  connect?: Prisma.PublicationWhereUniqueInput
+}
+
+export type PublicationUpdateOneRequiredWithoutMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.PublicationCreateWithoutMediaInput, Prisma.PublicationUncheckedCreateWithoutMediaInput>
+  connectOrCreate?: Prisma.PublicationCreateOrConnectWithoutMediaInput
+  upsert?: Prisma.PublicationUpsertWithoutMediaInput
+  connect?: Prisma.PublicationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PublicationUpdateToOneWithWhereWithoutMediaInput, Prisma.PublicationUpdateWithoutMediaInput>, Prisma.PublicationUncheckedUpdateWithoutMediaInput>
+}
+
 export type PublicationCreateNestedOneWithoutTargetsInput = {
   create?: Prisma.XOR<Prisma.PublicationCreateWithoutTargetsInput, Prisma.PublicationUncheckedCreateWithoutTargetsInput>
   connectOrCreate?: Prisma.PublicationCreateOrConnectWithoutTargetsInput
@@ -548,6 +569,7 @@ export type PublicationCreateWithoutCreatorInput = {
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutPublicationsInput
   targets?: Prisma.PublicationTargetCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationUncheckedCreateWithoutCreatorInput = {
@@ -561,6 +583,7 @@ export type PublicationUncheckedCreateWithoutCreatorInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   targets?: Prisma.PublicationTargetUncheckedCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaUncheckedCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationCreateOrConnectWithoutCreatorInput = {
@@ -616,6 +639,7 @@ export type PublicationCreateWithoutWorkspaceInput = {
   updatedAt?: Date | string
   creator: Prisma.UserCreateNestedOneWithoutCreatedPublicationsInput
   targets?: Prisma.PublicationTargetCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationUncheckedCreateWithoutWorkspaceInput = {
@@ -629,6 +653,7 @@ export type PublicationUncheckedCreateWithoutWorkspaceInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   targets?: Prisma.PublicationTargetUncheckedCreateNestedManyWithoutPublicationInput
+  media?: Prisma.PublicationMediaUncheckedCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationCreateOrConnectWithoutWorkspaceInput = {
@@ -657,6 +682,78 @@ export type PublicationUpdateManyWithWhereWithoutWorkspaceInput = {
   data: Prisma.XOR<Prisma.PublicationUpdateManyMutationInput, Prisma.PublicationUncheckedUpdateManyWithoutWorkspaceInput>
 }
 
+export type PublicationCreateWithoutMediaInput = {
+  id?: string
+  status?: $Enums.PublicationStatus
+  content: string
+  tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  scheduledFor?: Date | string | null
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workspace: Prisma.WorkspaceCreateNestedOneWithoutPublicationsInput
+  creator: Prisma.UserCreateNestedOneWithoutCreatedPublicationsInput
+  targets?: Prisma.PublicationTargetCreateNestedManyWithoutPublicationInput
+}
+
+export type PublicationUncheckedCreateWithoutMediaInput = {
+  id?: string
+  workspaceId: string
+  createdBy: string
+  status?: $Enums.PublicationStatus
+  content: string
+  tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  scheduledFor?: Date | string | null
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  targets?: Prisma.PublicationTargetUncheckedCreateNestedManyWithoutPublicationInput
+}
+
+export type PublicationCreateOrConnectWithoutMediaInput = {
+  where: Prisma.PublicationWhereUniqueInput
+  create: Prisma.XOR<Prisma.PublicationCreateWithoutMediaInput, Prisma.PublicationUncheckedCreateWithoutMediaInput>
+}
+
+export type PublicationUpsertWithoutMediaInput = {
+  update: Prisma.XOR<Prisma.PublicationUpdateWithoutMediaInput, Prisma.PublicationUncheckedUpdateWithoutMediaInput>
+  create: Prisma.XOR<Prisma.PublicationCreateWithoutMediaInput, Prisma.PublicationUncheckedCreateWithoutMediaInput>
+  where?: Prisma.PublicationWhereInput
+}
+
+export type PublicationUpdateToOneWithWhereWithoutMediaInput = {
+  where?: Prisma.PublicationWhereInput
+  data: Prisma.XOR<Prisma.PublicationUpdateWithoutMediaInput, Prisma.PublicationUncheckedUpdateWithoutMediaInput>
+}
+
+export type PublicationUpdateWithoutMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  scheduledFor?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutPublicationsNestedInput
+  creator?: Prisma.UserUpdateOneRequiredWithoutCreatedPublicationsNestedInput
+  targets?: Prisma.PublicationTargetUpdateManyWithoutPublicationNestedInput
+}
+
+export type PublicationUncheckedUpdateWithoutMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  scheduledFor?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  targets?: Prisma.PublicationTargetUncheckedUpdateManyWithoutPublicationNestedInput
+}
+
 export type PublicationCreateWithoutTargetsInput = {
   id?: string
   status?: $Enums.PublicationStatus
@@ -668,6 +765,7 @@ export type PublicationCreateWithoutTargetsInput = {
   updatedAt?: Date | string
   workspace: Prisma.WorkspaceCreateNestedOneWithoutPublicationsInput
   creator: Prisma.UserCreateNestedOneWithoutCreatedPublicationsInput
+  media?: Prisma.PublicationMediaCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationUncheckedCreateWithoutTargetsInput = {
@@ -681,6 +779,7 @@ export type PublicationUncheckedCreateWithoutTargetsInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  media?: Prisma.PublicationMediaUncheckedCreateNestedManyWithoutPublicationInput
 }
 
 export type PublicationCreateOrConnectWithoutTargetsInput = {
@@ -710,6 +809,7 @@ export type PublicationUpdateWithoutTargetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutPublicationsNestedInput
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedPublicationsNestedInput
+  media?: Prisma.PublicationMediaUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateWithoutTargetsInput = {
@@ -723,6 +823,7 @@ export type PublicationUncheckedUpdateWithoutTargetsInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  media?: Prisma.PublicationMediaUncheckedUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationCreateManyCreatorInput = {
@@ -748,6 +849,7 @@ export type PublicationUpdateWithoutCreatorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workspace?: Prisma.WorkspaceUpdateOneRequiredWithoutPublicationsNestedInput
   targets?: Prisma.PublicationTargetUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateWithoutCreatorInput = {
@@ -761,6 +863,7 @@ export type PublicationUncheckedUpdateWithoutCreatorInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targets?: Prisma.PublicationTargetUncheckedUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUncheckedUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateManyWithoutCreatorInput = {
@@ -798,6 +901,7 @@ export type PublicationUpdateWithoutWorkspaceInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   creator?: Prisma.UserUpdateOneRequiredWithoutCreatedPublicationsNestedInput
   targets?: Prisma.PublicationTargetUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateWithoutWorkspaceInput = {
@@ -811,6 +915,7 @@ export type PublicationUncheckedUpdateWithoutWorkspaceInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   targets?: Prisma.PublicationTargetUncheckedUpdateManyWithoutPublicationNestedInput
+  media?: Prisma.PublicationMediaUncheckedUpdateManyWithoutPublicationNestedInput
 }
 
 export type PublicationUncheckedUpdateManyWithoutWorkspaceInput = {
@@ -832,10 +937,12 @@ export type PublicationUncheckedUpdateManyWithoutWorkspaceInput = {
 
 export type PublicationCountOutputType = {
   targets: number
+  media: number
 }
 
 export type PublicationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   targets?: boolean | PublicationCountOutputTypeCountTargetsArgs
+  media?: boolean | PublicationCountOutputTypeCountMediaArgs
 }
 
 /**
@@ -855,6 +962,13 @@ export type PublicationCountOutputTypeCountTargetsArgs<ExtArgs extends runtime.T
   where?: Prisma.PublicationTargetWhereInput
 }
 
+/**
+ * PublicationCountOutputType without action
+ */
+export type PublicationCountOutputTypeCountMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PublicationMediaWhereInput
+}
+
 
 export type PublicationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -870,6 +984,7 @@ export type PublicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targets?: boolean | Prisma.Publication$targetsArgs<ExtArgs>
+  media?: boolean | Prisma.Publication$mediaArgs<ExtArgs>
   _count?: boolean | Prisma.PublicationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["publication"]>
 
@@ -921,6 +1036,7 @@ export type PublicationInclude<ExtArgs extends runtime.Types.Extensions.Internal
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   targets?: boolean | Prisma.Publication$targetsArgs<ExtArgs>
+  media?: boolean | Prisma.Publication$mediaArgs<ExtArgs>
   _count?: boolean | Prisma.PublicationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PublicationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -938,6 +1054,7 @@ export type $PublicationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     workspace: Prisma.$WorkspacePayload<ExtArgs>
     creator: Prisma.$UserPayload<ExtArgs>
     targets: Prisma.$PublicationTargetPayload<ExtArgs>[]
+    media: Prisma.$PublicationMediaPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1347,6 +1464,7 @@ export interface Prisma__PublicationClient<T, Null = never, ExtArgs extends runt
   workspace<T extends Prisma.WorkspaceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkspaceDefaultArgs<ExtArgs>>): Prisma.Prisma__WorkspaceClient<runtime.Types.Result.GetResult<Prisma.$WorkspacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   creator<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   targets<T extends Prisma.Publication$targetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publication$targetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicationTargetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  media<T extends Prisma.Publication$mediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Publication$mediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicationMediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1808,6 +1926,30 @@ export type Publication$targetsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.PublicationTargetScalarFieldEnum | Prisma.PublicationTargetScalarFieldEnum[]
+}
+
+/**
+ * Publication.media
+ */
+export type Publication$mediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PublicationMedia
+   */
+  select?: Prisma.PublicationMediaSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PublicationMedia
+   */
+  omit?: Prisma.PublicationMediaOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PublicationMediaInclude<ExtArgs> | null
+  where?: Prisma.PublicationMediaWhereInput
+  orderBy?: Prisma.PublicationMediaOrderByWithRelationInput | Prisma.PublicationMediaOrderByWithRelationInput[]
+  cursor?: Prisma.PublicationMediaWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PublicationMediaScalarFieldEnum | Prisma.PublicationMediaScalarFieldEnum[]
 }
 
 /**

@@ -60,6 +60,8 @@ export const ModelName = {
   WorkspaceInvitation: 'WorkspaceInvitation',
   Channel: 'Channel',
   Publication: 'Publication',
+  MediaAsset: 'MediaAsset',
+  PublicationMedia: 'PublicationMedia',
   PublicationTarget: 'PublicationTarget',
   TagGroup: 'TagGroup',
   WorkspaceMember: 'WorkspaceMember'
@@ -214,6 +216,37 @@ export const PublicationScalarFieldEnum = {
 } as const
 
 export type PublicationScalarFieldEnum = (typeof PublicationScalarFieldEnum)[keyof typeof PublicationScalarFieldEnum]
+
+
+export const MediaAssetScalarFieldEnum = {
+  id: 'id',
+  workspaceId: 'workspaceId',
+  createdBy: 'createdBy',
+  objectKey: 'objectKey',
+  type: 'type',
+  filename: 'filename',
+  mimeType: 'mimeType',
+  declaredSize: 'declaredSize',
+  confirmedSize: 'confirmedSize',
+  etag: 'etag',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  uploadedAt: 'uploadedAt',
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaAssetScalarFieldEnum = (typeof MediaAssetScalarFieldEnum)[keyof typeof MediaAssetScalarFieldEnum]
+
+
+export const PublicationMediaScalarFieldEnum = {
+  publicationId: 'publicationId',
+  mediaAssetId: 'mediaAssetId',
+  position: 'position'
+} as const
+
+export type PublicationMediaScalarFieldEnum = (typeof PublicationMediaScalarFieldEnum)[keyof typeof PublicationMediaScalarFieldEnum]
 
 
 export const PublicationTargetScalarFieldEnum = {

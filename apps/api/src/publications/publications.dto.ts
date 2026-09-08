@@ -75,6 +75,11 @@ export class PublicationBodyDto {
   @IsOptional()
   @IsISO8601()
   scheduledFor?: string | null;
+  @ApiPropertyOptional({ type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  mediaIds?: string[];
 }
 
 export class PublicationsQueryDto {
@@ -122,7 +127,7 @@ export class PublicationResponseDto {
   @ApiProperty({ type: String }) createdBy!: string;
   @ApiProperty({ enum: statuses }) status!: string;
   @ApiProperty({ type: String }) content!: string;
-  @ApiProperty({ type: [Object] }) media!: [];
+  @ApiProperty({ type: [Object] }) media!: Array<Record<string, unknown>>;
   @ApiProperty({ type: [PublicationTargetResponseDto] })
   targets!: PublicationTargetResponseDto[];
   @ApiProperty({ type: [TagSnapshotDto] }) tagGroupSnapshots!: TagSnapshotDto[];

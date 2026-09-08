@@ -25,7 +25,7 @@ import {
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
 import { ROUTES } from "@/routes/route-paths";
-import { getApiErrorTranslationKey } from "@/shared/api/api-error";
+import { getApiError, getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { Button } from "@/shared/components/ui/button";
 import {
   Select,
@@ -89,6 +89,23 @@ function PostComposerContent({
 }) {
   const { t, i18n } = useTranslation("createPost");
   const { t: tApiError } = useTranslation("apiErrors");
+
+  const publicationErrorMessage = (error: unknown) => {
+    const detail = getApiError(error)?.details?.[0];
+    if (!detail) return tApiError(getApiErrorTranslationKey(error));
+    if (detail.code === "MEDIA_REQUIRED")
+      return t("composer.validation.mediaRequired");
+    if (detail.code === "MEDIA_TYPE_NOT_SUPPORTED")
+      return t("composer.validation.mediaType");
+    if (detail.code === "TOO_LONG") return t("composer.validation.characters");
+    if (detail.code === "TOO_MANY" && detail.field.includes("media"))
+      return t("composer.validation.mediaCount");
+    if (detail.code === "REQUIRED" && detail.field.includes("content"))
+      return t("composer.validation.empty");
+    if (detail.code === "MEDIA_NOT_READY")
+      return t("composer.validation.mediaPending");
+    return tApiError(getApiErrorTranslationKey(error));
+  };
   const navigate = useNavigate();
   const openTagsManager = () => {
     window.open(ROUTES.tags, "_blank", "noopener,noreferrer");
@@ -108,6 +125,7 @@ function PostComposerContent({
     { skip: !workspace || workspace.subscriptionStatus !== "trialing" }
   );
   const [content, setContent] = useState(existing?.content ?? "");
+  const [composerNow] = useState(() => Date.now());
   const [media, setMedia] = useState<PublicationMedia[]>(existing?.media ?? []);
   const [channelIds, setChannelIds] = useState<string[]>(
     existing?.targets.map((target) => target.channelId) ?? []
@@ -223,8 +241,15 @@ function PostComposerContent({
     existing?.status === "published" ||
     existing?.status === "publishing";
   const minimumSchedule = utcToZonedInput(
-    new Date().toISOString(),
+    new Date(composerNow + 5 * 60 * 1000).toISOString(),
     workspace?.timezone ?? "UTC"
+  );
+  const maximumSchedule = utcToZonedInput(
+    new Date(composerNow + 90 * 24 * 60 * 60 * 1000).toISOString(),
+    workspace?.timezone ?? "UTC"
+  );
+  const mediaBusy = media.some(
+    (item) => item.status && item.status !== "ready"
   );
   const changeTimingMode = (mode: PublicationTimingMode) => {
     setTimingMode(mode);
@@ -242,8 +267,10 @@ function PostComposerContent({
     if (
       status === "scheduled" &&
       (!scheduledFor ||
-        zonedInputToUtc(scheduledFor, workspace.timezone) <=
-          new Date().toISOString())
+        zonedInputToUtc(scheduledFor, workspace.timezone) <
+          new Date(composerNow + 5 * 60 * 1000).toISOString() ||
+        zonedInputToUtc(scheduledFor, workspace.timezone) >
+          new Date(composerNow + 90 * 24 * 60 * 60 * 1000).toISOString())
     ) {
       toast.error(t("composer.validation.future"));
       return false;
@@ -282,6 +309,7 @@ function PostComposerContent({
             ?.settings ?? {},
       })),
       tagGroupSnapshots,
+      mediaIds: media.map((item) => item.id),
       scheduledFor:
         status === "scheduled"
           ? zonedInputToUtc(scheduledFor, workspace.timezone)
@@ -302,7 +330,7 @@ function PostComposerContent({
       toast.success(t(`composer.feedback.${status}`));
       navigate(ROUTES.posts);
     } catch (error) {
-      toast.error(tApiError(getApiErrorTranslationKey(error)));
+      toast.error(publicationErrorMessage(error));
     }
   };
   const requestConfirmation = (status: "published" | "scheduled") => {
@@ -347,7 +375,6 @@ function PostComposerContent({
             disabled={readOnly}
             effectiveContentLength={effectiveContent.length}
             media={media}
-            mediaDisabled
             onContentChange={setContent}
             onManageTags={openTagsManager}
             onMediaChange={setMedia}
@@ -376,6 +403,7 @@ function PostComposerContent({
           />
           <SchedulingStep
             disabled={readOnly}
+            maximumSchedule={maximumSchedule}
             minimumSchedule={minimumSchedule}
             onScheduledForChange={setScheduledFor}
             onTimingModeChange={changeTimingMode}
@@ -387,7 +415,7 @@ function PostComposerContent({
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
               <Button
                 className="w-full sm:w-auto"
-                disabled={isCreating || isUpdating}
+                disabled={isCreating || isUpdating || mediaBusy}
                 variant="outline"
                 onClick={() => save("draft")}
               >
@@ -399,6 +427,7 @@ function PostComposerContent({
                 disabled={
                   isCreating ||
                   isUpdating ||
+                  mediaBusy ||
                   (timingMode === "scheduled" && !scheduledFor)
                 }
                 onClick={() =>

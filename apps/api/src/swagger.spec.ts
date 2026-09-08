@@ -3,8 +3,10 @@ import { describe, it } from "node:test";
 import { Test } from "@nestjs/testing";
 
 import { MailService } from "./infrastructure/mail.service.js";
+import { ObjectStorageService } from "./infrastructure/object-storage.service.js";
 import { PrismaService } from "./infrastructure/prisma.service.js";
 import { RedisService } from "./infrastructure/redis.service.js";
+import { MediaCleanupService } from "./media/media-cleanup.service.js";
 import { createOpenApiDocument } from "./swagger.js";
 
 process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";
@@ -20,6 +22,10 @@ describe("OpenAPI contract", () => {
       .overrideProvider(RedisService)
       .useValue({ client: {} })
       .overrideProvider(MailService)
+      .useValue({})
+      .overrideProvider(ObjectStorageService)
+      .useValue({})
+      .overrideProvider(MediaCleanupService)
       .useValue({})
       .compile();
     const app = module.createNestApplication();
@@ -49,6 +55,10 @@ describe("OpenAPI contract", () => {
       "/api/v1/workspaces/{workspaceId}/channels/lookup",
       "/api/v1/workspaces/{workspaceId}/channels/oauth/{platform}/start",
       "/api/v1/workspaces/{workspaceId}/channels/{channelId}",
+      "/api/v1/workspaces/{workspaceId}/media/uploads",
+      "/api/v1/workspaces/{workspaceId}/media/{mediaId}/complete",
+      "/api/v1/workspaces/{workspaceId}/media/{mediaId}/access",
+      "/api/v1/workspaces/{workspaceId}/media/{mediaId}",
       "/api/v1/channels/oauth/mock/callback",
       "/api/v1/health/live",
       "/api/v1/health/ready",

@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 
 import { apiError } from "../common/api-error.js";
-import type { Prisma, PublicationStatus } from "../generated/prisma/client.js";
+import { Prisma, type PublicationStatus } from "../generated/prisma/client.js";
 import { PrismaService } from "../infrastructure/prisma.service.js";
 import { WorkspaceAccessService } from "../workspaces/workspace-access.service.js";
 import type {
@@ -24,7 +24,21 @@ const CHARACTER_LIMITS = {
   youtube: 5000,
 } as const;
 const MEDIA_REQUIRED = new Set(["instagram", "tiktok", "youtube"]);
-const includeTargets = { targets: { orderBy: { id: "asc" as const } } };
+const MEDIA_LIMITS = {
+  facebook: 10,
+  linkedin: 9,
+  instagram: 10,
+  tiktok: 1,
+  youtube: 1,
+} as const;
+const includeTargets = {
+  targets: { orderBy: { id: "asc" as const } },
+  media: {
+    orderBy: { position: "asc" as const },
+    include: { mediaAsset: true },
+  },
+};
+const DAY = 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class PublicationsService {
@@ -39,7 +53,16 @@ export class PublicationsService {
       createdBy: publication.createdBy,
       status: publication.status,
       content: publication.content,
-      media: [],
+      media: publication.media
+        .filter((item: any) => item.mediaAsset.status !== "deleted")
+        .map((item: any) => ({
+          id: item.mediaAsset.id,
+          type: item.mediaAsset.type,
+          filename: item.mediaAsset.filename,
+          mimeType: item.mediaAsset.mimeType,
+          size: item.mediaAsset.confirmedSize ?? item.mediaAsset.declaredSize,
+          status: item.mediaAsset.status,
+        })),
       targets: publication.targets.map((target: any) => ({
         channelId: target.channelId,
         platform: target.platform,
@@ -114,6 +137,16 @@ export class PublicationsService {
     input: PublicationBodyDto
   ) {
     this.validateSnapshots(input.tagGroupSnapshots, "tagGroupSnapshots");
+    const mediaIds = input.mediaIds ?? [];
+    if (new Set(mediaIds).size !== mediaIds.length)
+      this.validationError([{ field: "mediaIds", code: "DUPLICATE" }]);
+    const media = mediaIds.length
+      ? await transaction.$queryRaw<Array<{ id: string; type: string }>>(
+          Prisma.sql`SELECT "id", "type" FROM "MediaAsset" WHERE "id" IN (${Prisma.join(mediaIds)}) AND "workspaceId" = ${workspaceId} AND "status" = 'ready' FOR UPDATE`
+        )
+      : [];
+    if (media.length !== mediaIds.length)
+      this.validationError([{ field: "mediaIds", code: "MEDIA_NOT_READY" }]);
     const ids = input.targets.map((target) => target.channelId);
     if (new Set(ids).size !== ids.length)
       this.validationError([{ field: "targets", code: "DUPLICATE" }]);
@@ -139,10 +172,24 @@ export class PublicationsService {
             field: `targets.${index}.channelId`,
             code: "CHANNEL_NOT_CONNECTED",
           });
-        if (MEDIA_REQUIRED.has(channel.platform))
+        if (MEDIA_REQUIRED.has(channel.platform) && media.length === 0)
           details.push({
             field: `targets.${index}.media`,
             code: "MEDIA_REQUIRED",
+          });
+        if (media.length > MEDIA_LIMITS[channel.platform])
+          details.push({
+            field: `targets.${index}.media`,
+            code: "TOO_MANY",
+            params: { max: MEDIA_LIMITS[channel.platform] },
+          });
+        if (
+          (channel.platform === "tiktok" || channel.platform === "youtube") &&
+          media.some((asset) => asset.type !== "video")
+        )
+          details.push({
+            field: `targets.${index}.media`,
+            code: "MEDIA_TYPE_NOT_SUPPORTED",
           });
         const snapshots =
           target.tagGroupSnapshotsOverride ?? input.tagGroupSnapshots;
@@ -154,7 +201,7 @@ export class PublicationsService {
           target.contentOverride?.trim() || input.content,
           snapshots
         );
-        if (!content)
+        if (!content && media.length === 0)
           details.push({ field: `targets.${index}.content`, code: "REQUIRED" });
         const max = CHARACTER_LIMITS[channel.platform];
         if (content.length > max)
@@ -167,8 +214,21 @@ export class PublicationsService {
       if (input.status === "scheduled") {
         if (!input.scheduledFor)
           details.push({ field: "scheduledFor", code: "REQUIRED" });
-        else if (new Date(input.scheduledFor).getTime() <= Date.now())
-          details.push({ field: "scheduledFor", code: "MUST_BE_FUTURE" });
+        else {
+          const scheduled = new Date(input.scheduledFor).getTime();
+          if (scheduled < Date.now() + 5 * 60 * 1000)
+            details.push({
+              field: "scheduledFor",
+              code: "TOO_SOON",
+              params: { minutes: 5 },
+            });
+          if (scheduled > Date.now() + 90 * DAY)
+            details.push({
+              field: "scheduledFor",
+              code: "TOO_FAR",
+              params: { days: 90 },
+            });
+        }
       }
       if (details.length) this.validationError(details);
     }
@@ -187,6 +247,44 @@ export class PublicationsService {
         status: normalizedStatus,
       };
     });
+  }
+
+  private mediaCreate(mediaIds: string[]) {
+    return mediaIds.map((mediaAssetId, position) => ({
+      mediaAssetId,
+      position,
+    }));
+  }
+
+  private async recomputeMediaRetention(
+    transaction: Prisma.TransactionClient,
+    mediaIds: string[]
+  ) {
+    if (!mediaIds.length) return;
+    const references = await transaction.publicationMedia.findMany({
+      where: { mediaAssetId: { in: mediaIds } },
+      include: { publication: true },
+    });
+    for (const mediaId of mediaIds) {
+      const required = references
+        .filter((reference) => reference.mediaAssetId === mediaId)
+        .map(({ publication }) => {
+          const base = publication.updatedAt.getTime();
+          if (publication.status === "published")
+            return (publication.publishedAt?.getTime() ?? base) + 2 * DAY;
+          if (publication.status === "draft" || publication.status === "failed")
+            return base + 7 * DAY;
+          return (publication.scheduledFor?.getTime() ?? base) + 7 * DAY;
+        });
+      await transaction.mediaAsset.updateMany({
+        where: { id: mediaId, status: { in: ["pending", "ready", "failed"] } },
+        data: {
+          expiresAt: new Date(
+            required.length ? Math.max(...required) : Date.now() + DAY
+          ),
+        },
+      });
+    }
   }
 
   async list(userId: string, workspaceId: string, query: PublicationsQueryDto) {
@@ -314,9 +412,11 @@ export class PublicationsService {
             input.status === "scheduled" ? new Date(input.scheduledFor!) : null,
           publishedAt: input.status === "published" ? new Date() : null,
           targets: { create: targets },
+          media: { create: this.mediaCreate(input.mediaIds ?? []) },
         },
         include: includeTargets,
       });
+      await this.recomputeMediaRetention(tx, input.mediaIds ?? []);
       return this.shape(publication);
     });
   }
@@ -334,6 +434,9 @@ export class PublicationsService {
         workspaceId
       );
       const existing = await this.find(workspaceId, id, tx);
+      const previousMediaIds = existing.media.map(
+        (item: any) => item.mediaAssetId
+      );
       if (["published", "publishing"].includes(existing.status))
         throw new ConflictException(
           apiError("PUBLICATION_IMMUTABLE", "Publication is immutable")
@@ -342,42 +445,51 @@ export class PublicationsService {
       if (existing.status === "draft" && input.status !== "draft")
         await this.assertTrial(tx, workspaceId, id);
       await tx.publicationTarget.deleteMany({ where: { publicationId: id } });
-      return this.shape(
-        await tx.publication.update({
-          where: { id },
-          data: {
-            status: input.status,
-            content: input.content.trim(),
-            tagGroupSnapshots:
-              input.tagGroupSnapshots as unknown as Prisma.InputJsonValue,
-            scheduledFor:
-              input.status === "scheduled"
-                ? new Date(input.scheduledFor!)
-                : null,
-            publishedAt: input.status === "published" ? new Date() : null,
-            targets: { create: targets },
-          },
-          include: includeTargets,
-        })
-      );
+      await tx.publicationMedia.deleteMany({ where: { publicationId: id } });
+      const updated = await tx.publication.update({
+        where: { id },
+        data: {
+          status: input.status,
+          content: input.content.trim(),
+          tagGroupSnapshots:
+            input.tagGroupSnapshots as unknown as Prisma.InputJsonValue,
+          scheduledFor:
+            input.status === "scheduled" ? new Date(input.scheduledFor!) : null,
+          publishedAt: input.status === "published" ? new Date() : null,
+          targets: { create: targets },
+          media: { create: this.mediaCreate(input.mediaIds ?? []) },
+        },
+        include: includeTargets,
+      });
+      await this.recomputeMediaRetention(tx, [
+        ...new Set([...previousMediaIds, ...(input.mediaIds ?? [])]),
+      ]);
+      return this.shape(updated);
     });
   }
 
   async delete(userId: string, workspaceId: string, id: string) {
     await this.access.requireRole(userId, workspaceId, [...MANAGE_ROLES]);
-    const existing = await this.find(workspaceId, id);
-    if (["published", "publishing"].includes(existing.status))
-      throw new ConflictException(
-        apiError("PUBLICATION_IMMUTABLE", "Publication is immutable")
-      );
-    await this.prisma.publication.delete({ where: { id } });
+    await this.prisma.$transaction(async (tx) => {
+      const existing = await this.find(workspaceId, id, tx);
+      if (["published", "publishing"].includes(existing.status))
+        throw new ConflictException(
+          apiError("PUBLICATION_IMMUTABLE", "Publication is immutable")
+        );
+      const mediaIds = existing.media.map((item: any) => item.mediaAssetId);
+      await tx.publication.delete({ where: { id } });
+      await this.recomputeMediaRetention(tx, mediaIds);
+    });
   }
 
   async duplicate(userId: string, workspaceId: string, id: string) {
     await this.access.requireRole(userId, workspaceId, [...MANAGE_ROLES]);
     const source = await this.find(workspaceId, id);
-    return this.shape(
-      await this.prisma.publication.create({
+    return this.prisma.$transaction(async (tx) => {
+      const available = source.media.filter(
+        (item: any) => item.mediaAsset.status === "ready"
+      );
+      const duplicated = await tx.publication.create({
         data: {
           workspaceId,
           createdBy: userId,
@@ -397,10 +509,21 @@ export class PublicationsService {
               status: "draft",
             })),
           },
+          media: {
+            create: available.map((item: any, position: number) => ({
+              mediaAssetId: item.mediaAssetId,
+              position,
+            })),
+          },
         },
         include: includeTargets,
-      })
-    );
+      });
+      await this.recomputeMediaRetention(
+        tx,
+        available.map((item: any) => item.mediaAssetId)
+      );
+      return this.shape(duplicated);
+    });
   }
 
   private invalidStatus(): never {
@@ -414,10 +537,10 @@ export class PublicationsService {
 
   async cancel(userId: string, workspaceId: string, id: string) {
     await this.access.requireRole(userId, workspaceId, [...MANAGE_ROLES]);
-    const existing = await this.find(workspaceId, id);
-    if (existing.status !== "scheduled") this.invalidStatus();
-    return this.shape(
-      await this.prisma.publication.update({
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await this.find(workspaceId, id, tx);
+      if (existing.status !== "scheduled") this.invalidStatus();
+      const updated = await tx.publication.update({
         where: { id },
         data: {
           status: "draft",
@@ -425,19 +548,24 @@ export class PublicationsService {
           targets: { updateMany: { where: {}, data: { status: "draft" } } },
         },
         include: includeTargets,
-      })
-    );
+      });
+      await this.recomputeMediaRetention(
+        tx,
+        existing.media.map((item: any) => item.mediaAssetId)
+      );
+      return this.shape(updated);
+    });
   }
 
   async retry(userId: string, workspaceId: string, id: string) {
     await this.access.requireRole(userId, workspaceId, [...MANAGE_ROLES]);
-    const existing = await this.find(workspaceId, id);
-    if (existing.status !== "failed") this.invalidStatus();
-    const scheduled =
-      existing.scheduledFor && existing.scheduledFor.getTime() > Date.now();
-    const status: PublicationStatus = scheduled ? "scheduled" : "published";
-    return this.shape(
-      await this.prisma.publication.update({
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await this.find(workspaceId, id, tx);
+      if (existing.status !== "failed") this.invalidStatus();
+      const scheduled =
+        existing.scheduledFor && existing.scheduledFor.getTime() > Date.now();
+      const status: PublicationStatus = scheduled ? "scheduled" : "published";
+      const updated = await tx.publication.update({
         where: { id },
         data: {
           status,
@@ -447,7 +575,12 @@ export class PublicationsService {
           },
         },
         include: includeTargets,
-      })
-    );
+      });
+      await this.recomputeMediaRetention(
+        tx,
+        existing.media.map((item: any) => item.mediaAssetId)
+      );
+      return this.shape(updated);
+    });
   }
 }

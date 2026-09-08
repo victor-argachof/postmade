@@ -11,6 +11,7 @@ import {
 export function SchedulingStep({
   disabled,
   minimumSchedule,
+  maximumSchedule,
   onScheduledForChange,
   onTimingModeChange,
   scheduledFor,
@@ -19,6 +20,7 @@ export function SchedulingStep({
 }: {
   disabled: boolean;
   minimumSchedule: string;
+  maximumSchedule: string;
   onScheduledForChange: (value: string) => void;
   onTimingModeChange: (mode: PublicationTimingMode) => void;
   scheduledFor: string;
@@ -44,6 +46,7 @@ export function SchedulingStep({
               disabled={disabled}
               disablePast={!disabled}
               min={minimumSchedule}
+              max={maximumSchedule}
               pickerPlacement="top"
               value={scheduledFor}
               onChange={onScheduledForChange}

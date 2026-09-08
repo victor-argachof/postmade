@@ -91,6 +91,11 @@ pnpm db:deploy
 Copie `.env.example` para `apps/api/.env` ao executar a API fora do Docker. O comando
 `pnpm db:seed` cria somente a conta demonstrativa local.
 
+O armazenamento temporário de mídia requer um bucket privado Cloudflare R2 e as
+variáveis `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY_ID` e
+`R2_SECRET_ACCESS_KEY`. Consulte [`docs/media-storage.md`](docs/media-storage.md)
+para CORS, lifecycle, limites e retenção. Nunca exponha essas credenciais no web.
+
 ### Prisma Studio
 
 Para visualizar e editar os dados do banco local por uma interface web:

@@ -12,10 +12,32 @@ export interface PublicationTagGroupSnapshot {
 export interface PublicationMedia {
   id: string;
   type: "image" | "video";
-  url: string;
+  url?: string;
   filename: string;
   mimeType: string;
   size?: number;
+  status?: MediaAssetStatus;
+}
+
+export type MediaAssetStatus =
+  "pending" | "ready" | "failed" | "deleting" | "deleted";
+
+export interface CreateMediaUploadInput {
+  filename: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface MediaUploadResponse {
+  media: PublicationMedia;
+  uploadUrl: string;
+  expiresAt: string;
+  requiredHeaders: Record<string, string>;
+}
+
+export interface MediaAccessResponse {
+  url: string;
+  expiresAt: string;
 }
 
 export interface PublicationTarget {
@@ -43,6 +65,7 @@ export interface PublicationInput {
   targets: PublicationTargetInput[];
   tagGroupSnapshots?: PublicationTagGroupSnapshot[];
   scheduledFor?: string | null;
+  mediaIds?: string[];
 }
 
 export interface ScheduledPublication {

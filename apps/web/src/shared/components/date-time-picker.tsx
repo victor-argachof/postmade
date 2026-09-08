@@ -38,6 +38,7 @@ export function DatePicker({
   className,
   disabled = false,
   min,
+  max,
   onChange,
   placement = "bottom",
   value,
@@ -46,6 +47,7 @@ export function DatePicker({
   className?: string;
   disabled?: boolean;
   min?: string;
+  max?: string;
   onChange: (value: string) => void;
   placement?: "top" | "bottom";
   value: string;
@@ -180,7 +182,7 @@ export function DatePicker({
                   date === value &&
                     "bg-primary text-primary-foreground hover:bg-primary/90"
                 )}
-                disabled={Boolean(min && date < min)}
+                disabled={Boolean((min && date < min) || (max && date > max))}
                 key={date}
                 type="button"
                 onClick={() => {
@@ -218,6 +220,7 @@ export function DateTimePicker({
   disabled = false,
   disablePast = false,
   min,
+  max,
   onChange,
   pickerPlacement = "bottom",
   value,
@@ -227,6 +230,7 @@ export function DateTimePicker({
   disabled?: boolean;
   disablePast?: boolean;
   min?: string;
+  max?: string;
   onChange: (value: string) => void;
   pickerPlacement?: "top" | "bottom";
   value: string;
@@ -285,6 +289,7 @@ export function DateTimePicker({
           aria-label={ariaLabel}
           disabled={disabled}
           min={effectiveMinimum?.slice(0, 10)}
+          max={max?.slice(0, 10)}
           placement={pickerPlacement}
           value={date}
           onChange={selectDate}

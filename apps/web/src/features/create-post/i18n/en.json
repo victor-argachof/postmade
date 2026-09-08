@@ -34,6 +34,9 @@
     "placeholder": "What would you like to share?",
     "addMedia": "Add images or video",
     "mediaUnavailable": "Media upload will be available in a future step. Save as a draft to continue.",
+    "mediaUploading": "Uploading {{progress}}%",
+    "mediaUploadFailed": "Media upload failed.",
+    "mediaRetry": "Retry",
     "loading": "Loading publication...",
     "retry": "Retry",
     "mediaGuidance": {
@@ -92,7 +95,8 @@
       "characters": "The text exceeds the limit.",
       "mediaRequired": "This platform requires media.",
       "mediaCount": "Too much media for this platform.",
-      "mediaType": "Incompatible media format."
+      "mediaType": "Incompatible media format.",
+      "mediaPending": "Wait for the media upload to complete."
     },
     "feedback": {
       "draft": "Draft saved.",

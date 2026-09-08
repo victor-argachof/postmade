@@ -63,6 +63,14 @@ enum PublicationStatus {
   failed
 }
 
+enum MediaAssetStatus {
+  pending
+  ready
+  failed
+  deleting
+  deleted
+}
+
 model User {
   id               String            @id @default(uuid())
   name             String
@@ -76,6 +84,7 @@ model User {
   createdTagGroups TagGroup[]        @relation("TagGroupCreator")
   createdChannels  Channel[]         @relation("ChannelCreator")
   createdPublications Publication[]   @relation("PublicationCreator")
+  createdMediaAssets MediaAsset[]     @relation("MediaAssetCreator")
   sentInvitations  WorkspaceInvitation[] @relation("InvitationSender")
   ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
 }
@@ -148,6 +157,7 @@ model Workspace {
   tagGroups            TagGroup[]
   channels             Channel[]
   publications         Publication[]
+  mediaAssets          MediaAsset[]
   invitations          WorkspaceInvitation[]
 
   @@index([ownerId])
@@ -213,11 +223,49 @@ model Publication {
   workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   creator           User               @relation("PublicationCreator", fields: [createdBy], references: [id], onDelete: Restrict)
   targets           PublicationTarget[]
+  media             PublicationMedia[]
 
   @@index([workspaceId, status])
   @@index([workspaceId, scheduledFor])
   @@index([workspaceId, publishedAt])
   @@index([workspaceId, createdAt])
+}
+
+model MediaAsset {
+  id            String           @id @default(uuid())
+  workspaceId   String
+  createdBy     String
+  objectKey     String           @unique
+  type          String
+  filename      String
+  mimeType      String
+  declaredSize  Int
+  confirmedSize Int?
+  etag          String?
+  status        MediaAssetStatus @default(pending)
+  expiresAt     DateTime
+  uploadedAt    DateTime?
+  deletedAt     DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  workspace     Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  creator       User             @relation("MediaAssetCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  publications  PublicationMedia[]
+
+  @@index([workspaceId, status])
+  @@index([status, expiresAt])
+}
+
+model PublicationMedia {
+  publicationId String
+  mediaAssetId  String
+  position      Int
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  mediaAsset    MediaAsset  @relation(fields: [mediaAssetId], references: [id], onDelete: Restrict)
+
+  @@id([publicationId, mediaAssetId])
+  @@unique([publicationId, position])
+  @@index([mediaAssetId])
 }
 
 model PublicationTarget {

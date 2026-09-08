@@ -7,6 +7,7 @@ import { ChannelsModule } from "./channels/channels.module.js";
 import { validateConfig } from "./config.js";
 import { HealthModule } from "./health/health.module.js";
 import { InfrastructureModule } from "./infrastructure/infrastructure.module.js";
+import { MediaModule } from "./media/media.module.js";
 import { PublicationsModule } from "./publications/publications.module.js";
 import { TagsModule } from "./tags/tags.module.js";
 import { WorkspacesModule } from "./workspaces/workspaces.module.js";
@@ -15,6 +16,7 @@ import { WorkspacesModule } from "./workspaces/workspaces.module.js";
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateConfig }),
     InfrastructureModule,
+    MediaModule,
     AuthModule,
     AccountModule,
     ChannelsModule,

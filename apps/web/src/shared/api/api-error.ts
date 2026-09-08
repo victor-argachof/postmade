@@ -16,6 +16,13 @@ export type ApiErrorTranslationKey =
   | "invalidCredentials"
   | "invalidOAuthState"
   | "invalidTimezone"
+  | "mediaInUse"
+  | "mediaInvalidType"
+  | "mediaNotFound"
+  | "mediaNotReady"
+  | "mediaSizeMismatch"
+  | "mediaStorageUnavailable"
+  | "mediaUploadExpired"
   | "invitationAlreadyAccepted"
   | "invitationDuplicate"
   | "invitationEmailFailed"
@@ -57,6 +64,13 @@ export const API_ERROR_TRANSLATION_KEYS = {
   INVALID_CREDENTIALS: "invalidCredentials",
   INVALID_OAUTH_STATE: "invalidOAuthState",
   INVALID_TIMEZONE: "invalidTimezone",
+  MEDIA_IN_USE: "mediaInUse",
+  MEDIA_INVALID_TYPE: "mediaInvalidType",
+  MEDIA_NOT_FOUND: "mediaNotFound",
+  MEDIA_NOT_READY: "mediaNotReady",
+  MEDIA_SIZE_MISMATCH: "mediaSizeMismatch",
+  MEDIA_STORAGE_UNAVAILABLE: "mediaStorageUnavailable",
+  MEDIA_UPLOAD_EXPIRED: "mediaUploadExpired",
   INVITATION_ALREADY_ACCEPTED: "invitationAlreadyAccepted",
   INVITATION_DUPLICATE: "invitationDuplicate",
   INVITATION_EMAIL_FAILED: "invitationEmailFailed",
