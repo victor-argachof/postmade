@@ -51,6 +51,7 @@ export class PublicationsService {
     return {
       id: publication.id,
       createdBy: publication.createdBy,
+      title: publication.title,
       status: publication.status,
       content: publication.content,
       media: publication.media
@@ -298,9 +299,6 @@ export class PublicationsService {
     const where: Prisma.PublicationWhereInput = {
       workspaceId,
       ...(query.status ? { status: query.status } : {}),
-      ...(query.query?.trim()
-        ? { content: { contains: query.query.trim(), mode: "insensitive" } }
-        : {}),
       ...(query.platform || query.channelId
         ? {
             targets: {
@@ -318,6 +316,26 @@ export class PublicationsService {
               { scheduledFor: null, publishedAt: range },
               { scheduledFor: null, publishedAt: null, createdAt: range },
             ],
+          }
+        : {}),
+      ...(query.query?.trim()
+        ? {
+            AND: {
+              OR: [
+                {
+                  title: {
+                    contains: query.query.trim(),
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  content: {
+                    contains: query.query.trim(),
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            },
           }
         : {}),
     };
@@ -404,6 +422,7 @@ export class PublicationsService {
         data: {
           workspaceId,
           createdBy: userId,
+          title: input.title?.trim() || null,
           status: input.status,
           content: input.content.trim(),
           tagGroupSnapshots:
@@ -450,6 +469,7 @@ export class PublicationsService {
         where: { id },
         data: {
           status: input.status,
+          title: input.title?.trim() || null,
           content: input.content.trim(),
           tagGroupSnapshots:
             input.tagGroupSnapshots as unknown as Prisma.InputJsonValue,
@@ -494,6 +514,7 @@ export class PublicationsService {
           workspaceId,
           createdBy: userId,
           status: "draft",
+          title: source.title,
           content: source.content,
           tagGroupSnapshots: source.tagGroupSnapshots as Prisma.InputJsonValue,
           targets: {
@@ -532,6 +553,23 @@ export class PublicationsService {
         "PUBLICATION_INVALID_STATUS",
         "Publication status does not allow this action"
       )
+    );
+  }
+
+  async updateTitle(
+    userId: string,
+    workspaceId: string,
+    id: string,
+    title: string | null | undefined
+  ) {
+    await this.access.requireRole(userId, workspaceId, [...MANAGE_ROLES]);
+    await this.find(workspaceId, id);
+    return this.shape(
+      await this.prisma.publication.update({
+        where: { id },
+        data: { title: title?.trim() || null },
+        include: includeTargets,
+      })
     );
   }
 

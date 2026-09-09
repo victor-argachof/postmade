@@ -52,6 +52,17 @@ export const postsApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Post", "Schedule"],
     }),
+    updatePublicationTitle: build.mutation<
+      ScheduledPublication,
+      WorkspaceInput & { publicationId: string; title: string | null }
+    >({
+      query: ({ workspaceId, publicationId, title }) => ({
+        url: `/workspaces/${workspaceId}/publications/${publicationId}/title`,
+        method: "PATCH",
+        body: { title },
+      }),
+      invalidatesTags: ["Post", "Schedule"],
+    }),
     deletePublication: build.mutation<
       void,
       WorkspaceInput & { publicationId: string }
@@ -100,6 +111,7 @@ export const {
   useGetPublicationQuery,
   useCreatePublicationMutation,
   useUpdatePublicationMutation,
+  useUpdatePublicationTitleMutation,
   useDeletePublicationMutation,
   useDuplicatePublicationMutation,
   useCancelPublicationMutation,

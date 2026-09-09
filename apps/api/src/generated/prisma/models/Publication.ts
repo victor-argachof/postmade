@@ -28,6 +28,7 @@ export type PublicationMinAggregateOutputType = {
   id: string | null
   workspaceId: string | null
   createdBy: string | null
+  title: string | null
   status: $Enums.PublicationStatus | null
   content: string | null
   scheduledFor: Date | null
@@ -40,6 +41,7 @@ export type PublicationMaxAggregateOutputType = {
   id: string | null
   workspaceId: string | null
   createdBy: string | null
+  title: string | null
   status: $Enums.PublicationStatus | null
   content: string | null
   scheduledFor: Date | null
@@ -52,6 +54,7 @@ export type PublicationCountAggregateOutputType = {
   id: number
   workspaceId: number
   createdBy: number
+  title: number
   status: number
   content: number
   tagGroupSnapshots: number
@@ -67,6 +70,7 @@ export type PublicationMinAggregateInputType = {
   id?: true
   workspaceId?: true
   createdBy?: true
+  title?: true
   status?: true
   content?: true
   scheduledFor?: true
@@ -79,6 +83,7 @@ export type PublicationMaxAggregateInputType = {
   id?: true
   workspaceId?: true
   createdBy?: true
+  title?: true
   status?: true
   content?: true
   scheduledFor?: true
@@ -91,6 +96,7 @@ export type PublicationCountAggregateInputType = {
   id?: true
   workspaceId?: true
   createdBy?: true
+  title?: true
   status?: true
   content?: true
   tagGroupSnapshots?: true
@@ -177,6 +183,7 @@ export type PublicationGroupByOutputType = {
   id: string
   workspaceId: string
   createdBy: string
+  title: string | null
   status: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots: runtime.JsonValue
@@ -211,6 +218,7 @@ export type PublicationWhereInput = {
   id?: Prisma.StringFilter<"Publication"> | string
   workspaceId?: Prisma.StringFilter<"Publication"> | string
   createdBy?: Prisma.StringFilter<"Publication"> | string
+  title?: Prisma.StringNullableFilter<"Publication"> | string | null
   status?: Prisma.EnumPublicationStatusFilter<"Publication"> | $Enums.PublicationStatus
   content?: Prisma.StringFilter<"Publication"> | string
   tagGroupSnapshots?: Prisma.JsonFilter<"Publication">
@@ -228,6 +236,7 @@ export type PublicationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   content?: Prisma.SortOrder
   tagGroupSnapshots?: Prisma.SortOrder
@@ -248,6 +257,7 @@ export type PublicationWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PublicationWhereInput | Prisma.PublicationWhereInput[]
   workspaceId?: Prisma.StringFilter<"Publication"> | string
   createdBy?: Prisma.StringFilter<"Publication"> | string
+  title?: Prisma.StringNullableFilter<"Publication"> | string | null
   status?: Prisma.EnumPublicationStatusFilter<"Publication"> | $Enums.PublicationStatus
   content?: Prisma.StringFilter<"Publication"> | string
   tagGroupSnapshots?: Prisma.JsonFilter<"Publication">
@@ -265,6 +275,7 @@ export type PublicationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   content?: Prisma.SortOrder
   tagGroupSnapshots?: Prisma.SortOrder
@@ -284,6 +295,7 @@ export type PublicationScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Publication"> | string
   workspaceId?: Prisma.StringWithAggregatesFilter<"Publication"> | string
   createdBy?: Prisma.StringWithAggregatesFilter<"Publication"> | string
+  title?: Prisma.StringNullableWithAggregatesFilter<"Publication"> | string | null
   status?: Prisma.EnumPublicationStatusWithAggregatesFilter<"Publication"> | $Enums.PublicationStatus
   content?: Prisma.StringWithAggregatesFilter<"Publication"> | string
   tagGroupSnapshots?: Prisma.JsonWithAggregatesFilter<"Publication">
@@ -295,6 +307,7 @@ export type PublicationScalarWhereWithAggregatesInput = {
 
 export type PublicationCreateInput = {
   id?: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -312,6 +325,7 @@ export type PublicationUncheckedCreateInput = {
   id?: string
   workspaceId: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -325,6 +339,7 @@ export type PublicationUncheckedCreateInput = {
 
 export type PublicationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -342,6 +357,7 @@ export type PublicationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -357,6 +373,7 @@ export type PublicationCreateManyInput = {
   id?: string
   workspaceId: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -368,6 +385,7 @@ export type PublicationCreateManyInput = {
 
 export type PublicationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -381,6 +399,7 @@ export type PublicationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -404,6 +423,7 @@ export type PublicationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   content?: Prisma.SortOrder
   tagGroupSnapshots?: Prisma.SortOrder
@@ -417,6 +437,7 @@ export type PublicationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   content?: Prisma.SortOrder
   scheduledFor?: Prisma.SortOrder
@@ -429,6 +450,7 @@ export type PublicationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   workspaceId?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
+  title?: Prisma.SortOrder
   status?: Prisma.SortOrder
   content?: Prisma.SortOrder
   scheduledFor?: Prisma.SortOrder
@@ -560,6 +582,7 @@ export type PublicationUpdateOneRequiredWithoutTargetsNestedInput = {
 
 export type PublicationCreateWithoutCreatorInput = {
   id?: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -575,6 +598,7 @@ export type PublicationCreateWithoutCreatorInput = {
 export type PublicationUncheckedCreateWithoutCreatorInput = {
   id?: string
   workspaceId: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -619,6 +643,7 @@ export type PublicationScalarWhereInput = {
   id?: Prisma.StringFilter<"Publication"> | string
   workspaceId?: Prisma.StringFilter<"Publication"> | string
   createdBy?: Prisma.StringFilter<"Publication"> | string
+  title?: Prisma.StringNullableFilter<"Publication"> | string | null
   status?: Prisma.EnumPublicationStatusFilter<"Publication"> | $Enums.PublicationStatus
   content?: Prisma.StringFilter<"Publication"> | string
   tagGroupSnapshots?: Prisma.JsonFilter<"Publication">
@@ -630,6 +655,7 @@ export type PublicationScalarWhereInput = {
 
 export type PublicationCreateWithoutWorkspaceInput = {
   id?: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -645,6 +671,7 @@ export type PublicationCreateWithoutWorkspaceInput = {
 export type PublicationUncheckedCreateWithoutWorkspaceInput = {
   id?: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -684,6 +711,7 @@ export type PublicationUpdateManyWithWhereWithoutWorkspaceInput = {
 
 export type PublicationCreateWithoutMediaInput = {
   id?: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -700,6 +728,7 @@ export type PublicationUncheckedCreateWithoutMediaInput = {
   id?: string
   workspaceId: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -728,6 +757,7 @@ export type PublicationUpdateToOneWithWhereWithoutMediaInput = {
 
 export type PublicationUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -744,6 +774,7 @@ export type PublicationUncheckedUpdateWithoutMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -756,6 +787,7 @@ export type PublicationUncheckedUpdateWithoutMediaInput = {
 
 export type PublicationCreateWithoutTargetsInput = {
   id?: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -772,6 +804,7 @@ export type PublicationUncheckedCreateWithoutTargetsInput = {
   id?: string
   workspaceId: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -800,6 +833,7 @@ export type PublicationUpdateToOneWithWhereWithoutTargetsInput = {
 
 export type PublicationUpdateWithoutTargetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -816,6 +850,7 @@ export type PublicationUncheckedUpdateWithoutTargetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -829,6 +864,7 @@ export type PublicationUncheckedUpdateWithoutTargetsInput = {
 export type PublicationCreateManyCreatorInput = {
   id?: string
   workspaceId: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -840,6 +876,7 @@ export type PublicationCreateManyCreatorInput = {
 
 export type PublicationUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -855,6 +892,7 @@ export type PublicationUpdateWithoutCreatorInput = {
 export type PublicationUncheckedUpdateWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -869,6 +907,7 @@ export type PublicationUncheckedUpdateWithoutCreatorInput = {
 export type PublicationUncheckedUpdateManyWithoutCreatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   workspaceId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -881,6 +920,7 @@ export type PublicationUncheckedUpdateManyWithoutCreatorInput = {
 export type PublicationCreateManyWorkspaceInput = {
   id?: string
   createdBy: string
+  title?: string | null
   status?: $Enums.PublicationStatus
   content: string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -892,6 +932,7 @@ export type PublicationCreateManyWorkspaceInput = {
 
 export type PublicationUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -907,6 +948,7 @@ export type PublicationUpdateWithoutWorkspaceInput = {
 export type PublicationUncheckedUpdateWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -921,6 +963,7 @@ export type PublicationUncheckedUpdateWithoutWorkspaceInput = {
 export type PublicationUncheckedUpdateManyWithoutWorkspaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPublicationStatusFieldUpdateOperationsInput | $Enums.PublicationStatus
   content?: Prisma.StringFieldUpdateOperationsInput | string
   tagGroupSnapshots?: Prisma.JsonNullValueInput | runtime.InputJsonValue
@@ -974,6 +1017,7 @@ export type PublicationSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   id?: boolean
   workspaceId?: boolean
   createdBy?: boolean
+  title?: boolean
   status?: boolean
   content?: boolean
   tagGroupSnapshots?: boolean
@@ -992,6 +1036,7 @@ export type PublicationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   workspaceId?: boolean
   createdBy?: boolean
+  title?: boolean
   status?: boolean
   content?: boolean
   tagGroupSnapshots?: boolean
@@ -1007,6 +1052,7 @@ export type PublicationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   id?: boolean
   workspaceId?: boolean
   createdBy?: boolean
+  title?: boolean
   status?: boolean
   content?: boolean
   tagGroupSnapshots?: boolean
@@ -1022,6 +1068,7 @@ export type PublicationSelectScalar = {
   id?: boolean
   workspaceId?: boolean
   createdBy?: boolean
+  title?: boolean
   status?: boolean
   content?: boolean
   tagGroupSnapshots?: boolean
@@ -1031,7 +1078,7 @@ export type PublicationSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PublicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "createdBy" | "status" | "content" | "tagGroupSnapshots" | "scheduledFor" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["publication"]>
+export type PublicationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "workspaceId" | "createdBy" | "title" | "status" | "content" | "tagGroupSnapshots" | "scheduledFor" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["publication"]>
 export type PublicationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   workspace?: boolean | Prisma.WorkspaceDefaultArgs<ExtArgs>
   creator?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1060,6 +1107,7 @@ export type $PublicationPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     workspaceId: string
     createdBy: string
+    title: string | null
     status: $Enums.PublicationStatus
     content: string
     tagGroupSnapshots: runtime.JsonValue
@@ -1497,6 +1545,7 @@ export interface PublicationFieldRefs {
   readonly id: Prisma.FieldRef<"Publication", 'String'>
   readonly workspaceId: Prisma.FieldRef<"Publication", 'String'>
   readonly createdBy: Prisma.FieldRef<"Publication", 'String'>
+  readonly title: Prisma.FieldRef<"Publication", 'String'>
   readonly status: Prisma.FieldRef<"Publication", 'PublicationStatus'>
   readonly content: Prisma.FieldRef<"Publication", 'String'>
   readonly tagGroupSnapshots: Prisma.FieldRef<"Publication", 'Json'>

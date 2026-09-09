@@ -19,6 +19,7 @@ const publication = (
 ): ScheduledPublication => ({
   id,
   createdBy: owner.userId,
+  title: null,
   status,
   content: `Content ${id}`,
   media: [],

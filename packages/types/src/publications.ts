@@ -61,6 +61,7 @@ export interface PublicationTargetInput {
 
 export interface PublicationInput {
   status: "draft" | "scheduled" | "published";
+  title?: string | null;
   content: string;
   targets: PublicationTargetInput[];
   tagGroupSnapshots?: PublicationTagGroupSnapshot[];
@@ -71,6 +72,7 @@ export interface PublicationInput {
 export interface ScheduledPublication {
   id: string;
   createdBy: string;
+  title: string | null;
   status: PublicationStatus;
   content: string;
   media: PublicationMedia[];

@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { cn } from "@/shared/lib/utils";
 
+import { publicationDisplayTitle } from "../lib/publication-display";
+
 function monthDays(month: string) {
   const [year = 1970, monthNumber = 1] = month.split("-").map(Number);
   const first = new Date(Date.UTC(year, monthNumber - 1, 1));
@@ -109,7 +111,7 @@ export function CalendarGrid({
                       onSelectPublication(post);
                     }}
                   >
-                    {post.content || t("mediaOnly")}
+                    {publicationDisplayTitle(post, t("mediaOnly"))}
                   </span>
                 ))}
                 {posts.length > 3 && (

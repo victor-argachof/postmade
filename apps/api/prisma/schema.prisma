@@ -213,6 +213,7 @@ model Publication {
   id                String             @id @default(uuid())
   workspaceId       String
   createdBy         String
+  title             String?
   status            PublicationStatus  @default(draft)
   content           String
   tagGroupSnapshots Json               @default("[]")

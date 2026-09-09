@@ -13,6 +13,7 @@ type ConfirmationMode = "published" | "scheduled";
 export function PublicationConfirmationModal({
   channels,
   content,
+  internalTitle,
   locale,
   mode,
   onClose,
@@ -23,6 +24,7 @@ export function PublicationConfirmationModal({
 }: {
   channels: SocialChannel[];
   content: string;
+  internalTitle: string | null;
   locale: string;
   mode: ConfirmationMode | null;
   onClose: () => void;
@@ -55,6 +57,14 @@ export function PublicationConfirmationModal({
         )}
       </p>
       <div className="mt-6 space-y-3">
+        {internalTitle && (
+          <div className="rounded-xl border border-border p-3">
+            <p className="text-xs font-bold tracking-wide text-muted-foreground uppercase">
+              {t("composer.confirmation.internalTitle")}
+            </p>
+            <p className="mt-1 text-sm font-semibold">{internalTitle}</p>
+          </div>
+        )}
         <div className="flex gap-3 rounded-xl border border-border p-3">
           <Users className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
           <div className="min-w-0">

@@ -1,5 +1,12 @@
 import type { ScheduledPublication, SocialChannel } from "@postmade/types";
-import { Copy, Edit3, RotateCcw, Trash2, XCircle } from "lucide-react";
+import {
+  Copy,
+  Edit3,
+  RotateCcw,
+  TextCursorInput,
+  Trash2,
+  XCircle,
+} from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -12,6 +19,7 @@ import { Pagination } from "@/shared/components/pagination";
 import { Button } from "@/shared/components/ui/button";
 import { Tooltip } from "@/shared/components/ui/tooltip";
 
+import { publicationDisplayTitle } from "../lib/publication-display";
 import { PublicationStatusBadge } from "./publication-status-badge";
 
 type Action = "delete" | "cancel" | "duplicate" | "retry";
@@ -23,6 +31,7 @@ export function PostsDataTable({
   locale,
   onAction,
   onEdit,
+  onRename,
   publications,
   remotePagination,
   timezone,
@@ -33,6 +42,7 @@ export function PostsDataTable({
   locale: string;
   onAction: (action: Action, id: string) => void;
   onEdit: (id: string) => void;
+  onRename: (id: string) => void;
   publications: ScheduledPublication[];
   remotePagination?: {
     page: number;
@@ -46,7 +56,10 @@ export function PostsDataTable({
   const { t } = useTranslation("posts");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [sorting, setSorting] = useState<DataTableSorting>();
+  const [sorting, setSorting] = useState<DataTableSorting | undefined>({
+    columnId: "date",
+    direction: "desc",
+  });
   const activePageSize = remotePagination?.pageSize ?? pageSize;
   const totalPages = Math.max(
     1,
@@ -55,7 +68,7 @@ export function PostsDataTable({
   const currentPage = Math.min(remotePagination?.page ?? page, totalPages);
   const sortableValue = (post: ScheduledPublication, columnId: string) => {
     if (columnId === "publication")
-      return post.content.toLocaleLowerCase(locale);
+      return (post.title || post.content).toLocaleLowerCase(locale);
     if (columnId === "status")
       return t(`statusLabels.${post.status}`).toLocaleLowerCase(locale);
     if (columnId === "channels") return post.targets.length;
@@ -104,11 +117,16 @@ export function PostsDataTable({
   );
   const actions = (post: ScheduledPublication) => (
     <div className="flex flex-wrap justify-end gap-1">
-      {canManage &&
-        !["published", "publishing"].includes(post.status) &&
-        actionButton(t("actions.edit"), <Edit3 className="size-4" />, () =>
-          onEdit(post.id)
-        )}
+      {canManage && ["published", "publishing"].includes(post.status)
+        ? actionButton(
+            t("actions.editTitle"),
+            <TextCursorInput className="size-4" />,
+            () => onRename(post.id)
+          )
+        : canManage &&
+          actionButton(t("actions.edit"), <Edit3 className="size-4" />, () =>
+            onEdit(post.id)
+          )}
       {canManage &&
         actionButton(t("actions.duplicate"), <Copy className="size-4" />, () =>
           onAction("duplicate", post.id)
@@ -137,22 +155,27 @@ export function PostsDataTable({
       sortable: true,
       sortLabel: t("table.sortByPublication"),
       cell: (post) => {
-        const content = post.content || t("mediaOnly");
+        const displayTitle = publicationDisplayTitle(post, t("mediaOnly"));
         return (
           <div className="max-w-sm min-w-52">
             <Tooltip
               className="w-72 max-w-[min(24rem,80vw)]"
               containerClassName="w-full"
-              content={content}
+              content={displayTitle}
               label={t("table.fullContent")}
             >
               <p
                 className="w-full cursor-help truncate font-semibold"
                 tabIndex={0}
               >
-                {content}
+                {displayTitle}
               </p>
             </Tooltip>
+            {post.title && post.content && (
+              <p className="mt-1 w-full truncate text-xs text-muted-foreground">
+                {post.content}
+              </p>
+            )}
           </div>
         );
       },
@@ -245,8 +268,13 @@ export function PostsDataTable({
           <article className="p-5" key={post.id}>
             <PublicationStatusBadge status={post.status} />
             <p className="mt-2 truncate font-semibold">
-              {post.content || t("mediaOnly")}
+              {publicationDisplayTitle(post, t("mediaOnly"))}
             </p>
+            {post.title && post.content && (
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {post.content}
+              </p>
+            )}
             <p className="mt-1 text-xs text-muted-foreground">
               {date(post)} · {t("channels", { count: post.targets.length })}
             </p>

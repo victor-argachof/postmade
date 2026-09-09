@@ -17,12 +17,15 @@ export function ContentStep({
   effectiveContentLength,
   media,
   mediaDisabled = false,
+  onTitleChange,
   onContentChange,
   onManageTags,
   onMediaChange,
   onTagGroupsChange,
   selectedPlatforms,
   tagGroupSnapshots,
+  title,
+  titleDisabled = disabled,
   workspaceId,
 }: {
   content: string;
@@ -30,12 +33,15 @@ export function ContentStep({
   effectiveContentLength: number;
   media: PublicationMedia[];
   mediaDisabled?: boolean;
+  onTitleChange: (title: string) => void;
   onContentChange: (content: string) => void;
   onManageTags: () => void;
   onMediaChange: (media: PublicationMedia[]) => void;
   onTagGroupsChange: (snapshots: PublicationTagGroupSnapshot[]) => void;
   selectedPlatforms: SocialPlatform[];
   tagGroupSnapshots: PublicationTagGroupSnapshot[];
+  title: string;
+  titleDisabled?: boolean;
   workspaceId: string;
 }) {
   const { t } = useTranslation("createPost");
@@ -55,6 +61,28 @@ export function ContentStep({
           {t("composer.mediaUnavailable")}
         </p>
       )}
+      <div className="mt-5">
+        <div className="flex justify-between gap-4">
+          <label className="text-sm font-semibold" htmlFor="post-title">
+            {t("composer.internalTitle")}
+          </label>
+          <span className="text-xs text-muted-foreground">
+            {title.length}/120
+          </span>
+        </div>
+        <input
+          className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm transition outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+          disabled={titleDisabled}
+          id="post-title"
+          maxLength={120}
+          placeholder={t("composer.internalTitlePlaceholder")}
+          value={title}
+          onChange={(event) => onTitleChange(event.target.value)}
+        />
+        <p className="mt-2 text-xs text-muted-foreground">
+          {t("composer.internalTitleDescription")}
+        </p>
+      </div>
       <div className="mt-5 flex justify-between gap-4">
         <label className="text-sm font-semibold" htmlFor="post-caption">
           {t("composer.caption")}

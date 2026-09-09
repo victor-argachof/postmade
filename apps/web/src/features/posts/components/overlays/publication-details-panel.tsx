@@ -1,5 +1,5 @@
 import type { ScheduledPublication, SocialChannel } from "@postmade/types";
-import { Edit3, X } from "lucide-react";
+import { Edit3, TextCursorInput, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,12 +11,14 @@ export function PublicationDetailsPanel({
   channels,
   onClose,
   onEdit,
+  onRename,
   publication,
 }: {
   canManage: boolean;
   channels: SocialChannel[];
   onClose: () => void;
   onEdit: (id: string) => void;
+  onRename: (publication: ScheduledPublication) => void;
   publication: ScheduledPublication | null;
 }) {
   const { t } = useTranslation("posts", { keyPrefix: "calendar" });
@@ -72,6 +74,11 @@ export function PublicationDetailsPanel({
         </div>
         <div className="mt-5">
           <PublicationStatusBadge status={renderedPublication.status} />
+          {renderedPublication.title && (
+            <h3 className="mt-5 text-xl font-black">
+              {renderedPublication.title}
+            </h3>
+          )}
           <p className="mt-5 leading-7 whitespace-pre-wrap">
             {renderedPublication.content || t("mediaOnly")}
           </p>
@@ -91,18 +98,29 @@ export function PublicationDetailsPanel({
               </div>
             ))}
           </div>
-          {canManage &&
-            !["published", "publishing"].includes(
-              renderedPublication.status
-            ) && (
-              <Button
-                className="mt-6 w-full"
-                onClick={() => onEdit(renderedPublication.id)}
-              >
+          {canManage && (
+            <Button
+              className="mt-6 w-full"
+              onClick={() =>
+                ["published", "publishing"].includes(renderedPublication.status)
+                  ? onRename(renderedPublication)
+                  : onEdit(renderedPublication.id)
+              }
+            >
+              {["published", "publishing"].includes(
+                renderedPublication.status
+              ) ? (
+                <TextCursorInput className="size-4" />
+              ) : (
                 <Edit3 className="size-4" />
-                {t("details.edit")}
-              </Button>
-            )}
+              )}
+              {t(
+                ["published", "publishing"].includes(renderedPublication.status)
+                  ? "details.editTitle"
+                  : "details.edit"
+              )}
+            </Button>
+          )}
         </div>
       </aside>
     </div>

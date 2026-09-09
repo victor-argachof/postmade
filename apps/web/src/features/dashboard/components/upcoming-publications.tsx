@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { PublicationStatusBadge } from "@/features/posts/components/publication-status-badge";
+import { publicationDisplayTitle } from "@/features/posts/lib/publication-display";
 import { ROUTES } from "@/routes/route-paths";
 import {
   DataTable,
@@ -47,10 +48,10 @@ export function UpcomingPublications({
       cell: (publication) => (
         <Link
           className="block max-w-sm min-w-52 truncate font-semibold hover:text-primary hover:underline"
-          title={publication.content || t("upcoming.mediaOnly")}
+          title={publicationDisplayTitle(publication, t("upcoming.mediaOnly"))}
           to={publicationUrl(publication)}
         >
-          {publication.content || t("upcoming.mediaOnly")}
+          {publicationDisplayTitle(publication, t("upcoming.mediaOnly"))}
         </Link>
       ),
     },
@@ -140,7 +141,10 @@ export function UpcomingPublications({
                     </span>
                   </div>
                   <p className="mt-2 truncate font-semibold">
-                    {publication.content || t("upcoming.mediaOnly")}
+                    {publicationDisplayTitle(
+                      publication,
+                      t("upcoming.mediaOnly")
+                    )}
                   </p>
                   <p className="mt-1 truncate text-xs text-muted-foreground">
                     {channelNames(publication).join(", ")}

@@ -15,6 +15,7 @@ const post = (
 ): ScheduledPublication => ({
   id,
   createdBy: "user-1",
+  title: null,
   status,
   content: id,
   media: [],

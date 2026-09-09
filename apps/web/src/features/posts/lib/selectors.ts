@@ -24,7 +24,9 @@ export function filterPublications(
   return publications.filter((post) => {
     const date = post.scheduledFor ?? post.publishedAt ?? post.createdAt;
     return (
-      (!query || post.content.toLowerCase().includes(query)) &&
+      (!query ||
+        post.title?.toLowerCase().includes(query) ||
+        post.content.toLowerCase().includes(query)) &&
       (filters.status === "all" || post.status === filters.status) &&
       (filters.platform === "all" ||
         post.targets.some((target) => target.platform === filters.platform)) &&

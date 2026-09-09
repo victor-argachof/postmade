@@ -5,6 +5,7 @@ import { filterPublications, groupPublicationsByLocalDay } from "../selectors";
 const post: ScheduledPublication = {
   id: "post-1",
   createdBy: "user-1",
+  title: null,
   status: "scheduled",
   content: "Launch day",
   media: [],
@@ -48,6 +49,19 @@ describe("publication selectors", () => {
         to: "",
       })
     ).toEqual([]);
+  });
+
+  it("filters by the internal title", () => {
+    expect(
+      filterPublications([{ ...post, title: "Campanha Primavera" }], {
+        query: "primavera",
+        status: "all",
+        platform: "all",
+        channelId: "all",
+        from: "",
+        to: "",
+      })
+    ).toHaveLength(1);
   });
 
   it("groups instants by workspace timezone", () => {

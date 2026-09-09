@@ -52,7 +52,8 @@
     },
     "details": {
       "title": "Detalhes da publicação",
-      "edit": "Editar publicação"
+      "edit": "Editar publicação",
+      "editTitle": "Editar título interno"
     }
   },
   "channels_one": "{{count}} canal",
@@ -81,7 +82,7 @@
     "youtube": "YouTube"
   },
   "filters": {
-    "search": "Buscar conteúdo",
+    "search": "Buscar título ou conteúdo",
     "clearSearch": "Limpar busca",
     "status": "Status",
     "platform": "Plataforma",
@@ -107,6 +108,7 @@
   },
   "actions": {
     "edit": "Editar",
+    "editTitle": "Editar título interno",
     "duplicate": "Duplicar",
     "cancel": "Cancelar agendamento",
     "retry": "Tentar novamente",
@@ -130,7 +132,8 @@
     "delete": "Publicação excluída.",
     "cancel": "Agendamento cancelado.",
     "duplicate": "Rascunho duplicado.",
-    "retry": "Nova tentativa iniciada."
+    "retry": "Nova tentativa iniciada.",
+    "rename": "Título interno atualizado."
   },
   "duplicateModal": {
     "title": "Duplicar publicação",
@@ -152,5 +155,15 @@
     "close": "Fechar",
     "cancel": "Cancelar",
     "confirm": "Excluir"
+  },
+  "renameModal": {
+    "title": "Editar título interno",
+    "description": "Este título é usado somente para identificar a publicação dentro do Postmade e não será enviado às redes sociais.",
+    "label": "Título interno",
+    "placeholder": "Ex.: Campanha de lançamento",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "confirm": "Salvar título",
+    "saving": "Salvando..."
   }
 }

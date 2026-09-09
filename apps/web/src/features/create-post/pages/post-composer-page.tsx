@@ -21,6 +21,7 @@ import {
   useGetPublicationQuery,
   useGetPublicationsQuery,
   useUpdatePublicationMutation,
+  useUpdatePublicationTitleMutation,
 } from "@/features/posts/services/posts-api";
 import { effectivePublicationContent } from "@/features/tags/lib/tags";
 import { WORKSPACE_TRIAL_LIMITS } from "@/features/workspaces/lib/workspace-limits";
@@ -120,11 +121,14 @@ function PostComposerContent({
     useCreatePublicationMutation();
   const [updatePublication, { isLoading: isUpdating }] =
     useUpdatePublicationMutation();
+  const [updatePublicationTitle, { isLoading: isUpdatingTitle }] =
+    useUpdatePublicationTitleMutation();
   const { data: trialPublications } = useGetPublicationsQuery(
     { workspaceId: workspace?.id ?? "", page: 1, pageSize: 50 },
     { skip: !workspace || workspace.subscriptionStatus !== "trialing" }
   );
   const [content, setContent] = useState(existing?.content ?? "");
+  const [title, setTitle] = useState(existing?.title ?? "");
   const [composerNow] = useState(() => Date.now());
   const [media, setMedia] = useState<PublicationMedia[]>(existing?.media ?? []);
   const [channelIds, setChannelIds] = useState<string[]>(
@@ -235,11 +239,14 @@ function PostComposerContent({
   const role = workspace?.members.find(
     (member) => member.id === user?.id
   )?.role;
+  const canManage = Boolean(role && role !== "viewer");
   const readOnly =
-    !role ||
-    role === "viewer" ||
+    !canManage ||
     existing?.status === "published" ||
     existing?.status === "publishing";
+  const immutable = Boolean(
+    existing && ["published", "publishing"].includes(existing.status)
+  );
   const minimumSchedule = utcToZonedInput(
     new Date(composerNow + 5 * 60 * 1000).toISOString(),
     workspace?.timezone ?? "UTC"
@@ -293,6 +300,7 @@ function PostComposerContent({
     if (status !== "draft" && !validated && !validateSubmission(status)) return;
     const publication: PublicationInput = {
       status,
+      title: title.trim() || null,
       content: content.trim(),
       targets: selected.map((channel): PublicationTargetInput => ({
         channelId: channel.id,
@@ -329,6 +337,20 @@ function PostComposerContent({
         }).unwrap();
       toast.success(t(`composer.feedback.${status}`));
       navigate(ROUTES.posts);
+    } catch (error) {
+      toast.error(publicationErrorMessage(error));
+    }
+  };
+  const saveTitle = async () => {
+    if (!workspace || !existing || !canManage) return;
+    try {
+      await updatePublicationTitle({
+        workspaceId: workspace.id,
+        publicationId: existing.id,
+        title: title.trim() || null,
+      }).unwrap();
+      setTitle(title.trim());
+      toast.success(t("composer.feedback.title"));
     } catch (error) {
       toast.error(publicationErrorMessage(error));
     }
@@ -375,12 +397,15 @@ function PostComposerContent({
             disabled={readOnly}
             effectiveContentLength={effectiveContent.length}
             media={media}
+            onTitleChange={setTitle}
             onContentChange={setContent}
             onManageTags={openTagsManager}
             onMediaChange={setMedia}
             onTagGroupsChange={setTagGroupSnapshots}
             selectedPlatforms={selectedPlatforms}
             tagGroupSnapshots={tagGroupSnapshots}
+            title={title}
+            titleDisabled={!canManage}
             workspaceId={workspace?.id ?? ""}
           />
           <PersonalizationStep
@@ -449,6 +474,17 @@ function PostComposerContent({
               </Button>
             </div>
           )}
+          {immutable && canManage && (
+            <div className="flex justify-end">
+              <Button
+                disabled={isUpdatingTitle || title === (existing?.title ?? "")}
+                onClick={() => void saveTitle()}
+              >
+                <Save className="size-4" />
+                {t("composer.saveTitle")}
+              </Button>
+            </div>
+          )}
         </div>
         <aside className="xl:sticky xl:top-20 xl:self-start">
           <div className="rounded-2xl border border-border bg-card p-5">
@@ -499,6 +535,7 @@ function PostComposerContent({
       <PublicationConfirmationModal
         channels={selected}
         content={effectiveContent}
+        internalTitle={title.trim() || null}
         locale={i18n.language}
         mode={confirmationMode}
         onClose={() => setConfirmationMode(null)}

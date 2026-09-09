@@ -30,6 +30,9 @@
       "remove": "Remover {{name}}"
     },
     "content": "2. Crie o conteúdo",
+    "internalTitle": "Título interno (opcional)",
+    "internalTitlePlaceholder": "Ex.: Campanha de lançamento",
+    "internalTitleDescription": "Usado apenas para organização no Postmade. Não será enviado às redes sociais.",
     "caption": "Legenda",
     "placeholder": "O que você quer compartilhar?",
     "addMedia": "Adicionar imagens ou vídeo",
@@ -74,6 +77,7 @@
       "scheduleDescription": "Revise as informações antes de confirmar o agendamento.",
       "destinations": "Destinos",
       "content": "Conteúdo",
+      "internalTitle": "Título interno",
       "tags": "Grupos de tags",
       "schedule": "Data e horário",
       "cancel": "Cancelar",
@@ -85,6 +89,7 @@
     "previewEmpty": "Seu conteúdo aparecerá aqui.",
     "previewNoChannel": "Selecione um canal para visualizar.",
     "saveDraft": "Salvar rascunho",
+    "saveTitle": "Salvar título",
     "scheduleAction": "Agendar",
     "publishNow": "Publicar agora",
     "validation": {
@@ -103,7 +108,8 @@
       "scheduled": "Publicação agendada.",
       "published": "Publicação registrada como publicada.",
       "publishing": "Publicação enviada.",
-      "failed": "Publicação salva."
+      "failed": "Publicação salva.",
+      "title": "Título atualizado."
     }
   }
 }

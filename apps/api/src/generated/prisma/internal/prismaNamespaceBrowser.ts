@@ -206,6 +206,7 @@ export const PublicationScalarFieldEnum = {
   id: 'id',
   workspaceId: 'workspaceId',
   createdBy: 'createdBy',
+  title: 'title',
   status: 'status',
   content: 'content',
   tagGroupSnapshots: 'tagGroupSnapshots',

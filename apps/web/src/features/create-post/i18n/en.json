@@ -30,6 +30,9 @@
       "remove": "Remove {{name}}"
     },
     "content": "2. Create content",
+    "internalTitle": "Internal title (optional)",
+    "internalTitlePlaceholder": "E.g. Launch campaign",
+    "internalTitleDescription": "Used only for organization in Postmade. It will not be sent to social networks.",
     "caption": "Caption",
     "placeholder": "What would you like to share?",
     "addMedia": "Add images or video",
@@ -74,6 +77,7 @@
       "scheduleDescription": "Review the information before confirming the schedule.",
       "destinations": "Destinations",
       "content": "Content",
+      "internalTitle": "Internal title",
       "tags": "Tag groups",
       "schedule": "Date and time",
       "cancel": "Cancel",
@@ -85,6 +89,7 @@
     "previewEmpty": "Your content will appear here.",
     "previewNoChannel": "Select a channel to preview.",
     "saveDraft": "Save draft",
+    "saveTitle": "Save title",
     "scheduleAction": "Schedule",
     "publishNow": "Publish now",
     "validation": {
@@ -103,7 +108,8 @@
       "scheduled": "Publication scheduled.",
       "published": "Publication recorded as published.",
       "publishing": "Publication sent.",
-      "failed": "Publication saved."
+      "failed": "Publication saved.",
+      "title": "Title updated."
     }
   }
 }

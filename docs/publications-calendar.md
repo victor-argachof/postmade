@@ -20,6 +20,11 @@ independentemente da quantidade de canais; rascunhos não consomem a cota.
 
 ## Conteúdo multicanal
 
+Cada publicação pode ter um `title` opcional de até 120 caracteres. Ele é um
+metadado interno de organização, pesquisável e editável mesmo após a conclusão, e
+nunca integra o conteúdo enviado às redes. Títulos nativos de plataformas, como o
+do YouTube, deverão ser modelados futuramente nas configurações do target.
+
 Uma publicação agrega texto e mídia base e possui um target por canal. O conteúdo
 pode ser personalizado por plataforma e é aplicado a todos os targets daquela rede.
 As regras ficam

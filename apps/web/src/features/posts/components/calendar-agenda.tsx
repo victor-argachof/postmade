@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { PublicationStatusBadge } from "@/features/posts/components/publication-status-badge";
 import { Button } from "@/shared/components/ui/button";
 
+import { publicationDisplayTitle } from "../lib/publication-display";
+
 export function CalendarAgenda({
   canManage,
   date,
@@ -66,7 +68,7 @@ export function CalendarAgenda({
               </time>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">
-                  {post.content || t("mediaOnly")}
+                  {publicationDisplayTitle(post, t("mediaOnly"))}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {post.targets.length} {t("channels")}

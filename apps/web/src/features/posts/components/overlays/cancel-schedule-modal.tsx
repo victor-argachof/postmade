@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/shared/components/ui/button";
 import { Modal } from "@/shared/components/ui/modal";
 
+import { publicationDisplayTitle } from "../../lib/publication-display";
+
 export function CancelScheduleModal({
   publication,
   onClose,
@@ -27,7 +29,7 @@ export function CancelScheduleModal({
             {t("cancelModal.description")}
           </p>
           <p className="mt-4 line-clamp-2 rounded-xl bg-muted p-3 text-sm font-semibold">
-            {publication.content || t("mediaOnly")}
+            {publicationDisplayTitle(publication, t("mediaOnly"))}
           </p>
           <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <Button type="button" variant="outline" onClick={onClose}>

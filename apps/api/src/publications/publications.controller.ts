@@ -32,6 +32,7 @@ import {
   PublicationResponseDto,
   PublicationsPageResponseDto,
   PublicationsQueryDto,
+  PublicationTitleBodyDto,
 } from "./publications.dto.js";
 import { PublicationsService } from "./publications.service.js";
 
@@ -86,6 +87,20 @@ export class PublicationsController {
     @Body() body: PublicationBodyDto
   ) {
     return this.publications.update(user.id, workspaceId, id, body);
+  }
+  @Patch(":publicationId/title")
+  @ApiOperation({ summary: "Update a publication internal title" })
+  @ApiOkResponse({ type: PublicationResponseDto })
+  @ApiBadRequestResponse({ type: ApiErrorDto })
+  @ApiForbiddenResponse({ type: ApiErrorDto })
+  @ApiNotFoundResponse({ type: ApiErrorDto })
+  updateTitle(
+    @CurrentUser() user: SafeUser,
+    @Param("workspaceId") workspaceId: string,
+    @Param("publicationId") id: string,
+    @Body() body: PublicationTitleBodyDto
+  ) {
+    return this.publications.updateTitle(user.id, workspaceId, id, body.title);
   }
   @Delete(":publicationId")
   @HttpCode(204)

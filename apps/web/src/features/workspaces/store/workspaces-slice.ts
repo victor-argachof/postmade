@@ -240,6 +240,7 @@ const workspacesSlice = createSlice({
         {
           id: "development-publication:draft",
           createdBy: action.payload.userId,
+          title: null,
           status: "draft",
           content:
             "Ideias para a próxima semana: bastidores do produto e dicas de organização.",
@@ -254,6 +255,7 @@ const workspacesSlice = createSlice({
         {
           id: "development-publication:scheduled-multichannel",
           createdBy: action.payload.userId,
+          title: null,
           status: "scheduled",
           content:
             "Planejar, criar e publicar em todos os canais pode ser mais simples.",
@@ -278,6 +280,7 @@ const workspacesSlice = createSlice({
         {
           id: "development-publication:scheduled-instagram",
           createdBy: action.payload.userId,
+          title: null,
           status: "scheduled",
           content: "Um novo jeito de organizar seu calendário de conteúdo.",
           media: [image],
@@ -291,6 +294,7 @@ const workspacesSlice = createSlice({
         {
           id: "development-publication:published",
           createdBy: action.payload.userId,
+          title: null,
           status: "published",
           content: "Centralize suas publicações e ganhe mais tempo para criar.",
           media: [image],
@@ -311,6 +315,7 @@ const workspacesSlice = createSlice({
         {
           id: "development-publication:failed",
           createdBy: action.payload.userId,
+          title: null,
           status: "failed",
           content:
             "Confira as novidades que preparamos para melhorar sua rotina.",

@@ -16,6 +16,7 @@ import { useAppSelector } from "@/shared/hooks/store-hooks";
 import { CancelScheduleModal } from "../components/overlays/cancel-schedule-modal";
 import { DeletePublicationModal } from "../components/overlays/delete-publication-modal";
 import { DuplicatePublicationModal } from "../components/overlays/duplicate-publication-modal";
+import { RenamePublicationModal } from "../components/overlays/rename-publication-modal";
 import { PostsDataTable } from "../components/posts-data-table";
 import { PostsFilters } from "../components/posts-filters";
 import { PostsViewSwitcher } from "../components/posts-view-switcher";
@@ -25,6 +26,7 @@ import {
   useDuplicatePublicationMutation,
   useGetPublicationsQuery,
   useRetryPublicationMutation,
+  useUpdatePublicationTitleMutation,
 } from "../services/posts-api";
 import type { PublicationFilters } from "../types";
 
@@ -97,11 +99,14 @@ export function PostsPage() {
   const [cancel] = useCancelPublicationMutation();
   const [remove] = useDeletePublicationMutation();
   const [retry] = useRetryPublicationMutation();
+  const [updateTitle, { isLoading: isRenaming }] =
+    useUpdatePublicationTitleMutation();
   const [duplicating, setDuplicating] = useState<ScheduledPublication | null>(
     null
   );
   const [canceling, setCanceling] = useState<ScheduledPublication | null>(null);
   const [deleting, setDeleting] = useState<ScheduledPublication | null>(null);
+  const [renaming, setRenaming] = useState<ScheduledPublication | null>(null);
   const canManage =
     workspace?.members.find((member) => member.id === user?.id)?.role !==
     "viewer";
@@ -184,6 +189,10 @@ export function PostsPage() {
           locale={i18n.language}
           onAction={requestAction}
           onEdit={(id) => navigate(ROUTES.editPost(id))}
+          onRename={(id) => {
+            const publication = data?.items.find((post) => post.id === id);
+            if (publication) setRenaming(publication);
+          }}
           publications={data?.items ?? []}
           timezone={workspace?.timezone ?? "UTC"}
           remotePagination={{
@@ -218,6 +227,28 @@ export function PostsPage() {
         onConfirm={() => {
           if (deleting) void execute("delete", deleting.id);
           setDeleting(null);
+        }}
+      />
+      <RenamePublicationModal
+        isLoading={isRenaming}
+        key={renaming?.id ?? "closed"}
+        publication={renaming}
+        onClose={() => {
+          if (!isRenaming) setRenaming(null);
+        }}
+        onConfirm={async (title) => {
+          if (!workspace || !renaming) return;
+          try {
+            await updateTitle({
+              workspaceId: workspace.id,
+              publicationId: renaming.id,
+              title,
+            }).unwrap();
+            toast.success(t("feedback.rename"));
+            setRenaming(null);
+          } catch (requestError) {
+            toast.error(tApiError(getApiErrorTranslationKey(requestError)));
+          }
         }}
       />
     </section>

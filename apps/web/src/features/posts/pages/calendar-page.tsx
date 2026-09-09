@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 import { mergeChannelLookup } from "@/features/channels/lib/channel-lookup";
 import { useLookupChannelsQuery } from "@/features/channels/services/channels-api";
@@ -12,6 +13,7 @@ import {
   selectActiveWorkspace,
 } from "@/features/posts/lib/selectors";
 import { ROUTES } from "@/routes/route-paths";
+import { getApiErrorTranslationKey } from "@/shared/api/api-error";
 import { DatePicker } from "@/shared/components/date-time-picker";
 import { PageHeader } from "@/shared/components/page-header";
 import { Button } from "@/shared/components/ui/button";
@@ -23,8 +25,12 @@ import {
   CalendarToolbar,
   type CalendarFilters,
 } from "../components/calendar-toolbar";
-import { PublicationDetailsPanel } from "../components/publication-details-panel";
-import { useGetPublicationsQuery } from "../services/posts-api";
+import { PublicationDetailsPanel } from "../components/overlays/publication-details-panel";
+import { RenamePublicationModal } from "../components/overlays/rename-publication-modal";
+import {
+  useGetPublicationsQuery,
+  useUpdatePublicationTitleMutation,
+} from "../services/posts-api";
 
 const initialFilters: CalendarFilters = {
   platform: "all",
@@ -42,6 +48,7 @@ export function CalendarPage() {
 function CalendarPageContent() {
   const { t, i18n } = useTranslation("posts", { keyPrefix: "calendar" });
   const { t: tPosts } = useTranslation("posts");
+  const { t: tApiError } = useTranslation("apiErrors");
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const workspace = useAppSelector(selectActiveWorkspace);
@@ -55,6 +62,9 @@ function CalendarPageContent() {
     : today;
   const [filters, setFilters] = useState(initialFilters);
   const [detail, setDetail] = useState<ScheduledPublication | null>(null);
+  const [renaming, setRenaming] = useState<ScheduledPublication | null>(null);
+  const [updateTitle, { isLoading: isRenaming }] =
+    useUpdatePublicationTitleMutation();
   const [monthYear = "1970", monthNumber = "01"] = month.split("-");
   const rangeFrom = new Date(
     Date.UTC(Number(monthYear), Number(monthNumber) - 1, 1)
@@ -200,7 +210,31 @@ function CalendarPageContent() {
         channels={channels}
         onClose={() => setDetail(null)}
         onEdit={(id) => navigate(ROUTES.editPost(id))}
+        onRename={setRenaming}
         publication={detail}
+      />
+      <RenamePublicationModal
+        isLoading={isRenaming}
+        key={renaming?.id ?? "closed"}
+        publication={renaming}
+        onClose={() => {
+          if (!isRenaming) setRenaming(null);
+        }}
+        onConfirm={async (title) => {
+          if (!workspace || !renaming) return;
+          try {
+            const updated = await updateTitle({
+              workspaceId: workspace.id,
+              publicationId: renaming.id,
+              title,
+            }).unwrap();
+            setDetail(updated);
+            setRenaming(null);
+            toast.success(tPosts("feedback.rename"));
+          } catch (requestError) {
+            toast.error(tApiError(getApiErrorTranslationKey(requestError)));
+          }
+        }}
       />
     </section>
   );

@@ -8,6 +8,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  MaxLength,
   Min,
   ValidateNested,
 } from "class-validator";
@@ -59,6 +60,11 @@ export class PublicationBodyDto {
   @ApiProperty({ enum: writableStatuses })
   @IsIn(writableStatuses)
   status!: (typeof writableStatuses)[number];
+  @ApiPropertyOptional({ type: String, nullable: true, maxLength: 120 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  title?: string | null;
   @ApiProperty({ type: String }) @IsString() content!: string;
   @ApiProperty({ type: [PublicationTargetBodyDto] })
   @IsArray()
@@ -80,6 +86,14 @@ export class PublicationBodyDto {
   @IsArray()
   @IsString({ each: true })
   mediaIds?: string[];
+}
+
+export class PublicationTitleBodyDto {
+  @ApiProperty({ type: String, nullable: true, maxLength: 120 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  title!: string | null;
 }
 
 export class PublicationsQueryDto {
@@ -125,6 +139,7 @@ export class PublicationTargetResponseDto {
 export class PublicationResponseDto {
   @ApiProperty({ type: String }) id!: string;
   @ApiProperty({ type: String }) createdBy!: string;
+  @ApiProperty({ type: String, nullable: true }) title!: string | null;
   @ApiProperty({ enum: statuses }) status!: string;
   @ApiProperty({ type: String }) content!: string;
   @ApiProperty({ type: [Object] }) media!: Array<Record<string, unknown>>;

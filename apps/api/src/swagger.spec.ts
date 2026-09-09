@@ -59,6 +59,7 @@ describe("OpenAPI contract", () => {
       "/api/v1/workspaces/{workspaceId}/media/{mediaId}/complete",
       "/api/v1/workspaces/{workspaceId}/media/{mediaId}/access",
       "/api/v1/workspaces/{workspaceId}/media/{mediaId}",
+      "/api/v1/workspaces/{workspaceId}/publications/{publicationId}/title",
       "/api/v1/channels/oauth/mock/callback",
       "/api/v1/health/live",
       "/api/v1/health/ready",
